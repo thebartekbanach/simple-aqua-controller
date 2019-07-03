@@ -49,6 +49,7 @@ class NavigationManager {
             if (state == NAVIGATION && nav->idleTask == nav->sleepTask) {
                 state = BANNER;
                 printProgramHeader(lcd);
+                nav->reset();
                 return;
             }
 
