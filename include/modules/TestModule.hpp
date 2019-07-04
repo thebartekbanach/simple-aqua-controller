@@ -1,18 +1,26 @@
 #pragma once
 #include "../system/SystemModule.hpp"
+#include "../system/ActionReceiver.hpp"
 
 #include "../utils/log.hpp"
+
 
 class TestModule: public CommonSystemModule {
     private:
         menuNode* feedingSettings = new menuNode("Ustawienia karmienia", 0, nullptr);
-        prompt* feedingAction = new prompt("Karmienie");
+        prompt* feedingAction;
         prompt** actions;
         menuNode** settings;
         ushort lastSecond = 0;
 
+        void startFeedingAction() {
+            logln("Feeding started!");
+        }
+
     public:
         TestModule() {
+            feedingAction = new prompt("Karmienie", receiverFor(this, &TestModule::startFeedingAction), enterEvent);
+
             actions = new prompt*[1] {
                 feedingAction
             };
