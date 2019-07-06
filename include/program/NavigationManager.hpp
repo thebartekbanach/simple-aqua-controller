@@ -29,7 +29,6 @@ class NavigationManager {
 
         void update(const JoystickActions &action) {
             if (actionManager->isUsed() && state != ACTION_MANAGER) {
-                nav->idleOn();
                 nav->reset();
                 state = ACTION_MANAGER;
                 return;

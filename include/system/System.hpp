@@ -27,7 +27,7 @@ class System {
             int settingsAddress = 0;
 
             for (ushort i = 0; i < modules->length; ++i) {
-                modules->items[i]->setup(settingsAddress, eventBus, *actionManager);
+                modules->items[i]->setup(settingsAddress, eventBus, *actionManager, *rtc);
                 settingsAddress += modules->items[i]->getSettingsSize();
             }
         }

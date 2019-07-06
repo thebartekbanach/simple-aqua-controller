@@ -1,9 +1,46 @@
 #pragma once
 #include "../system/SystemModule.hpp"
 #include "../system/ActionReceiver.hpp"
+#include "../system/Timer.hpp"
 
 #include "../utils/log.hpp"
 
+class TestAction: public CommonActionCreator {
+    private:
+        Timer actionEnd;
+        int lastSecond = 0;
+
+    protected:
+        void setup() override {
+            logln("TestAction setup called");
+            lcd->clear();
+            lcd->setCursor(0, 0);
+            lcd->print("Czas karmienia");
+            lcd->setCursor(0, 1);
+            lcd->print("dobiegnie konca");
+            lcd->setCursor(0, 2);
+            lcd->print("za: ");
+        }
+
+    public:
+        TestAction(const Timer &actionEndTime) {
+            actionEnd = actionEndTime;
+        }
+
+        ActionCreator* update(const RtcDateTime &time, const JoystickActions &action) {
+            const int timeToEnd = actionEnd.timeToEndInSeconds(time);
+
+            if (lastSecond != timeToEnd) {
+                lcd->setCursor(5, 2);
+                lcd->print((String(timeToEnd) + "  ").c_str());
+                lastSecond = timeToEnd;
+            } else if (timeToEnd < 1) {
+                return nullptr;
+            }
+            
+            return this;
+        }
+};
 
 class TestModule: public CommonSystemModule {
     private:
@@ -15,6 +52,7 @@ class TestModule: public CommonSystemModule {
 
         void startFeedingAction() {
             logln("Feeding started!");
+            actionManager->acquire(new TestAction(Timer().start(rtc->GetDateTime(), RtcDateTime(30))));
         }
 
     public:

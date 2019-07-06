@@ -75,14 +75,11 @@ class Program {
         prompt** mainMenuItems = combineMenuParts(actionItems, actionsLength, (prompt*)settingsMenu);
         menuNode* mainMenu = new menuNode("Menu glowne", actionsLength + 1, mainMenuItems, noAction, noEvent, wrapStyle);
 
-        log("Final length of actions is: ") logln(actionsLength + 1);
-        logln(mainMenuItems[0]->getText());
-        logln(mainMenuItems[1]->getText());
         nav.useMenu(*mainMenu);
     }
 
     void initializeSystem() {
-        logln("Starting system.setup()")
+        logln("System setup...")
         system.setup();
 
         logln("Collecting actions and settings")
@@ -121,7 +118,7 @@ class Program {
             const JoystickActions jaction = joystick.collectActions();
 
             system.update(time);
-            actionManager.update(time, jaction);
             navigationManager.update(jaction);
+            actionManager.update(time, jaction);
         }
 };

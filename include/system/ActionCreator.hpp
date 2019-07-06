@@ -17,5 +17,5 @@ class CommonActionCreator: public ActionCreator {
         virtual void setup() {}
     
     public:
-        virtual void setup(LiquidCrystal_PCF8574* lcd) { this->lcd = lcd; }
+        virtual void setup(LiquidCrystal_PCF8574* lcd) { this->lcd = lcd; setup(); }
 };

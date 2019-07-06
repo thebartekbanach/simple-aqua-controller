@@ -16,7 +16,7 @@ class SystemModule {
         virtual MenuItemsResult<prompt> getActionsMenu() { return MenuItemsResult<prompt>(nullptr, 0); }
         virtual MenuItemsResult<menuNode> getSettingsMenu(){ return MenuItemsResult<menuNode>(nullptr, 0); }
 
-        virtual void setup(const int &settingsStartAddress, GlobalEventBus& eventBus, ActionManager& actionManager) { }
+        virtual void setup(const int &settingsStartAddress, GlobalEventBus& eventBus, ActionManager& actionManager, RtcDS1302<ThreeWire>& rtc) { }
         virtual void update(const RtcDateTime &time) { }
         virtual void onEvent(const int &moduleId, const int &eventCode) { };
 };
@@ -25,15 +25,17 @@ class CommonSystemModule: public SystemModule {
     protected:
         GlobalEventBus* eventBus;
         ActionManager* actionManager;
+        RtcDS1302<ThreeWire>* rtc;
         int settingsStartAddress;
 
         virtual void setup() {}
 
     public:
-        void setup(const int &settingsStartAddress, GlobalEventBus& eventBus, ActionManager& actionManager) {
+        void setup(const int &settingsStartAddress, GlobalEventBus& eventBus, ActionManager& actionManager, RtcDS1302<ThreeWire>& rtc) {
             this->settingsStartAddress = settingsStartAddress;
             this->eventBus = &eventBus;
             this->actionManager = &actionManager;
+            this->rtc = &rtc;
 
             this->setup();
         }
