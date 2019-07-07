@@ -1,6 +1,6 @@
 #pragma once
 
-#include "SystemModule.hpp";
+#include "SystemModule.hpp"
 
 struct SystemModulesList {
     SystemModule **items;
