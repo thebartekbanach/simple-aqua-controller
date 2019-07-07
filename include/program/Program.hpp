@@ -9,6 +9,7 @@
 
 #include <ThreeWire.h>
 #include <RtcDS1302.h>
+#include <DueFlashStorage.h>
 
 #include "../control/joystick/JoystickController.hpp"
 #include "../control/joystick/JoystickBind.hpp"
@@ -32,6 +33,7 @@ class Program {
     
     ThreeWire rtcWiring;
     RtcDS1302<ThreeWire> rtc;
+    DueFlashStorage storage;
 
     navNode nav_cursors[MAX_DEPTH];
     navRoot nav;
@@ -80,7 +82,7 @@ class Program {
 
     void initializeSystem() {
         logln("System setup...")
-        system.setup();
+        system.setup(&storage);
 
         logln("Collecting actions and settings")
         MenuItemsResult<Menu::prompt> actions = system.collectActions();

@@ -2,6 +2,7 @@
 
 #include <menu.h>
 #include <RtcDS1302.h>
+#include <DueFlashStorage.h>
 
 #include "../program/ActionManager.hpp"
 
@@ -23,11 +24,16 @@ class System {
         System(SystemModulesList* modules, ActionManager &actionManager, RtcDS1302<ThreeWire> &rtc):
             modules(modules), actionManager(&actionManager), rtc(&rtc), eventBus(this->modules) {}
 
-        void setup() {
-            int settingsAddress = 0;
+        void setup(DueFlashStorage* storage) {
+            bool isEepromInitialized = !storage->read(4);
+            storage->write(4, false);
+
+            log("EEPROM store is: ") logln(isEepromInitialized);
+
+            int settingsAddress = 8; // https://github.com/sebnil/DueFlashStorage/blob/master/src/DueFlashStorage.cpp#L63
 
             for (ushort i = 0; i < modules->length; ++i) {
-                modules->items[i]->setup(settingsAddress, eventBus, *actionManager, *rtc);
+                modules->items[i]->setup(settingsAddress, isEepromInitialized, storage, eventBus, *actionManager, *rtc);
                 settingsAddress += modules->items[i]->getSettingsSize();
             }
         }
