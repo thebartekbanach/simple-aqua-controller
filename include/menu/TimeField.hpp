@@ -2,7 +2,6 @@
 
 #include <menu.h>
 
-#include "DecimalsField.hpp"
 #include "../utils/SystemTime.hpp"
 
 menuNode* timeField(char* title, ushort& hours, ushort& minutes, actionReceiver* updateEvent, eventMask onEvent = exitEvent) {
