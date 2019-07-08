@@ -15,11 +15,15 @@ class SystemModule {
         virtual int getSettingsSize() { return 0; }
         virtual void resetSettings() { }
 
-        virtual MenuItemsResult<prompt> getActionsMenu() { return MenuItemsResult<prompt>(nullptr, 0); }
-        virtual MenuItemsResult<menuNode> getSettingsMenu(){ return MenuItemsResult<menuNode>(nullptr, 0); }
+        virtual prompt** getActionMenuItems() { return nullptr; }
+        virtual menuNode** getSettingsMenuItems() { return nullptr; }
+
+        virtual ushort getActionMenuItemsLength() { return 0; }
+        virtual ushort getSettingsMenuItemsLength() { return 0; }
 
         virtual void setup(const int &settingsStartAddress, const bool& isEepromInitialized, DueFlashStorage* storage, 
                            GlobalEventBus& eventBus, ActionManager& actionManager, RtcDS1302<ThreeWire>& rtc) { }
+
         virtual void update(const RtcDateTime &time) { }
         virtual void onEvent(const int &moduleId, const int &eventCode) { };
 };
@@ -29,14 +33,12 @@ class CommonSystemModule: public SystemModule {
         GlobalEventBus* eventBus;
         ActionManager* actionManager;
         RtcDS1302<ThreeWire>* rtc;
-        int settingsStartAddress;
 
         virtual void setup() {}
 
     public:
         void setup(const int &settingsStartAddress, const bool& isEepromInitialized, DueFlashStorage* storage,
                     GlobalEventBus& eventBus, ActionManager& actionManager, RtcDS1302<ThreeWire>& rtc) {
-            this->settingsStartAddress = settingsStartAddress;
             this->eventBus = &eventBus;
             this->actionManager = &actionManager;
             this->rtc = &rtc;
@@ -57,6 +59,9 @@ class CommonSystemModuleWithSettings: public SystemModule {
 
     public:
         CommonSystemModuleWithSettings(TSettings defaultSettings): settings(defaultSettings) {}
+        
+        virtual int getSettingsSize() { return sizeof(TSettings); }
+        virtual void resetSettings() { settings.resetSettings(); }
 
         void setup(const int &settingsStartAddress, const bool& isEepromInitialized, DueFlashStorage* storage, 
                     GlobalEventBus& eventBus, ActionManager& actionManager, RtcDS1302<ThreeWire>& rtc) {

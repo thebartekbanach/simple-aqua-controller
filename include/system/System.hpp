@@ -42,18 +42,17 @@ class System {
             ushort lengthOfActions = 0;
 
             for (ushort i = 0; i < modules->length; ++i) {
-                lengthOfActions += modules->items[i]->getActionsMenu().length;
+                lengthOfActions += modules->items[i]->getActionMenuItemsLength();
             }
-
-            log("Length of actions is: ") logln(lengthOfActions);
             
             prompt** items = new prompt*[lengthOfActions];
 
             for (ushort i = 0, total = 0; i < lengthOfActions; ++i) {
-                auto actions = modules->items[i]->getActionsMenu();
+                prompt** actions = modules->items[i]->getActionMenuItems();
+                ushort actionsLength = modules->items[i]->getActionMenuItemsLength();
 
-                for (ushort j = 0; j < actions.length; ++j, ++total) {
-                    items[total] = actions.items[j];
+                for (ushort j = 0; j < actionsLength; ++j, ++total) {
+                    items[total] = actions[j];
                 }
             }
 
@@ -64,16 +63,17 @@ class System {
             ushort lengthOfSettings = 0;
 
             for (ushort i = 0; i < modules->length; ++i) {
-                lengthOfSettings += modules->items[i]->getActionsMenu().length;
+                lengthOfSettings += modules->items[i]->getSettingsMenuItemsLength();
             }
-
+            
             menuNode** items = new menuNode*[lengthOfSettings];
 
             for (ushort i = 0, total = 0; i < lengthOfSettings; ++i) {
-                auto settings = modules->items[i]->getSettingsMenu();
+                menuNode** settings = modules->items[i]->getSettingsMenuItems();
+                ushort settingsLength = modules->items[i]->getSettingsMenuItemsLength();
 
-                for (ushort j = 0; j < settings.length; ++j, ++total) {
-                    items[total] = settings.items[j];
+                for (ushort j = 0; j < settingsLength; ++j, ++total) {
+                    items[total] = settings[j];
                 }
             }
 

@@ -48,10 +48,6 @@ class TestAction: public CommonActionCreator {
 
 class TestModule: public CommonSystemModuleWithSettings<TestSettings> {
     private:
-        menuNode* feedingSettings = new menuNode("Ustawienia karmienia", 0, nullptr);
-        prompt* feedingAction;
-        prompt** actions;
-        menuNode** settingsMenuNodes;
         ushort lastSecond = 0;
 
         void startFeedingAction() {
@@ -62,30 +58,25 @@ class TestModule: public CommonSystemModuleWithSettings<TestSettings> {
         }
 
     public:
-        TestModule(): CommonSystemModuleWithSettings(TestSettings()) {
-            feedingAction = new prompt("Karmienie", receiverFor(this, &TestModule::startFeedingAction), enterEvent);
+        TestModule(): CommonSystemModuleWithSettings(TestSettings()) {}
 
-            actions = new prompt*[1] {
-                feedingAction
-            };
-
-            settingsMenuNodes = new menuNode*[1] {
-                feedingSettings
+        prompt** getActionMenuItems() {
+            return new prompt*[1] {
+                new prompt("Karmienie", ActionReceiver<TestModule>::forCb(this, &TestModule::startFeedingAction), enterEvent)
             };
         }
 
-        virtual int getSettingsSize() { logln("Returning size of settingsMenuNodes"); return 0; }
-        virtual void resetSettings() { }
+        ushort getActionMenuItemsLength() { return 1; }
 
-        virtual MenuItemsResult<prompt> getActionsMenu() {
-            return MenuItemsResult<prompt>(actions, 1);
+        menuNode** getSettingsMenuItems() {
+            return new menuNode*[1] {
+                new menuNode("Karmienie", 0, nullptr)
+            };
         }
 
-        virtual MenuItemsResult<menuNode> getSettingsMenu() {
-            return MenuItemsResult<menuNode>(settingsMenuNodes, 1);
-        }
+        ushort getSettingsMenuItemsLength() { return 1; }
 
-        virtual void update(const RtcDateTime &time) {
+        void update(const RtcDateTime &time) {
             ushort second = time.Second();
 
             if (lastSecond != second) {
@@ -93,5 +84,6 @@ class TestModule: public CommonSystemModuleWithSettings<TestSettings> {
                 logln(time.Second());
             }
         }
-        virtual void onEvent(const int &moduleId, const int &eventCode) { };
+
+        void onEvent(const int &moduleId, const int &eventCode) { };
 };
