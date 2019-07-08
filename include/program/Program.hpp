@@ -43,31 +43,21 @@ class Program {
     NavigationManager navigationManager;
 
     void initializeRtc() {
-        RtcDateTime compiled = RtcDateTime(__DATE__, "00:00:00");
-
-        if (!rtc.IsDateTimeValid()) 
-        {
+        if (!rtc.IsDateTimeValid()) {
             // Common Causes:
             //    1) first time you ran and the device wasn't running yet
             //    2) the battery on the device is low or even missing
-            rtc.SetDateTime(compiled);
+            logln("Rtc wasn't running yet or battery level is low");
+            rtc.SetDateTime(RtcDateTime(__DATE__, "00:00:00"));
         }
 
-        if (rtc.GetIsWriteProtected())
-        {
+        if (rtc.GetIsWriteProtected()) {
             rtc.SetIsWriteProtected(false);
         }
 
-        if (!rtc.GetIsRunning())
-        {
+        if (!rtc.GetIsRunning()) {
+            logln("Starting rtc");
             rtc.SetIsRunning(true);
-        }
-
-        RtcDateTime now = rtc.GetDateTime();
-
-        if (now < compiled) 
-        {
-            rtc.SetDateTime(compiled);
         }
     }
 
