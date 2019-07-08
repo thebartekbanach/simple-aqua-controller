@@ -18,8 +18,6 @@ class RelayModule {
             }
         }
 
-
-
     public:
         RelayModule(const ushort numberOfModules, const ushort* modulePins, const bool* turnedOnStates):
             modulePins(modulePins),

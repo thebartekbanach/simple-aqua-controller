@@ -2,8 +2,6 @@
 
 #include <DueFlashStorage.h>
 
-#include "../utils/log.hpp"
-
 class SystemModuleSettingsBase {
     public:
         virtual void initialize(const int& settingsStartAddress, const bool& eepromIsInitialized, DueFlashStorage* storage) = 0;
@@ -30,11 +28,6 @@ class SystemModuleSettings: public SystemModuleSettingsBase {
             this->settingsStartAddress = settingsStartAddress;
             this->storage = storage;
 
-            logln(sizeof(TSettings));
-            logln(sizeof(_data));
-
-            logln("Initializing SystemModuleSettings<TSettings>");
-
             if (eepromIsInitialized) restoreSettings();
             else resetSettings();
         }
@@ -44,22 +37,16 @@ class SystemModuleSettings: public SystemModuleSettingsBase {
         }
 
         void restoreSettings() {
-            logln("Restoring settings from memory");
-
             uint8_t* buffer = storage->readAddress(settingsStartAddress);
             memcpy(&_data, buffer, sizeof(TSettings));
         }
 
         void resetSettings() {
-            logln("Resetting settings to default");
-
             _data = defaultSettings;
             saveSettings();
         }
 
-        void saveSettings() {
-            log("Saving setting to memory with size: ") logln(sizeof(TSettings));
-            
+        void saveSettings() {            
             byte buffer[sizeof(TSettings)];
             memcpy(buffer, &_data, sizeof(TSettings));
             storage->write(settingsStartAddress, buffer, sizeof(TSettings));

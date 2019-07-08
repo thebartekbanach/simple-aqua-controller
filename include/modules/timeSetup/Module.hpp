@@ -18,7 +18,6 @@ class TimeSetupModule: public CommonSystemModuleWithSettings<TimeSetupModuleSett
             }
             
             else if (event == exitEvent && isInEditMode) {
-                logln("Updating time") logln(actualTime.hour) logln(actualTime.minute);
                 rtc->SetDateTime(RtcDateTime(2000, 1, 1, actualTime.hour, actualTime.minute, 0));
                 isInEditMode = false;
             }

@@ -11,8 +11,6 @@
 #include "SystemModulesList.hpp"
 #include "MenuItemsResult.hpp"
 
-#include "../utils/log.hpp"
-
 class System {
     SystemModulesList* modules;
     GlobalEventBus eventBus;
@@ -27,8 +25,6 @@ class System {
         void setup(DueFlashStorage* storage) {
             bool isEepromInitialized = !storage->read(4);
             storage->write(4, false);
-
-            log("EEPROM store is: ") logln(isEepromInitialized);
 
             int settingsAddress = 8; // https://github.com/sebnil/DueFlashStorage/blob/master/src/DueFlashStorage.cpp#L63
 
@@ -65,19 +61,14 @@ class System {
             for (ushort i = 0; i < modules->length; ++i) {
                 lengthOfSettings += modules->items[i]->getSettingsMenuItemsLength();
             }
-
-            log("Counted length of setting items is: ") logln(lengthOfSettings)
             
             menuNode** items = new menuNode*[lengthOfSettings];
 
             for (ushort i = 0, total = 0; i < modules->length; ++i) {
-                log("Getting settings from module: ") logln(i)
-
                 menuNode** settings = modules->items[i]->getSettingsMenuItems();
                 ushort settingsLength = modules->items[i]->getSettingsMenuItemsLength();
 
                 for (ushort j = 0; j < settingsLength; ++j, ++total) {
-                    log("Testing is null: ") logln(!settings[j])
                     items[total] = settings[j];
                 }
             }
