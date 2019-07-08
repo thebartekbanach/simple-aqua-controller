@@ -4,7 +4,7 @@
 
 #include "../control/relayModule/RelayModule.hpp"
 
-#include "timeSetup/TimeSetupModule.hpp"
+#include "timeSetup/Module.hpp"
 #include "mainPump/Module.hpp"
 
 SystemModulesList* getSystemModules() {

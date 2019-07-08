@@ -5,7 +5,7 @@
 
 #include "../../menu/TimeField.hpp"
 
-#include "TimeSetupModuleSettings.hpp"
+#include "Settings.hpp"
 
 class TimeSetupModule: public CommonSystemModuleWithSettings<TimeSetupModuleSettings> {
     private:
