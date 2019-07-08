@@ -47,7 +47,7 @@ class System {
             
             prompt** items = new prompt*[lengthOfActions];
 
-            for (ushort i = 0, total = 0; i < lengthOfActions; ++i) {
+            for (ushort i = 0, total = 0; i < modules->length; ++i) {
                 prompt** actions = modules->items[i]->getActionMenuItems();
                 ushort actionsLength = modules->items[i]->getActionMenuItemsLength();
 
@@ -65,14 +65,19 @@ class System {
             for (ushort i = 0; i < modules->length; ++i) {
                 lengthOfSettings += modules->items[i]->getSettingsMenuItemsLength();
             }
+
+            log("Counted length of setting items is: ") logln(lengthOfSettings)
             
             menuNode** items = new menuNode*[lengthOfSettings];
 
-            for (ushort i = 0, total = 0; i < lengthOfSettings; ++i) {
+            for (ushort i = 0, total = 0; i < modules->length; ++i) {
+                log("Getting settings from module: ") logln(i)
+
                 menuNode** settings = modules->items[i]->getSettingsMenuItems();
                 ushort settingsLength = modules->items[i]->getSettingsMenuItemsLength();
 
                 for (ushort j = 0; j < settingsLength; ++j, ++total) {
+                    log("Testing is null: ") logln(!settings[j])
                     items[total] = settings[j];
                 }
             }
