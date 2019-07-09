@@ -11,8 +11,8 @@ SystemModulesList* getSystemModules() {
     logln("Initializing system dependencies");
 
     RelayModule* relayModule = new RelayModule(8,
-        new ushort[8] { 52, 50, 48, 46, 44, 42, 40, 38 },
-        new bool[8] { HIGH, HIGH, HIGH, HIGH, HIGH, HIGH, HIGH, HIGH }
+        new ushort[8] { mainPumpPin, 50, 48, 46, 44, 42, 40, 38 },
+        new bool[8] { LOW, HIGH, HIGH, HIGH, HIGH, HIGH, HIGH, HIGH }
     );
 
     logln("Initializing system modules")
@@ -23,8 +23,8 @@ SystemModulesList* getSystemModules() {
     #define NUMBER_OF_MODULES 2
 
     SystemModule** modules = new SystemModule*[NUMBER_OF_MODULES] {
-        mainPumpModule,
-        timeSetupModule
+        timeSetupModule,
+        mainPumpModule
     };
 
     return new SystemModulesList(modules, NUMBER_OF_MODULES);

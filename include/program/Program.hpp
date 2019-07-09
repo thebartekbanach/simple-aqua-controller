@@ -109,8 +109,8 @@ class Program {
             const RtcDateTime time = rtc.GetDateTime();
             const JoystickActions jaction = joystick.collectActions();
 
+            actionManager.update(time, jaction);
             system.update(time);
             navigationManager.update(jaction);
-            actionManager.update(time, jaction);
         }
 };

@@ -1,0 +1,7 @@
+#pragma once
+
+#define MAIN_PUMP_MODULE_ID 1
+#define MAIN_PUMP_FEEDING_ACTION 2
+
+#define UPDATE_FEEDING_TIME 1
+#define ABORT_FEEDING 2

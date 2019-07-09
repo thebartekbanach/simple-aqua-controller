@@ -3,5 +3,5 @@
 #include "../../utils/SystemTime.hpp"
 
 struct MainPumpModuleSettings {
-    SystemTime feedingLength = { .hour = 0, .minute = 15 };
+    ushort feedingLength = 5;
 };

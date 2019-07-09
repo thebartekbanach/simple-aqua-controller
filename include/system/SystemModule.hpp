@@ -25,7 +25,7 @@ class SystemModule {
                            GlobalEventBus& eventBus, ActionManager& actionManager, RtcDS1302<ThreeWire>& rtc) { }
 
         virtual void update(const RtcDateTime &time) { }
-        virtual void onEvent(const int &moduleId, const int &eventCode) { };
+        virtual void onEvent(const int &moduleId, const int &eventCode, void* data = nullptr) { };
 };
 
 class CommonSystemModule: public SystemModule {
