@@ -31,6 +31,9 @@ class RelayModule {
             if (module >= numberOfModules || module < 0) return;
             
             digitalWrite(modulePins[module], newState == ON ? !turnedOnStates[module] : turnedOnStates[module]); // high = off, low = on
+
+            delay(300); // electromagnetic interference from relay module...
+
             stateList[module] = newState;
         }
 
