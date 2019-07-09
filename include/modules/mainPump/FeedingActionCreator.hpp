@@ -40,6 +40,9 @@ class FeedingActionCreator: public CommonActionCreator {
         void changeEndTime(const RtcDateTime& actualTime, int addValue) {
             uint timeToEnd = timer.timeToEndInSeconds(actualTime);
 
+            if (addValue < 0 && timeToEnd < (2 * 60)) return;
+            if (addValue > 0 && timeToEnd > (59 * 60)) return;
+
             timer.start(actualTime, timeToEnd + addValue);
         }
 
