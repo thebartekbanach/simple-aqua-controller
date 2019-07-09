@@ -4,10 +4,34 @@
 
 class Timer {
     private:
-        RtcDateTime* endTime;
+        RtcDateTime* endTime = nullptr;
+
     public:
+        Timer(const RtcDateTime& actualTime, const RtcDateTime& howLong) {
+            start(actualTime, howLong);
+        }
+
+        Timer(const RtcDateTime& actualTime, const uint& howLong) {
+            start(actualTime, howLong);
+        }
+
+        Timer(const RtcDateTime& endTime) {
+            start(endTime);
+        }
+
+        Timer() {}
+
+        ~Timer() {
+            if (endTime) delete endTime;
+        }
+
         Timer& start(const RtcDateTime& actualTime, const RtcDateTime& howLong) {
-            endTime = new RtcDateTime(actualTime.TotalSeconds64() + howLong.TotalSeconds64());
+            start(actualTime, howLong.TotalSeconds64());
+            return *this;
+        }
+
+        Timer& start(const RtcDateTime& actualTime, const uint& howLong) {
+            endTime = new RtcDateTime(actualTime.TotalSeconds64() + howLong);
             return *this;
         }
 
@@ -30,15 +54,15 @@ class Timer {
         }
         
         bool isReached(const RtcDateTime& actualTime) {
-            return !endTime ? false : actualTime.TotalSeconds64() > endTime->TotalSeconds64();
+            return !isStarted() ? true : actualTime.TotalSeconds64() > endTime->TotalSeconds64();
         }
 
-        unsigned long long timeToEndInSeconds(const RtcDateTime& actualTime) {
-            if (!isStarted() || isReached(actualTime)) return 0;
+        unsigned int timeToEndInSeconds(const RtcDateTime& actualTime) {
+            if (!isStarted() || actualTime.TotalSeconds64() > endTime->TotalSeconds64()) return 0;
             return endTime->TotalSeconds64() - actualTime.TotalSeconds64();
         }
 
-        unsigned long long timeToEndInMinutes(const RtcDateTime& actualTime) {
+        unsigned int timeToEndInMinutes(const RtcDateTime& actualTime) {
             return timeToEndInSeconds(actualTime) / 60;
         }
 
