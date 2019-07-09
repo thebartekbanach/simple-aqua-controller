@@ -6,9 +6,9 @@ Menu::navCmds joystickActionToMenuAction(const JoystickActions &action) {
     switch (action)
     {
     case UP:
-        return upCmd;
-    case DOWN:
         return downCmd;
+    case DOWN:
+        return upCmd;
     case BACK:
         return escCmd;
     case OK:

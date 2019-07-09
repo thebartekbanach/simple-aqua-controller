@@ -30,9 +30,9 @@ class JoystickController {
             JoystickActions action = NONE;
             
             if (yVal == 0) {
-                action = DOWN;
-            } else if (yVal > 1000) {
                 action = UP;
+            } else if (yVal > 1000) {
+                action = DOWN;
             } else if (xVal > 1000) {
                 action = BACK;
             } else if (xVal == 0) {
