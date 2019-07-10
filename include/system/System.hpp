@@ -31,6 +31,9 @@ class System {
             for (ushort i = 0; i < modules->length; ++i) {
                 modules->items[i]->setup(settingsAddress, isEepromInitialized, storage, eventBus, *actionManager, *rtc);
                 settingsAddress += modules->items[i]->getSettingsSize();
+
+                // Flash start address must be on four byte boundary error fix
+                settingsAddress += settingsAddress % 4;
             }
         }
 
