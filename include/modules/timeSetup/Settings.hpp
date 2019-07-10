@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../utils/SystemTime.hpp"
+#include "../../system/SystemTime.hpp"
 
 struct TimeSetupModuleSettings {
     SystemTime dayStart = { .hour = 8, .minute = 00 };
