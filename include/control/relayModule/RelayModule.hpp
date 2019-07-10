@@ -29,6 +29,7 @@ class RelayModule {
 
         void set(const ushort& module, const bool& newState) {
             if (module >= numberOfModules || module < 0) return;
+            if (stateList[module] == newState) return;
             
             digitalWrite(modulePins[module], newState == ON ? !turnedOnStates[module] : turnedOnStates[module]); // high = off, low = on
 
