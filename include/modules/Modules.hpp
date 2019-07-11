@@ -5,7 +5,7 @@
 #include "../control/relayModule/RelayModule.hpp"
 
 #include "timeSetup/Module.hpp"
-#include "mainPump/Module.hpp"
+#include "mainPumpControl/Module.hpp"
 #include "aerationControl/Module.hpp"
 #include "lightingControl/Module.hpp"
 #include "heatherControl/Module.hpp"
