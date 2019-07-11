@@ -5,12 +5,18 @@
 
 #include "../../menu/TimeField.hpp"
 
+#include "../../utils/isInTimeScope.hpp"
+
+#include "Events.hpp"
+#include "DayCycle.hpp"
 #include "Settings.hpp"
 
 class TimeSetupModule: public CommonSystemModuleWithSettings<TimeSetupModuleSettings> {
     private:
         SystemTime actualTime = { .hour = 0, .minute = 0 };
         bool isInEditMode = false;
+
+        DayCycle actualCycle = UNSET;
 
         void timeChangedEvent(eventMask event, navNode& nav, prompt &item) {
             if (event == enterEvent && !isInEditMode) {
@@ -48,9 +54,27 @@ class TimeSetupModule: public CommonSystemModuleWithSettings<TimeSetupModuleSett
 
         ushort getSettingsMenuItemsLength() { return 1; }
 
+        void setup() override {
+            update(rtc->GetDateTime());
+        }
+
         void update(const RtcDateTime &time) { 
-            if (!isInEditMode) {
-                this->actualTime = asSystemTime(time);
+            if (isInEditMode) return;
+
+            actualTime = asSystemTime(time);
+
+            bool isDay = isInTimeScope(settings.data().dayStart, settings.data().nightStart, actualTime);
+
+            if (isDay && actualCycle != DAY) {
+                actualCycle = DAY;
+                eventBus->send(TIME_SETUP_MODULE, DAY_CYCLE_BEGIN);
+                return;
+            }
+
+            if (!isDay && actualCycle != NIGHT) {
+                actualCycle = NIGHT;
+                eventBus->send(TIME_SETUP_MODULE, NIGHT_CYCLE_BEGIN);
+                return;
             }
         }
 };
