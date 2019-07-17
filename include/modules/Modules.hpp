@@ -10,6 +10,7 @@
 #include "lightingControl/Module.hpp"
 #include "heatherControl/Module.hpp"
 #include "sterilizationControl/Module.hpp"
+#include "waterAdditionControl/Module.hpp"
 
 SystemModulesList* getSystemModules() {
     logln("Initializing system dependencies");
@@ -27,8 +28,9 @@ SystemModulesList* getSystemModules() {
     LightingControlModule* lightingControlModule = new LightingControlModule(relayModule);
     HeatherControlModule* heatherControlModule = new HeatherControlModule(relayModule);
     SterilizationControlModule* sterilizationControlModule = new SterilizationControlModule(relayModule);
+    WaterAdditionControlModule* waterAdditionControlModule = new WaterAdditionControlModule(relayModule);
     
-    #define NUMBER_OF_MODULES 6
+    #define NUMBER_OF_MODULES 7
 
     SystemModule** modules = new SystemModule*[NUMBER_OF_MODULES] {
         timeSetupModule,
@@ -36,7 +38,8 @@ SystemModulesList* getSystemModules() {
         aerationControlModule,
         lightingControlModule,
         heatherControlModule,
-        sterilizationControlModule
+        sterilizationControlModule,
+        waterAdditionControlModule
     };
 
     return new SystemModulesList(modules, NUMBER_OF_MODULES);
