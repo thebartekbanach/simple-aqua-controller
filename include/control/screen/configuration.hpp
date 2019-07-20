@@ -5,7 +5,7 @@
 #include <menuIO/PCF8574Out.h>
 #include "lcd.hpp"
 
-#define MAX_DEPTH 4
+#define MAX_DEPTH 5
 
 chainStream<0> menuInput(nullptr);
 
