@@ -6,9 +6,9 @@
 
 class WaterLevelSensor {
     private:
-        const ushort numberOfDevices;
-        const ushort* numberOfDevicePins;
-        const ushort** devicesPins;
+        const short unsigned int numberOfDevices;
+        const short unsigned int* numberOfDevicePins;
+        short unsigned int** devicesPins;
 
         void allToGnd() {
             for (ushort device = 0; device < numberOfDevices; ++device) {
@@ -20,7 +20,7 @@ class WaterLevelSensor {
         }
 
     public:
-        WaterLevelSensor(const ushort numberOfDevices, const ushort* numberOfDevicePins, const ushort** devicesPins):
+        WaterLevelSensor(const short unsigned int numberOfDevices, const short unsigned int* numberOfDevicePins, short unsigned int** devicesPins):
             numberOfDevices(numberOfDevices),
             numberOfDevicePins(numberOfDevicePins),
             devicesPins(devicesPins) {
@@ -32,6 +32,7 @@ class WaterLevelSensor {
             if (level > numberOfDevicePins[deviceId]) return false;
             
             pinMode(devicesPins[deviceId][level], INPUT_PULLUP);
+            delay(100); // need to wait a short while to give time to pull up the pin
             const bool result = !digitalRead(devicesPins[deviceId][level]);
             pinMode(devicesPins[deviceId][level], OUTPUT);
             digitalWrite(devicesPins[deviceId][level], LOW);
