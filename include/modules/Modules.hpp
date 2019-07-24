@@ -19,6 +19,19 @@ SystemModulesList* getSystemModules() {
         new ushort[8] { mainPumpPin,    addionalPumpPin,    heatherPin,     aerationPin,    sterilizationPin,   lightingPin,    40,     38 },
         new bool[8] {   LOW,            HIGH,               HIGH,           HIGH,           HIGH,               HIGH,           HIGH,   HIGH }
     );
+    
+    WaterLevelSensor* waterLevelSensor = new WaterLevelSensor((short unsigned int)2, new short unsigned int[2] { 2,  2 }, 
+        new short unsigned int*[2] {
+            new ushort[2] {
+                changeWaterLevelPin,
+                normalWaterLevelPin
+            },
+            new short unsigned int[2] {
+                addionalWaterTankMaxLevelPin,
+                addionalWaterTankMinLevelPin
+            }
+        }
+    );
 
     logln("Initializing system modules")
     
@@ -28,7 +41,7 @@ SystemModulesList* getSystemModules() {
     LightingControlModule* lightingControlModule = new LightingControlModule(relayModule);
     HeatherControlModule* heatherControlModule = new HeatherControlModule(relayModule);
     SterilizationControlModule* sterilizationControlModule = new SterilizationControlModule(relayModule);
-    WaterAdditionControlModule* waterAdditionControlModule = new WaterAdditionControlModule(relayModule);
+    WaterAdditionControlModule* waterAdditionControlModule = new WaterAdditionControlModule(relayModule, waterLevelSensor);
     
     #define NUMBER_OF_MODULES 7
 

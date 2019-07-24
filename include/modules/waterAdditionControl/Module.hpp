@@ -4,18 +4,34 @@
 #include "../../system/ActionReceiver.hpp"
 
 #include "../../control/relayModule/RelayModule.hpp"
+#include "../../control/waterLevelSensor/WaterLevelSensor.hpp"
 
 #include "../../menu/TurnStateToggle.hpp"
 #include "../../menu/TimeField.hpp"
 
 #include "Settings.hpp"
 
+#include "actionCreators/WaterLevelChecking.hpp"
+
 class WaterAdditionControlModule: public CommonSystemModuleWithSettings<WaterAdditionModuleSettings> {
     private:
         RelayModule* relayModule;
+        WaterLevelSensor* waterLevelSensor;
 
         void settingsChanged() {
             settings.saveSettings();
+        }
+
+        void testWaterLevel() {
+            if (actionManager->canAcquire()) {
+                actionManager->acquire(new WaterLevelCheckingActionCreator(
+                    settings.data().numberOfChecks,
+                    settings.data().checkingFrequency,
+                    settings.data().minNumberOfUnsuccessfullAttemps,
+                    relayModule,
+                    waterLevelSensor
+                ));
+            }
         }
 
         menuNode* getWorkModeSubmenu() {
@@ -58,11 +74,12 @@ class WaterAdditionControlModule: public CommonSystemModuleWithSettings<WaterAdd
         }
     
     public:
-        WaterAdditionControlModule(RelayModule* relayModule):
+        WaterAdditionControlModule(RelayModule* relayModule, WaterLevelSensor* waterLevelSensor):
+            relayModule(relayModule),
+            waterLevelSensor(waterLevelSensor),
             CommonSystemModuleWithSettings<WaterAdditionModuleSettings>(
                 WaterAdditionModuleSettings()
-            ),
-            relayModule(relayModule) {}
+            ){}
 
         ushort getSettingsMenuItemsLength() { return 1; }
 
@@ -79,5 +96,18 @@ class WaterAdditionControlModule: public CommonSystemModuleWithSettings<WaterAdd
             };
         }
 
-        
+        ushort getActionMenuItemsLength() { return 2; }
+
+        prompt** getActionMenuItems() {
+            auto testWaterLevelActionCreator =
+                new ActionReceiver<WaterAdditionControlModule>(this, &WaterAdditionControlModule::testWaterLevel);
+
+            auto fillWaterTank =
+                new ActionReceiver<WaterAdditionControlModule>(this, &WaterAdditionControlModule::testWaterLevel);
+
+            return new prompt*[2] {
+                new prompt("Dolej wody", testWaterLevelActionCreator, enterEvent),
+                new prompt("Uzupelnij rezerwe", fillWaterTank, enterEvent)
+            };
+        }
 };
