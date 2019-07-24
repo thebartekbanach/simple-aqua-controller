@@ -58,8 +58,6 @@ class TimeScopedDeviceDriver: public CommonSystemModuleWithSettings<TimeScopedDe
 
         void update(const RtcDateTime &time) {            
             TimeScopedDeviceDriverSettings& settings = this->settings.data();
-
-            logln((int)settings.mode);
             
             switch(settings.mode) {
                 case FROM_SETTINGS:
