@@ -3,7 +3,7 @@
 #include <Arduino.h>
 
 #ifndef DEBUG_SERIAL_OUTPUT
-    #define DEBUG_SERIAL_OUTPUT Serial
+    #define DEBUG_SERIAL_OUTPUT SerialUSB
 #endif
 
 #ifdef DEBUG_MODE_ENABLED
