@@ -15,6 +15,8 @@ void initializeLcd() {
     lcd.createChar(arrowLeftCustomChar, arrowLeftCharDefinition);
     lcd.createChar(arrowRightCustomChar, arrowRightCharDefinition);
     lcd.createChar(doubleVerticalArrowCustomChar, doubleVerticalArrowCharDefinition);
+    lcd.createChar(approvedCustomChar, approvedCharDefinition);
+    lcd.createChar(xCustomChar, xCharDefinition);
 }
 
 void printProgramHeader(LiquidCrystal_PCF8574* lcd) {

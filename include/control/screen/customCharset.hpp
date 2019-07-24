@@ -61,3 +61,27 @@ int arrowRightCharDefinition[] = {
   B00000,
   B00000
 };
+
+#define approvedCustomChar 6
+int approvedCharDefinition[] = {
+    B00000,
+    B00000,
+    B00001,
+    B00010,
+    B10100,
+    B01000,
+    B00000,
+    B00000
+};
+
+#define xCustomChar 7
+int xCharDefinition[] = {
+    B00000,
+    B10001,
+    B01010,
+    B00100,
+    B01010,
+    B10001,
+    B00000,
+    B00000
+};
