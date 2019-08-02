@@ -28,14 +28,14 @@ class NavigationManager {
             nav(nav), actionManager(actionManager), lcd(lcd) {}
 
         void update(const JoystickActions &action) {
-            if (actionManager->isUsed() && state != ACTION_MANAGER) {
+            if (actionManager->isUsedByCreator() && state != ACTION_MANAGER) {
                 nav->reset();
                 state = ACTION_MANAGER;
                 return;
             }
 
             // actionManager has ended its execution | show header only once
-            if (!actionManager->isUsed() && state == ACTION_MANAGER) {
+            if (!actionManager->isUsedByCreator() && state == ACTION_MANAGER) {
                 state = BANNER;
                 printProgramHeader(lcd);
                 return;
@@ -49,6 +49,7 @@ class NavigationManager {
                 state = BANNER;
                 printProgramHeader(lcd);
                 nav->reset();
+                actionManager->menuLeaved();
                 return;
             }
 
@@ -57,6 +58,7 @@ class NavigationManager {
                 state = NAVIGATION;
                 nav->idleOff();
                 nav->doOutput();
+                actionManager->acquireByMenu();
                 return;
             }
 
