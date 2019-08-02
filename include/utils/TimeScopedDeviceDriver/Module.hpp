@@ -85,7 +85,7 @@ class TimeScopedDeviceDriver: public CommonSystemModuleWithSettings<TimeScopedDe
         }
 
         void onEvent(const int &moduleId, const int &eventCode, void* data = nullptr) {
-            if (moduleId == TIME_SETUP_MODULE) {
+            if (moduleId == TIME_SETUP_MODULE_ID) {
                 if (eventCode == DAY_CYCLE_BEGIN) {
                     actualCycle = DAY;
                 }

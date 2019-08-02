@@ -67,13 +67,13 @@ class TimeSetupModule: public CommonSystemModuleWithSettings<TimeSetupModuleSett
 
             if (isDay && actualCycle != DAY) {
                 actualCycle = DAY;
-                eventBus->send(TIME_SETUP_MODULE, DAY_CYCLE_BEGIN);
+                eventBus->send(TIME_SETUP_MODULE_ID, DAY_CYCLE_BEGIN);
                 return;
             }
 
             if (!isDay && actualCycle != NIGHT) {
                 actualCycle = NIGHT;
-                eventBus->send(TIME_SETUP_MODULE, NIGHT_CYCLE_BEGIN);
+                eventBus->send(TIME_SETUP_MODULE_ID, NIGHT_CYCLE_BEGIN);
                 return;
             }
         }
