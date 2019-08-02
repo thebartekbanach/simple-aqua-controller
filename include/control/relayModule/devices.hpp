@@ -18,5 +18,11 @@
 #define lighting 5
 #define lightingPin 42
 
+#define addionalTankValve 6
+#define addionalTankValvePin 40
+
+#define aquariumValve 7
+#define aquariumValvePin 38
+
 #define ON true
 #define OFF false

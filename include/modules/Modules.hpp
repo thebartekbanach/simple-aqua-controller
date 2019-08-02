@@ -16,8 +16,8 @@ SystemModulesList* getSystemModules() {
     logln("Initializing system dependencies");
 
     RelayModule* relayModule = new RelayModule(8,
-        new ushort[8] { mainPumpPin,    addionalPumpPin,    heatherPin,     aerationPin,    sterilizationPin,   lightingPin,    40,     38 },
-        new bool[8] {   LOW,            HIGH,               HIGH,           HIGH,           HIGH,               HIGH,           HIGH,   HIGH }
+        new ushort[8] { mainPumpPin,    addionalPumpPin,    heatherPin,     aerationPin,    sterilizationPin,   lightingPin,    addionalTankValvePin,   aquariumValvePin },
+        new bool[8] {   LOW,            HIGH,               HIGH,           HIGH,           HIGH,               HIGH,           HIGH,                   HIGH }
     );
     
     WaterLevelSensor* waterLevelSensor = new WaterLevelSensor((short unsigned int)2, new short unsigned int[2] { 2,  2 }, 
