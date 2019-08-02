@@ -68,6 +68,7 @@ class Program {
         menuNode* mainMenu = new menuNode("Menu glowne", actionsLength + 1, mainMenuItems, noAction, noEvent, wrapStyle);
 
         nav.useMenu(*mainMenu);
+        nav.timeOut = 60;
     }
 
     void initializeSystem() {
