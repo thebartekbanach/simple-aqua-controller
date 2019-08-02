@@ -3,6 +3,10 @@
 #define DEBUG_MODE_ENABLED
 #include "utils/log.hpp"
 
+#include "diagnostics/WaterLevelSensor.hpp"
+
+#ifndef DIAGNOSTICS_MODE
+
 #include "program/Program.hpp"
 
 Program* program;
@@ -25,3 +29,4 @@ void loop ()
     program->update();
 }
 
+#endif
