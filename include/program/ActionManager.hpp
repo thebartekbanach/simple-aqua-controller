@@ -8,21 +8,41 @@ class ActionManager {
     ActionCreator* creator = nullptr;
     LiquidCrystal_PCF8574* lcd;
 
+    bool isAcquiredByMenu = false;
+
     public:
         ActionManager(LiquidCrystal_PCF8574* lcd): lcd(lcd) {}
 
-        bool isUsed() {
+        bool isUsedByMenu() {
+            return isAcquiredByMenu;
+        }
+
+        void acquireByMenu() {
+            isAcquiredByMenu = true;
+        }
+
+        void menuLeaved() {
+            isAcquiredByMenu = false;
+        }
+
+        bool isUsedByCreator() {
             return !!creator;
         }
 
+        bool isUsed() {
+            return !!creator || isAcquiredByMenu;
+        }
+
         bool canAcquire() {
-            return !creator;
+            return !creator && !isAcquiredByMenu;
         }
 
         void acquire(ActionCreator* creator) {
-            if (!canAcquire()) {
+            if (isUsedByCreator()) {
                 delete creator;
             }
+
+            menuLeaved();
 
             this->creator = creator;
             this->creator->setup(lcd);
