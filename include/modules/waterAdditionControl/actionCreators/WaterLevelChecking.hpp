@@ -9,14 +9,17 @@
 
 #include "../../../utils/log.hpp"
 
+#include "../Settings.hpp"
+
 #include "messages/WaterLevelIsLow.hpp"
 #include "messages/WaterLevelIsEnough.hpp"
 #include "messages/WaterAdditionCancelled.hpp"
+#include "messages/AddionalWaterTankLevelIsToLow.hpp"
+
+#include "AddingWater.hpp"
 
 class WaterLevelCheckingActionCreator: public CommonActionCreator {
-    const ushort& numberOfChecks;
-    const ushort& checkingFrequency;
-    const ushort& minNumOfUnsuccessfullAttemps;
+    const WaterAdditionModuleSettings& settings;
 
     RelayModule* relayModule;
     WaterLevelSensor* waterLevelSensor;
@@ -55,45 +58,52 @@ class WaterLevelCheckingActionCreator: public CommonActionCreator {
             lcd->write(xCustomChar);
             lcd->print(String(numOfUnsuccessfullChceks) + " ");
 
-            lcd->print(String(numOfAllChecks) + "/" + String(numberOfChecks));
+            lcd->print(String(numOfAllChecks) + "/" + String(settings.numberOfChecks));
 
             displayedNumOfAllChecks = numOfAllChecks;
         }
 
         bool isWaterLevelNotEnought() {
-            return numOfUnsuccessfullChceks >= (float)numberOfChecks * ((float)minNumOfUnsuccessfullAttemps / 100);
+            return numOfUnsuccessfullChceks >=
+                (float)settings.numberOfChecks * ((float)settings.minNumberOfUnsuccessfullAttempts / 100);
         }
     
     public:
         WaterLevelCheckingActionCreator(
-            const ushort& numberOfChecks,
-            const ushort& checkingFrequency,
-            const ushort& minNumOfUnsuccessfullAttemps,
+            const WaterAdditionModuleSettings& settings,
             RelayModule* relayModule,
             WaterLevelSensor* waterLevelSensor):
-                numberOfChecks(numberOfChecks),
-                checkingFrequency(checkingFrequency),
-                minNumOfUnsuccessfullAttemps(minNumOfUnsuccessfullAttemps),
+                settings(settings),
                 relayModule(relayModule),
                 waterLevelSensor(waterLevelSensor) {}
 
         ActionCreator* update(const RtcDateTime &time, const JoystickActions &action) {
+            if (!waterLevelSensor->sense(addionalWaterTank, addionalWaterTankMinLevel)) {
+                return addionalWaterTankLevelIsToLowMessage();
+            }
+
             if (action == OK) {
-                return waterAdditionCancelledMessage(nullptr);
+                return waterAdditionCancelledMessage();
             }
 
             if (checkTimer.isReached(time)) {
                 numOfAllChecks += 1;
                 numOfUnsuccessfullChceks += !waterLevelSensor->sense(aquariumWater, normalWaterLevel);
-                checkTimer.start(time, checkingFrequency / 1000);
+                checkTimer.start(time, settings.checkingFrequency);
             }
 
             if (isWaterLevelNotEnought()) {
-                return waterLevelIsLowMessage(nullptr);
+                return waterLevelIsLowMessage(
+                    new AddingWaterActionCreator(
+                        settings,
+                        relayModule,
+                        waterLevelSensor
+                    )
+                );
             }
 
-            if (numOfAllChecks >= numberOfChecks) {
-                return waterLevelIsEnoughtMessage(nullptr);
+            if (numOfAllChecks >= settings.numberOfChecks) {
+                return waterLevelIsEnoughtMessage();
             }
 
             updateScreenInfo();

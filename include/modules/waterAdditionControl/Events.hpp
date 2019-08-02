@@ -1,0 +1,3 @@
+#pragma once
+
+#define WATER_ADDITION_CONTROL_MODULE_ID 2
