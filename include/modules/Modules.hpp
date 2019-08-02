@@ -3,6 +3,7 @@
 #include "../system/SystemModulesList.hpp"
 
 #include "../control/relayModule/RelayModule.hpp"
+#include "../control/waterLevelSensor/WaterLevelSensor.hpp"
 
 #include "timeSetup/Module.hpp"
 #include "mainPumpControl/Module.hpp"
