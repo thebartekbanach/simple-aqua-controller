@@ -20,7 +20,8 @@
 #include "actionCreators/WaterLevelChecking.hpp"
 #include "actionCreators/FillAddionalWaterTank.hpp"
 
-#include "actionCreators/messages/ConnectCleanWaterSource.hpp"
+#include "actionCreators/messages/ConnectCleanWaterSupply.hpp"
+#include "actionCreators/messages/AddionalWaterTankRefillUnnecessary.hpp"
 
 class WaterAdditionControlModule: public CommonSystemModuleWithSettings<WaterAdditionModuleSettings> {
     private:
@@ -48,13 +49,17 @@ class WaterAdditionControlModule: public CommonSystemModuleWithSettings<WaterAdd
 
         void startAddionalWaterTankRefill() {
             if (!actionManager->isUsedByCreator()) {
-                actionManager->acquire(connectCleanWaterSourceMessage(
-                    new FillAddionalWaterTankActionCreator(
-                        settings.data().addionalWaterTankRefillTimeout,
-                        waterLevelSensor,
-                        relayModule
-                    )
-                ));
+                if (waterLevelSensor->sense(addionalWaterTank, addionalWaterTankMaxLevel)) {
+                    actionManager->acquire(addionalWaterTankRefillUnnecessaryMessage());
+                } else {
+                    actionManager->acquire(connectCleanWaterSupplyMessage(
+                        new FillAddionalWaterTankActionCreator(
+                            settings.data().addionalWaterTankRefillTimeout,
+                            waterLevelSensor,
+                            relayModule
+                        )
+                    ));
+                }
             } 
         }
 
