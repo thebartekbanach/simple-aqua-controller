@@ -22,7 +22,7 @@ class FillAddionalWaterTankActionCreator: public CommonActionCreator {
         const ushort& fillingTimeoutTime;
 
         Timer waterAdditionCheckTimer;
-        Timer* fillingTimeout;
+        Timer* fillingTimeout = nullptr;
 
         WaterLevelSensor* waterLevelSensor;
         RelayModule* relayModule;
@@ -31,12 +31,10 @@ class FillAddionalWaterTankActionCreator: public CommonActionCreator {
         void setup() {
             lcd->clear();
             lcd->setCursor(0, 0);
-            lcd->print("Trwa dolewanie wody");
+            lcd->print(" Trwa uzupelnianie");
             lcd->setCursor(0, 1);
-            lcd->print(" wody do zbiornika");
-            lcd->setCursor(0, 2);
-            lcd->print("   rezerwowego");
-            lcd->setCursor(6, 3);
+            lcd->print("   rezerwy wody");
+            lcd->setCursor(10, 3);
             lcd->write(arrowRightCustomChar);
             lcd->print(" anuluj");
         }
