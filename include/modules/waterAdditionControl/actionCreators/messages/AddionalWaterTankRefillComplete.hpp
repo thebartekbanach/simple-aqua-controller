@@ -1,12 +1,12 @@
 #pragma once
 
-#include "../../../../utils/InformationBannerActionCreator.hpp"
+#include "../../../../utils/informationBanner/InformationBannerActionCreator.hpp"
 
 InformationBannerActionCreator* addionalWaterTankRefillCompleteMessage(ActionCreator* target = nullptr) {
     return new InformationBannerActionCreator(target, 30, true,
-        "  Woda w zbiorniku",
-        " rezerwowym zostala",
-        "    uzupelniona!",
-        " Odlacz zrodlo wody"
+        " Zbiornik rezerwowy",
+        " zostal uzupelniony",
+        " Odlacz zrodlo wody",
+        "          > gotowe"
     );
 }

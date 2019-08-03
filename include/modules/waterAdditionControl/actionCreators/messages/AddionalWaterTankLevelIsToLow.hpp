@@ -1,12 +1,11 @@
 #pragma once
 
-#include "../../../../utils/InformationBannerActionCreator.hpp"
+#include "../../../../utils/informationBanner/InformationBannerActionCreator.hpp"
 
 InformationBannerActionCreator* addionalWaterTankLevelIsToLowMessage(ActionCreator* target = nullptr) {
-    return new InformationBannerActionCreator(target, 5, true,
-        "Zbyt niski poziom",
-        "wody w zbiorniku",
-        "rezerwowym.",
-        "Uzupelnij wode!"
+    return new InformationBannerActionCreator(target, 10, true,
+        "",
+        "Niski poziom rezerwy",
+        " Uzupelnij rezerwe"
     );
 }

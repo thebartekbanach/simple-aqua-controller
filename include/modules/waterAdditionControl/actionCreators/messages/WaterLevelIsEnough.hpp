@@ -1,9 +1,9 @@
 #pragma once
 
-#include "../../../../utils/InformationBannerActionCreator.hpp"
+#include "../../../../utils/informationBanner/InformationBannerActionCreator.hpp"
 
 InformationBannerActionCreator* waterLevelIsEnoughtMessage(ActionCreator* target = nullptr) {
-    return new InformationBannerActionCreator(target, 5, true,
+    return new InformationBannerActionCreator(target, 10, true,
         "",
         "  Poziom wody jest",
         "wystarczajaco wysoki"
