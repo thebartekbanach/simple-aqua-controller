@@ -4,9 +4,9 @@
 
 class WaterLevelSensorDataStream {
     private:
-        const ushort& dataSetSize;
-        bool* data;
+        const ushort dataSetSize;
         ushort actualIndex = 0;
+        bool* data;
 
     public:
         WaterLevelSensorDataStream(const ushort& dataSetSize):
