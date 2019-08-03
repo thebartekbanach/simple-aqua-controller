@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../system/ActionCreator.hpp"
-#include "../system/SystemTime.hpp"
-#include "../system/Timer.hpp"
+#include "../../system/ActionCreator.hpp"
+#include "../../system/SystemTime.hpp"
+#include "../../system/Timer.hpp"
 
 class InformationBannerActionCreator: public CommonActionCreator {
     private:
@@ -44,12 +44,12 @@ class InformationBannerActionCreator: public CommonActionCreator {
         }
 
         ActionCreator* update(const RtcDateTime &time, const JoystickActions &action) {
-            if (!initialized && canTimeout) {
+            if (canTimeout && !initialized) {
                 end.start(time, showTimeInSeconds);
                 initialized = true;
             }
 
-            if (end.isReached(time)) {
+            if (canTimeout && end.isReached(time)) {
                 return target;
             }
 
