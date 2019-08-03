@@ -26,16 +26,16 @@ class AddingWaterActionCreator: public CommonActionCreator {
 
     Timer aquariumWaterCheckTimer;
     Timer addionalWaterCheckTimer;
-    Timer* waterAdditionTimeout;
+    Timer* waterAdditionTimeout = nullptr;
     WaterLevelSensorDataStream wlsDataStream;
 
     protected:
         void setup() {
             lcd->clear();
             lcd->setCursor(0, 0);
-            lcd->print("Uzupelnianie wody");
+            lcd->print(" Uzupelnianie wody");
             lcd->setCursor(0, 1);
-            lcd->print("Prosze czekac");
+            lcd->print("   Prosze czekac");
             lcd->setCursor(1, 3);
             lcd->write(arrowRightCustomChar);
             lcd->print(" dokoncz pozniej");
