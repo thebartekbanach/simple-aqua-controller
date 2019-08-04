@@ -7,6 +7,6 @@ InformationBannerActionCreator* addionalWaterTankRefillTimeoutMessage(ActionCrea
         "   Uwaga: timeout",
         "uzupelnienia wody w",
         "zbiorniku rezerwowym",
-        "    Sprawdz to!"
+        "   Sprawdz zawory"
     );
 }
