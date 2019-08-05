@@ -41,7 +41,7 @@ class Timer {
         }
 
         Timer& stop() {
-            delete endTime;
+            if (!!endTime) delete endTime;
             return *this;
         }
 
