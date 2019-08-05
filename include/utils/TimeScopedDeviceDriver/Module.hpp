@@ -40,14 +40,20 @@ class TimeScopedDeviceDriver: public CommonSystemModuleWithSettings<TimeScopedDe
                 new ActionReceiver<SystemModuleSettings<TimeScopedDeviceDriverSettings>>(
                     &settings, &SystemModuleSettings<TimeScopedDeviceDriverSettings>::saveSettings
                 );
-
-            prompt** settingsMenuItems = new prompt*[3] {
-                turnStateToggle("Tryb: ", settings.data().mode, settingsUpdated),
+                
+            prompt** manualWorkTimesMenuItems = new prompt*[2] {
                 timeField("Czas wlaczenia", settings.data().start, settingsUpdated),
                 timeField("Czas wylaczenia", settings.data().end, settingsUpdated)
             };
+
+            menuNode* manualWorkTimesMenu = new menuNode("Ustawienia zakresu", 2, manualWorkTimesMenuItems);
+
+            prompt** settingsMenuItems = new prompt*[2] {
+                turnStateToggle("Tryb: ", settings.data().mode, settingsUpdated),
+                manualWorkTimesMenu
+            };
             
-            menuNode* settingsMenu = new menuNode(name, 3, settingsMenuItems);
+            menuNode* settingsMenu = new menuNode(name, 2, settingsMenuItems);
 
             menuNode** result = new menuNode*[1] {
                 settingsMenu
