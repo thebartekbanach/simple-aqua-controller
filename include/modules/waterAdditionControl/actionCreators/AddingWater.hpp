@@ -57,7 +57,7 @@ class AddingWaterActionCreator: public CommonActionCreator {
 
         ActionCreator* update(const RtcDateTime &time, const JoystickActions &action) {
             if (!waterAdditionTimeout) {
-                waterAdditionTimeout = new Timer(time, settings.waterAdditionTimeout);
+                waterAdditionTimeout = new Timer(time, settings.waterAdditionTimeout * 60);
             }
 
             if (waterAdditionTimeout->isReached(time)) {

@@ -19,7 +19,7 @@
 
 class FillAddionalWaterTankActionCreator: public CommonActionCreator {
     private:
-        const ushort& fillingTimeoutTime;
+        const float& fillingTimeoutTime;
 
         Timer waterAdditionCheckTimer;
         Timer* fillingTimeout = nullptr;
@@ -41,7 +41,7 @@ class FillAddionalWaterTankActionCreator: public CommonActionCreator {
 
     public:
         FillAddionalWaterTankActionCreator(
-            const ushort& fillingTimeoutTime,
+            const float& fillingTimeoutTime,
             WaterLevelSensor* waterLevelSensor,
             RelayModule* relayModule):
             fillingTimeoutTime(fillingTimeoutTime),
@@ -54,7 +54,7 @@ class FillAddionalWaterTankActionCreator: public CommonActionCreator {
 
         ActionCreator* update(const RtcDateTime& time, const JoystickActions &action) {
             if (!fillingTimeout) {
-                fillingTimeout = new Timer(time, fillingTimeoutTime);
+                fillingTimeout = new Timer(time, fillingTimeoutTime * 60);
             }
 
             if (fillingTimeout->isReached(time)) {

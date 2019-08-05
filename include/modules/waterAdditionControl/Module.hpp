@@ -13,6 +13,7 @@
 #include "../../utils/isInTimeScope.hpp"
 
 #include "../timeSetup/DayCycle.hpp"
+#include "../timeSetup/Events.hpp"
 
 #include "Events.hpp"
 #include "Settings.hpp"
@@ -67,15 +68,16 @@ class WaterAdditionControlModule: public CommonSystemModuleWithSettings<WaterAdd
             auto saveSettings =
                 new ActionReceiver<WaterAdditionControlModule>(this, &WaterAdditionControlModule::settingsChanged);
 
-            auto workingModeValues = new prompt*[4] {
+            auto workingModeValues = new prompt*[5] {
                 new menuValue<WAM_WorkingMode>("wylaczony", DISABLED),
+                new menuValue<WAM_WorkingMode>("ciagly", CONTINUOUS),
                 new menuValue<WAM_WorkingMode>("manualny", MANUAL),
                 new menuValue<WAM_WorkingMode>("dzienny", DAY_CYCLE),
                 new menuValue<WAM_WorkingMode>("nocny", NIGHT_CYCLE),
             };
 
             auto workingModeToggle = new toggle<WAM_WorkingMode>(
-                "Tryb: ", settings.data().workingMode, 4, workingModeValues, saveSettings);
+                "Tryb: ", settings.data().workingMode, 5, workingModeValues, saveSettings);
 
 
             auto manualWorkingModeSettingsItems = new prompt*[2] {
@@ -104,18 +106,18 @@ class WaterAdditionControlModule: public CommonSystemModuleWithSettings<WaterAdd
             auto saveSettings =
                 new ActionReceiver<WaterAdditionControlModule>(this, &WaterAdditionControlModule::settingsChanged);
 
-            auto waterAdditionTimeout = new menuField<ushort>(settings.data().waterAdditionTimeout,
-                "Czas dolewki", "s", 5, 9999, 1, 0, saveSettings, exitEvent);
+            auto waterAdditionTimeout = new menuField<float>(settings.data().waterAdditionTimeout,
+                "Czas dolewki", "m", 0.5, 90, 1, 0.5, saveSettings, exitEvent);
 
-            auto waterRefillTimeout = new menuField<ushort>(settings.data().addionalWaterTankRefillTimeout,
-                "Czas uzupel.", "s", 5, 9999, 1, 0, saveSettings, exitEvent);
+            auto waterRefillTimeout = new menuField<float>(settings.data().addionalWaterTankRefillTimeout,
+                "Czas uzupel.", "m", 0.5, 90, 1, 0.5, saveSettings, exitEvent);
 
             auto timeoutMenuItems = new prompt*[2] {
                 waterAdditionTimeout,
                 waterRefillTimeout
             };
 
-            return new menuNode("Zabezpiecz. czasowe", 2, timeoutMenuItems);
+            return new menuNode("Bezpieczenstwo", 2, timeoutMenuItems);
         }
 
         menuNode* getFrequencySubmenu() {
@@ -123,13 +125,13 @@ class WaterAdditionControlModule: public CommonSystemModuleWithSettings<WaterAdd
                 new ActionReceiver<WaterAdditionControlModule>(this, &WaterAdditionControlModule::settingsChanged);
 
             auto breaksBeetweenChecks = new menuField<ushort>(settings.data().breaksBetweenChecks,
-                "Przerwy", "m", 5, 999, 1, 0, saveSettings, exitEvent);
+                "Przerwy", "m", 1, 24 * 60, 1, 0, saveSettings, exitEvent);
 
             auto numberOfChecks = new menuField<ushort>(settings.data().numberOfChecks,
                 "Ilosc probek", "", 1, 99, 1, 0, saveSettings, exitEvent);
 
             auto checkingFrequency = new menuField<ushort>(settings.data().checkingFrequency,
-                "Czestotliwosc", "s", 1, 9, 1, 0, saveSettings, exitEvent);
+                "Czestotliwosc", "s", 1, 5, 1, 0, saveSettings, exitEvent);
 
             auto percentOfUnsuccessfullAttempts = new menuField<ushort>(settings.data().minNumberOfUnsuccessfullAttempts,
                 "Min nieudanych", "%", 1, 99, 1, 0, saveSettings, exitEvent);
@@ -192,23 +194,34 @@ class WaterAdditionControlModule: public CommonSystemModuleWithSettings<WaterAdd
             waterAdditionTimer.start(rtc->GetDateTime(), settings.data().workTimeShift * 60);
         }
 
-        void update(const RtcDateTime &time) {
-            if (settings.data().workingMode == DISABLED) {
-                checkingEnabled = false;
-            } else if (settings.data().workingMode == MANUAL) {
-                checkingEnabled = isInTimeScope(
-                    settings.data().manualWorkStart,
-                    settings.data().manualWorkEnd,
-                    time
-                );
-            } else if (settings.data().workingMode == DAY_CYCLE) {
-                checkingEnabled = actualDayCycle == DAY;
-            } else if (settings.data().workingMode == NIGHT_CYCLE) {
-                checkingEnabled = actualDayCycle == NIGHT;
-            }
+        bool isCheckingEnabled(const RtcDateTime &time) {
+            switch (settings.data().workingMode) {
+                case CONTINUOUS:
+                    return true;
 
-            if (!checkingEnabled) {
+                case MANUAL:
+                    return isInTimeScope(
+                        settings.data().manualWorkStart,
+                        settings.data().manualWorkEnd,
+                        time
+                    );
+
+                case DAY_CYCLE:
+                    return actualDayCycle == DAY;
+
+                case NIGHT_CYCLE:
+                    return actualDayCycle == NIGHT;
+
+                default:
+                case DISABLED:
+                    return false;
+            }
+        }
+
+        void update(const RtcDateTime &time) {
+            if (!isCheckingEnabled(time)) {
                 relayModule->set(addionalPump, OFF);
+                waterAdditionTimer.stop();
                 return;
             }
 
@@ -232,11 +245,21 @@ class WaterAdditionControlModule: public CommonSystemModuleWithSettings<WaterAdd
         void onEvent(const int &moduleId, const int &eventCode, void* data) {
             if (moduleId == TIME_SETUP_MODULE_ID && eventCode == DAY_CYCLE_BEGIN) {
                 actualDayCycle = DAY;
+
+                if (settings.data().workingMode == DAY_CYCLE) {
+                    waterAdditionTimer.start(rtc->GetDateTime(), settings.data().workTimeShift * 60);
+                }
+
                 return;
             }
 
             if (moduleId == TIME_SETUP_MODULE_ID && eventCode == NIGHT_CYCLE_BEGIN) {
                 actualDayCycle = NIGHT;
+
+                if (settings.data().workingMode == NIGHT_CYCLE) {
+                    waterAdditionTimer.start(rtc->GetDateTime(), settings.data().workTimeShift * 60);
+                }
+
                 return;
             }
         }

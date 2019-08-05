@@ -4,9 +4,10 @@
 
 enum WAM_WorkingMode {
     DISABLED = 0,
-    MANUAL = 1,
-    DAY_CYCLE = 2,
-    NIGHT_CYCLE = 3
+    CONTINUOUS = 1,
+    MANUAL = 2,
+    DAY_CYCLE = 3,
+    NIGHT_CYCLE = 4
 };
 
 struct WaterAdditionModuleSettings {
@@ -16,9 +17,10 @@ struct WaterAdditionModuleSettings {
     unsigned short workTimeShift = 5; // minutes
 
     unsigned short breaksBetweenChecks = 60; // minutes
-    unsigned short numberOfChecks = 10;
+    unsigned short numberOfChecks = 3;
     unsigned short checkingFrequency = 1; // seconds
     unsigned short minNumberOfUnsuccessfullAttempts = 70; // %
-    unsigned short waterAdditionTimeout = 5 * 60; // seconds
-    unsigned short addionalWaterTankRefillTimeout = 30 * 60; // seconds
+
+    float waterAdditionTimeout = 5; // minutes
+    float addionalWaterTankRefillTimeout = 5; // minutes
 };
