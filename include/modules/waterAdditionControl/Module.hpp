@@ -85,7 +85,7 @@ class WaterAdditionControlModule: public CommonSystemModuleWithSettings<WaterAdd
                 timeField("Czas wylaczenia", settings.data().manualWorkEnd, saveSettings)
             };
 
-            auto manualWorkingModeMenu = new menuNode("Ustawienia manualne", 2, manualWorkingModeSettingsItems);
+            auto manualWorkingModeMenu = new menuNode("Ustawienia zakresu", 2, manualWorkingModeSettingsItems);
 
 
             auto timeShiftField = new menuField<ushort>(
