@@ -64,14 +64,12 @@ class TimeSetupModule: public CommonSystemModuleWithSettings<TimeSetupModuleSett
             if (isDay && actualCycle != DAY) {
                 actualCycle = DAY;
                 eventBus->send(TIME_SETUP_MODULE_ID, DAY_CYCLE_BEGIN);
-                logln("Day cycle changed to DAY");
                 return;
             }
 
             if (!isDay && actualCycle != NIGHT) {
                 actualCycle = NIGHT;
                 eventBus->send(TIME_SETUP_MODULE_ID, NIGHT_CYCLE_BEGIN);
-                logln("Day cycle changed to NIGHT");
                 return;
             }
         }
