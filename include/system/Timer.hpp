@@ -22,7 +22,7 @@ class Timer {
         Timer() {}
 
         ~Timer() {
-            if (endTime) delete endTime;
+            stop();
         }
 
         Timer& start(const RtcDateTime& actualTime, const RtcDateTime& howLong) {
@@ -42,6 +42,7 @@ class Timer {
 
         Timer& stop() {
             if (!!endTime) delete endTime;
+            endTime = nullptr;
             return *this;
         }
 
