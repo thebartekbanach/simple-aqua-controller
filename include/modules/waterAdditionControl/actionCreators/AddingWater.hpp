@@ -23,6 +23,7 @@ class AddingWaterActionCreator: public CommonActionCreator {
 
     RelayModule* relayModule;
     WaterLevelSensor* waterLevelSensor;
+    GlobalEventBus* eventBus;
 
     Timer aquariumWaterCheckTimer;
     Timer addionalWaterCheckTimer;
@@ -31,6 +32,8 @@ class AddingWaterActionCreator: public CommonActionCreator {
 
     protected:
         void setup() {
+            eventBus->send(WATER_ADDITION_CONTROL_MODULE_ID, WATER_ADDITION_CONTROL_ACQUIRE);
+            
             lcd->clear();
             lcd->setCursor(0, 0);
             lcd->print(" Uzupelnianie wody");
@@ -45,14 +48,17 @@ class AddingWaterActionCreator: public CommonActionCreator {
         AddingWaterActionCreator(
             const WaterAdditionModuleSettings& settings,
             RelayModule* relayModule,
-            WaterLevelSensor* waterLevelSensor):
+            WaterLevelSensor* waterLevelSensor,
+            GlobalEventBus* eventBus):
                 settings(settings),
                 relayModule(relayModule),
                 waterLevelSensor(waterLevelSensor),
+                eventBus(eventBus),
                 wlsDataStream(5) {}
 
         ~AddingWaterActionCreator() {
             if (waterAdditionTimeout) delete waterAdditionTimeout;
+            eventBus->send(WATER_ADDITION_CONTROL_MODULE_ID, WATER_ADDITION_CONTROL_RELEASE);
         }
 
         ActionCreator* update(const RtcDateTime &time, const JoystickActions &action) {
@@ -61,11 +67,13 @@ class AddingWaterActionCreator: public CommonActionCreator {
             }
 
             if (waterAdditionTimeout->isReached(time)) {
+                logln("Turning addional pomp OFF");
                 relayModule->set(addionalPump, OFF);
                 return waterAdditionTimeoutMessage();
             }
 
             if (action == OK) {
+                logln("Turning addional pomp OFF");
                 relayModule->set(addionalPump, OFF);
                 return waterAdditionCancelledMessage();
             }
@@ -74,6 +82,7 @@ class AddingWaterActionCreator: public CommonActionCreator {
                 addionalWaterCheckTimer.start(time, 1);
                 
                 if (!waterLevelSensor->sense(addionalWaterTank, addionalWaterTankMinLevel)) {
+                    logln("Turning addional pomp OFF");
                     relayModule->set(addionalPump, OFF);
                     return addionalWaterTankLevelIsToLowMessage();
                 }
@@ -89,11 +98,13 @@ class AddingWaterActionCreator: public CommonActionCreator {
                 );
 
                 if (average > 0.5) {
+                    logln("Turning addional pomp OFF");
                     relayModule->set(addionalPump, OFF);
                     return waterAdditionCompleteMessage();
                 }
             }
 
+            logln("Turning addional pomp ON");
             relayModule->set(addionalPump, ON);
             return this;
         }

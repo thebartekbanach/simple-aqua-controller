@@ -23,6 +23,7 @@ class WaterLevelCheckingActionCreator: public CommonActionCreator {
 
     RelayModule* relayModule;
     WaterLevelSensor* waterLevelSensor;
+    GlobalEventBus* eventBus;
 
     ushort numOfAllChecks = 0;
     ushort numOfUnsuccessfullChceks = 0;
@@ -72,10 +73,12 @@ class WaterLevelCheckingActionCreator: public CommonActionCreator {
         WaterLevelCheckingActionCreator(
             const WaterAdditionModuleSettings& settings,
             RelayModule* relayModule,
-            WaterLevelSensor* waterLevelSensor):
+            WaterLevelSensor* waterLevelSensor,
+            GlobalEventBus* eventBus):
                 settings(settings),
                 relayModule(relayModule),
-                waterLevelSensor(waterLevelSensor) {}
+                waterLevelSensor(waterLevelSensor),
+                eventBus(eventBus) {}
 
         ActionCreator* update(const RtcDateTime &time, const JoystickActions &action) {
             if (!waterLevelSensor->sense(addionalWaterTank, addionalWaterTankMinLevel)) {
@@ -97,7 +100,8 @@ class WaterLevelCheckingActionCreator: public CommonActionCreator {
                     new AddingWaterActionCreator(
                         settings,
                         relayModule,
-                        waterLevelSensor
+                        waterLevelSensor,
+                        eventBus
                     )
                 );
             }

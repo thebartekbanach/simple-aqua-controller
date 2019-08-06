@@ -26,9 +26,12 @@ class FillAddionalWaterTankActionCreator: public CommonActionCreator {
 
         WaterLevelSensor* waterLevelSensor;
         RelayModule* relayModule;
+        GlobalEventBus* eventBus;
 
     protected:
         void setup() {
+            eventBus->send(WATER_ADDITION_CONTROL_MODULE_ID, WATER_ADDITION_CONTROL_ACQUIRE);
+
             lcd->clear();
             lcd->setCursor(0, 0);
             lcd->print(" Trwa uzupelnianie");
@@ -43,13 +46,16 @@ class FillAddionalWaterTankActionCreator: public CommonActionCreator {
         FillAddionalWaterTankActionCreator(
             const float& fillingTimeoutTime,
             WaterLevelSensor* waterLevelSensor,
-            RelayModule* relayModule):
+            RelayModule* relayModule,
+            GlobalEventBus* eventBus):
             fillingTimeoutTime(fillingTimeoutTime),
             waterLevelSensor(waterLevelSensor),
-            relayModule(relayModule) {}
+            relayModule(relayModule),
+            eventBus(eventBus) {}
 
         ~FillAddionalWaterTankActionCreator() {
             if (fillingTimeout) delete fillingTimeout;
+            eventBus->send(WATER_ADDITION_CONTROL_MODULE_ID, WATER_ADDITION_CONTROL_RELEASE);
         }
 
         ActionCreator* update(const RtcDateTime& time, const JoystickActions &action) {

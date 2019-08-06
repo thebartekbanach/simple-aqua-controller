@@ -33,6 +33,7 @@ class WaterAdditionControlModule: public CommonSystemModuleWithSettings<WaterAdd
         DayCycle actualDayCycle;
 
         bool checkingEnabled = false;
+        bool actionCreatorRc = false;
 
         void settingsChanged() {
             settings.saveSettings();
@@ -43,7 +44,8 @@ class WaterAdditionControlModule: public CommonSystemModuleWithSettings<WaterAdd
                 actionManager->acquire(new WaterLevelCheckingActionCreator(
                     settings.data(),
                     relayModule,
-                    waterLevelSensor
+                    waterLevelSensor,
+                    eventBus
                 ));
             }
         }
@@ -57,7 +59,8 @@ class WaterAdditionControlModule: public CommonSystemModuleWithSettings<WaterAdd
                         new FillAddionalWaterTankActionCreator(
                             settings.data().addionalWaterTankRefillTimeout,
                             waterLevelSensor,
-                            relayModule
+                            relayModule,
+                            eventBus
                         )
                     ));
                 }
@@ -189,6 +192,7 @@ class WaterAdditionControlModule: public CommonSystemModuleWithSettings<WaterAdd
                 new menuNode("Dolewka wody", 2, waterAdditionActionsMenuItems)
             };
         }
+        
 
         void setup() {
             waterAdditionTimer.start(rtc->GetDateTime(), settings.data().workTimeShift * 60);
@@ -219,6 +223,8 @@ class WaterAdditionControlModule: public CommonSystemModuleWithSettings<WaterAdd
         }
 
         void update(const RtcDateTime &time) {
+            if (actionCreatorRc) return;
+
             if (!isCheckingEnabled(time)) {
                 relayModule->set(addionalPump, OFF);
                 waterAdditionTimer.stop();
@@ -234,7 +240,8 @@ class WaterAdditionControlModule: public CommonSystemModuleWithSettings<WaterAdd
                 actionManager->acquire(new WaterLevelCheckingActionCreator(
                     settings.data(),
                     relayModule,
-                    waterLevelSensor
+                    waterLevelSensor,
+                    eventBus
                 ));
 
                 waterAdditionTimer.start(time, settings.data().breaksBetweenChecks * 60);
@@ -260,6 +267,11 @@ class WaterAdditionControlModule: public CommonSystemModuleWithSettings<WaterAdd
                     waterAdditionTimer.start(rtc->GetDateTime(), settings.data().workTimeShift * 60);
                 }
 
+                return;
+            }
+
+            if (moduleId == WATER_ADDITION_CONTROL_MODULE_ID) {
+                actionCreatorRc = eventCode == WATER_ADDITION_CONTROL_ACQUIRE;
                 return;
             }
         }
