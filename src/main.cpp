@@ -16,7 +16,7 @@ void setup ()
     DEBUG_SERIAL_OUTPUT.begin(115200);
 
     logln("Enabling watchdog");
-    watchdogEnable(4000);
+    watchdogEnable(1000);
 
     logln("Starting program...");
     program = new Program();
