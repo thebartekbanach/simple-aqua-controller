@@ -7,23 +7,23 @@
 class RelayModule {
     private:
         const ushort* modulePins;
-        const bool* turnedOnStates;
+        const bool* turnedOffStates;
         const ushort numberOfModules;
         bool* stateList;
 
         void initialize() {
             for (ushort i = 0; i < numberOfModules; ++i) {
                 pinMode(modulePins[i], OUTPUT);
-                set(i, OFF);
+                digitalWrite(modulePins[i], turnedOffStates[i]);
             }
         }
 
     public:
-        RelayModule(const ushort numberOfModules, const ushort* modulePins, const bool* turnedOnStates):
+        RelayModule(const ushort numberOfModules, const ushort* modulePins, const bool* turnedOffStates):
             modulePins(modulePins),
-            turnedOnStates(turnedOnStates),
+            turnedOffStates(turnedOffStates),
             numberOfModules(numberOfModules),
-            stateList(new bool[numberOfModules]) {
+            stateList(new bool[numberOfModules] { false }) {
                 initialize();
             }
 
@@ -31,7 +31,8 @@ class RelayModule {
             if (module >= numberOfModules || module < 0) return;
             if (stateList[module] == newState) return;
             
-            digitalWrite(modulePins[module], newState == ON ? !turnedOnStates[module] : turnedOnStates[module]); // high = off, low = on
+            log("SETTING MOD: ") log(module) log(" TO ") logln(newState);
+            digitalWrite(modulePins[module], newState == ON ? !turnedOffStates[module] : turnedOffStates[module]); // high = off, low = on
 
             delay(300); // electromagnetic interference from relay module...
 
