@@ -6,7 +6,7 @@
 #include "../control/waterLevelSensor/WaterLevelSensor.hpp"
 
 #include "timeSetup/Module.hpp"
-#include "mainPumpControl/Module.hpp"
+#include "feedingControl/Module.hpp"
 #include "aerationControl/Module.hpp"
 #include "lightingControl/Module.hpp"
 #include "heatherControl/Module.hpp"
@@ -37,7 +37,7 @@ SystemModulesList* getSystemModules() {
     logln("Initializing system modules")
     
     TimeSetupModule* timeSetupModule = new TimeSetupModule();
-    MainPumpModule* mainPumpModule = new MainPumpModule(relayModule);
+    FeedingControlModule* feedingControlModule = new FeedingControlModule(relayModule);
     AerationControlModule* aerationControlModule = new AerationControlModule(relayModule);
     LightingControlModule* lightingControlModule = new LightingControlModule(relayModule);
     HeatherControlModule* heatherControlModule = new HeatherControlModule(relayModule);
@@ -48,7 +48,7 @@ SystemModulesList* getSystemModules() {
 
     SystemModule** modules = new SystemModule*[NUMBER_OF_MODULES] {
         timeSetupModule,
-        mainPumpModule,
+        feedingControlModule,
         aerationControlModule,
         lightingControlModule,
         heatherControlModule,
