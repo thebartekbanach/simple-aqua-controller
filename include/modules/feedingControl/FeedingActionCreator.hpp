@@ -47,7 +47,6 @@ class FeedingActionCreator: public CommonActionCreator {
             if (addValue < 0 && timeToEnd < (2 * 60)) return;
             if (addValue > 0 && timeToEnd > (59 * 60)) return;
 
-            logln("START")
             timer.start(actualTime, timeToEnd + addValue);
         }
 
