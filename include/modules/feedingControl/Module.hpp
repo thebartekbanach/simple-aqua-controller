@@ -11,7 +11,7 @@
 
 #include "FeedingActionCreator.hpp"
 
-class MainPumpModule: public CommonSystemModuleWithSettings<MainPumpModuleSettings> {
+class FeedingControlModule: public CommonSystemModuleWithSettings<FeedingControlModuleSettings> {
     private:
         RelayModule* relayModule;
 
@@ -26,9 +26,9 @@ class MainPumpModule: public CommonSystemModuleWithSettings<MainPumpModuleSettin
         }
 
     public:
-        MainPumpModule(RelayModule* relayModule):
+        FeedingControlModule(RelayModule* relayModule):
             relayModule(relayModule),
-            CommonSystemModuleWithSettings(MainPumpModuleSettings()) {
+            CommonSystemModuleWithSettings(FeedingControlModuleSettings()) {
                 relayModule->set(mainPump, ON);
             }
 
@@ -36,7 +36,7 @@ class MainPumpModule: public CommonSystemModuleWithSettings<MainPumpModuleSettin
 
         prompt** getActionMenuItems() {
             prompt* feedingPrompt = new prompt("Tryb karmienia",
-                ActionReceiver<MainPumpModule>::forCb(this, &MainPumpModule::startFeedingModeEvent),
+                ActionReceiver<FeedingControlModule>::forCb(this, &FeedingControlModule::startFeedingModeEvent),
                 enterEvent);
 
             return new prompt*[1] {
@@ -51,7 +51,7 @@ class MainPumpModule: public CommonSystemModuleWithSettings<MainPumpModuleSettin
                 settings.data().feedingLength,
                 "Czas karmienia", "m", 5, 60, 1, 0,
                 ActionReceiver<typeof(settings)>::forCb(&settings, 
-                    &SystemModuleSettings<MainPumpModuleSettings>::saveSettings),
+                    &SystemModuleSettings<FeedingControlModuleSettings>::saveSettings),
                 exitEvent
             );
 

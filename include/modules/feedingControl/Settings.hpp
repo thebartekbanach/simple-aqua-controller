@@ -2,6 +2,6 @@
 
 #include "../../system/SystemTime.hpp"
 
-struct MainPumpModuleSettings {
+struct FeedingControlModuleSettings {
     ushort feedingLength = 5;
 };
