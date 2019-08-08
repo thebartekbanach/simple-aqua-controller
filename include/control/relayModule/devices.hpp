@@ -22,7 +22,7 @@
 #define addionalTankValvePin 50
 
 #define aquariumValve 7
-#define aquariumValvePin 50
+#define aquariumValvePin 52
 
 #define ON true
 #define OFF false
