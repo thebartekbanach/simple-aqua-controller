@@ -7,11 +7,12 @@
 
 #include "timeSetup/Module.hpp"
 #include "feedingControl/Module.hpp"
+#include "waterChangeModule/Module.hpp"
+#include "waterAdditionControl/Module.hpp"
 #include "aerationControl/Module.hpp"
 #include "lightingControl/Module.hpp"
 #include "heatherControl/Module.hpp"
 #include "sterilizationControl/Module.hpp"
-#include "waterAdditionControl/Module.hpp"
 
 SystemModulesList* getSystemModules() {
     logln("Initializing system dependencies");
@@ -38,22 +39,25 @@ SystemModulesList* getSystemModules() {
     
     TimeSetupModule* timeSetupModule = new TimeSetupModule();
     FeedingControlModule* feedingControlModule = new FeedingControlModule(relayModule);
+    WaterChangeModule* waterChangeModule = new WaterChangeModule(waterLevelSensor, relayModule);
+    WaterAdditionControlModule* waterAdditionControlModule = new WaterAdditionControlModule(relayModule, waterLevelSensor);
     AerationControlModule* aerationControlModule = new AerationControlModule(relayModule);
     LightingControlModule* lightingControlModule = new LightingControlModule(relayModule);
     HeatherControlModule* heatherControlModule = new HeatherControlModule(relayModule);
     SterilizationControlModule* sterilizationControlModule = new SterilizationControlModule(relayModule);
-    WaterAdditionControlModule* waterAdditionControlModule = new WaterAdditionControlModule(relayModule, waterLevelSensor);
+
     
-    #define NUMBER_OF_MODULES 7
+    #define NUMBER_OF_MODULES 8
 
     SystemModule** modules = new SystemModule*[NUMBER_OF_MODULES] {
         timeSetupModule,
         feedingControlModule,
+        waterChangeModule,
+        waterAdditionControlModule,
         aerationControlModule,
         lightingControlModule,
         heatherControlModule,
-        sterilizationControlModule,
-        waterAdditionControlModule
+        sterilizationControlModule
     };
 
     return new SystemModulesList(modules, NUMBER_OF_MODULES);
