@@ -1,0 +1,6 @@
+#pragma once
+
+#define SERVICE_MODE_MODULE_ID 3
+
+#define SERVICE_MODE_ACTIVATION 1
+#define SERVICE_MODE_DEACTIVATION 0

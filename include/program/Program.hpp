@@ -109,7 +109,7 @@ class Program {
             nav(*(menuNode*)nullptr, nav_cursors, MAX_DEPTH, menuInput, menuOutput),
             actionManager(&lcd),
             navigationManager(&nav, &actionManager, &lcd),
-            system(getSystemModules(), actionManager, rtc) {}
+            system(getSystemModules(&nav), actionManager, rtc) {}
 
         void setup() {
             logln("Initializing rtc...");

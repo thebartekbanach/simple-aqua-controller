@@ -13,8 +13,9 @@
 #include "lightingControl/Module.hpp"
 #include "heatherControl/Module.hpp"
 #include "sterilizationControl/Module.hpp"
+#include "serviceMode/Module.hpp"
 
-SystemModulesList* getSystemModules() {
+SystemModulesList* getSystemModules(navRoot* navRootDependency) {
     logln("Initializing system dependencies");
 
     RelayModule* relayModule = new RelayModule(8,
@@ -24,11 +25,11 @@ SystemModulesList* getSystemModules() {
     
     WaterLevelSensor* waterLevelSensor = new WaterLevelSensor((short unsigned int)2, new short unsigned int[2] { 2,  2 }, 
         new short unsigned int*[2] {
-            new ushort[2] {
+            new ushort[2] { // aquariumWater
                 changeWaterLevelPin,
                 normalWaterLevelPin
             },
-            new short unsigned int[2] {
+            new short unsigned int[2] { // addionalWaterTank
                 addionalWaterTankMaxLevelPin,
                 addionalWaterTankMinLevelPin
             }
@@ -45,9 +46,10 @@ SystemModulesList* getSystemModules() {
     LightingControlModule* lightingControlModule = new LightingControlModule(relayModule);
     HeatherControlModule* heatherControlModule = new HeatherControlModule(relayModule);
     SterilizationControlModule* sterilizationControlModule = new SterilizationControlModule(relayModule);
+    ServiceModeModule* serviceModeModule = new ServiceModeModule(waterLevelSensor, relayModule, navRootDependency);
 
     
-    #define NUMBER_OF_MODULES 8
+    #define NUMBER_OF_MODULES 9
 
     SystemModule** modules = new SystemModule*[NUMBER_OF_MODULES] {
         timeSetupModule,
@@ -57,7 +59,8 @@ SystemModulesList* getSystemModules() {
         aerationControlModule,
         lightingControlModule,
         heatherControlModule,
-        sterilizationControlModule
+        sterilizationControlModule,
+        serviceModeModule
     };
 
     return new SystemModulesList(modules, NUMBER_OF_MODULES);

@@ -71,7 +71,7 @@ class FeedingActionCreator: public CommonActionCreator {
 
         ActionCreator* update(const RtcDateTime &time, const JoystickActions &action) {
             if (timer.isReached(time) || action == OK) {
-                eventBus->send(MAIN_PUMP_FEEDING_ACTION, ABORT_FEEDING);
+                eventBus->send(FEEDING_MODULE_ID, ABORT_FEEDING);
                 return nullptr;
             }
 

@@ -15,6 +15,8 @@
 #include "../timeSetup/DayCycle.hpp"
 #include "../timeSetup/Events.hpp"
 
+#include "../serviceMode/Events.hpp"
+
 #include "Events.hpp"
 #include "Settings.hpp"
 
@@ -236,7 +238,7 @@ class WaterAdditionControlModule: public CommonSystemModuleWithSettings<WaterAdd
         }
 
         void update(const RtcDateTime &time) {
-            if (actionCreatorRc) return;
+            if (actionCreatorRc || serviceModeActive) return;
 
             if (!isCheckingEnabled(time)) {
                 relayModule->set(addionalPump, OFF);
@@ -286,6 +288,10 @@ class WaterAdditionControlModule: public CommonSystemModuleWithSettings<WaterAdd
             if (moduleId == WATER_ADDITION_CONTROL_MODULE_ID) {
                 actionCreatorRc = eventCode == WATER_ADDITION_CONTROL_ACQUIRE;
                 return;
+            }
+
+            if (moduleId == SERVICE_MODE_MODULE_ID) {
+                serviceModeActive = eventCode;
             }
         }
 };

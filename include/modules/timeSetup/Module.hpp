@@ -7,6 +7,8 @@
 
 #include "../../utils/isInTimeScope.hpp"
 
+#include "../serviceMode/Events.hpp"
+
 #include "Events.hpp"
 #include "DayCycle.hpp"
 #include "Settings.hpp"
@@ -55,7 +57,7 @@ class TimeSetupModule: public CommonSystemModuleWithSettings<TimeSetupModuleSett
         ushort getSettingsMenuItemsLength() { return 1; }
 
         void update(const RtcDateTime &time) { 
-            if (isInEditMode) return;
+            if (isInEditMode || serviceModeActive) return;
 
             actualTime = asSystemTime(time);
 
@@ -71,6 +73,12 @@ class TimeSetupModule: public CommonSystemModuleWithSettings<TimeSetupModuleSett
                 actualCycle = NIGHT;
                 eventBus->send(TIME_SETUP_MODULE_ID, NIGHT_CYCLE_BEGIN);
                 return;
+            }
+        }
+
+        void onEvent(const int &moduleId, const int &eventCode, void* data) {
+            if (moduleId == SERVICE_MODE_MODULE_ID) {
+                serviceModeActive = eventCode;
             }
         }
 };

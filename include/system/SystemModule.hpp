@@ -33,6 +33,8 @@ class CommonSystemModule: public SystemModule {
         GlobalEventBus* eventBus;
         ActionManager* actionManager;
         RtcDS1302<ThreeWire>* rtc;
+        
+        bool serviceModeActive = false;
 
         virtual void setup() {}
 
@@ -54,6 +56,8 @@ class CommonSystemModuleWithSettings: public SystemModule {
         ActionManager* actionManager;
         RtcDS1302<ThreeWire>* rtc;
         SystemModuleSettings<TSettings> settings;
+        
+        bool serviceModeActive = false;
 
         virtual void setup() {}
 

@@ -11,6 +11,7 @@
 
 #include "../../modules/timeSetup/DayCycle.hpp"
 #include "../../modules/timeSetup/Events.hpp"
+#include "../../modules/serviceMode/Events.hpp"
 
 #include "../DeviceWorkingMode.hpp"
 #include "../isInTimeScope.hpp"
@@ -62,7 +63,9 @@ class TimeScopedDeviceDriver: public CommonSystemModuleWithSettings<TimeScopedDe
             return result;
         }
 
-        void update(const RtcDateTime &time) {            
+        void update(const RtcDateTime &time) {
+            if (serviceModeActive) return;
+
             TimeScopedDeviceDriverSettings& settings = this->settings.data();
             
             switch(settings.mode) {
@@ -99,6 +102,10 @@ class TimeScopedDeviceDriver: public CommonSystemModuleWithSettings<TimeScopedDe
                 else if (eventCode == NIGHT_CYCLE_BEGIN) {
                     actualCycle = NIGHT;
                 }
+            }
+
+            if (moduleId == SERVICE_MODE_MODULE_ID) {
+                serviceModeActive = eventCode;
             }
         };
 };
