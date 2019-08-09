@@ -11,7 +11,6 @@
 
 #include "../Settings.hpp"
 
-#include "messages/WaterLevelIsLow.hpp"
 #include "messages/WaterLevelIsEnough.hpp"
 #include "messages/WaterAdditionCancelled.hpp"
 #include "messages/AddionalWaterTankLevelIsToLow.hpp"
@@ -96,13 +95,11 @@ class WaterLevelCheckingActionCreator: public CommonActionCreator {
             }
 
             if (isWaterLevelNotEnought()) {
-                return waterLevelIsLowMessage(
-                    new AddingWaterActionCreator(
-                        settings,
-                        relayModule,
-                        waterLevelSensor,
-                        eventBus
-                    )
+                return new AddingWaterActionCreator(
+                    settings,
+                    relayModule,
+                    waterLevelSensor,
+                    eventBus
                 );
             }
 
