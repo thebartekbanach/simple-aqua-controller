@@ -39,6 +39,16 @@ class WaterAdditionControlModule: public CommonSystemModuleWithSettings<WaterAdd
             settings.saveSettings();
         }
 
+        void workTimesChanged() {
+            const RtcDateTime time = rtc->GetDateTime();
+
+            if (isCheckingEnabled(time)) {
+                waterAdditionTimer.start(time, settings.data().breaksBetweenChecks * 60);
+            }
+
+            settingsChanged();
+        }
+
         void testWaterLevel() {
             if (!actionManager->isUsedByCreator()) {
                 actionManager->acquire(new WaterLevelCheckingActionCreator(
@@ -69,7 +79,7 @@ class WaterAdditionControlModule: public CommonSystemModuleWithSettings<WaterAdd
 
         menuNode* getWorkModeSubmenu() {
             auto saveSettings =
-                new ActionReceiver<WaterAdditionControlModule>(this, &WaterAdditionControlModule::settingsChanged);
+                new ActionReceiver<WaterAdditionControlModule>(this, &WaterAdditionControlModule::workTimesChanged);
 
             auto workingModeValues = new prompt*[5] {
                 new menuValue<WAM_WorkingMode>("wylaczony", DISABLED),
@@ -127,8 +137,11 @@ class WaterAdditionControlModule: public CommonSystemModuleWithSettings<WaterAdd
             auto saveSettings =
                 new ActionReceiver<WaterAdditionControlModule>(this, &WaterAdditionControlModule::settingsChanged);
 
+            auto saveWorkTimeSettings =
+                new ActionReceiver<WaterAdditionControlModule>(this, &WaterAdditionControlModule::workTimesChanged);
+
             auto breaksBeetweenChecks = new menuField<ushort>(settings.data().breaksBetweenChecks,
-                "Przerwy", "m", 1, 24 * 60, 1, 0, saveSettings, exitEvent);
+                "Przerwy", "m", 1, 24 * 60, 5, 0, saveWorkTimeSettings, exitEvent);
 
             auto numberOfChecks = new menuField<ushort>(settings.data().numberOfChecks,
                 "Ilosc probek", "", 1, 99, 1, 0, saveSettings, exitEvent);
