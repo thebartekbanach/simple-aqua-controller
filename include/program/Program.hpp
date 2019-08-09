@@ -42,6 +42,8 @@ class Program {
     ActionManager actionManager;
     NavigationManager navigationManager;
 
+    RtcDateTime lastProperTime;
+
     void initializeRtc() {
         if (!rtc.IsDateTimeValid()) {
             // Common Causes:
@@ -83,6 +85,21 @@ class Program {
         buildMenu(actions.items, actions.length, settings.items, settings.length);
     }
 
+    RtcDateTime& getTime() {
+        const RtcDateTime time = rtc.GetDateTime();
+
+        auto totalTime = time.TotalSeconds64();
+        auto lastTotal = lastProperTime.TotalSeconds64();
+
+        if (!time.IsValid() || totalTime < lastTotal) {
+            rtc.SetDateTime(lastProperTime);
+            return lastProperTime;
+        }
+
+        lastProperTime = time;
+        return lastProperTime;
+    }
+
     public:
         Program():
             menuInput(nullptr),
@@ -107,7 +124,7 @@ class Program {
         }
 
         void update() {
-            const RtcDateTime time = rtc.GetDateTime();
+            const RtcDateTime time = getTime();
             const JoystickActions jaction = joystick.collectActions();
 
             actionManager.update(time, jaction);
