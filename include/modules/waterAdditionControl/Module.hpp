@@ -248,7 +248,7 @@ class WaterAdditionControlModule: public CommonSystemModuleWithSettings<WaterAdd
 
             if (waterAdditionTimer.isReached(time)) {
                 if (!actionManager->canAcquire()) {
-                    waterAdditionTimer.start(time, 5 * 60);
+                    waterAdditionTimer.start(time, 1 * 60);
                     return;
                 }
 
@@ -292,6 +292,12 @@ class WaterAdditionControlModule: public CommonSystemModuleWithSettings<WaterAdd
 
             if (moduleId == SERVICE_MODE_MODULE_ID) {
                 serviceModeActive = eventCode;
+
+                RtcDateTime time = rtc->GetDateTime();
+
+                if (!serviceModeActive && waterAdditionTimer.isReached(time) && isCheckingEnabled(time)) {
+                    waterAdditionTimer.start(time, settings.data().workTimeShift * 60);
+                }
             }
         }
 };
