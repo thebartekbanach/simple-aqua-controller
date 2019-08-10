@@ -7,6 +7,8 @@
 
 class ActionCreator {
     public:
+        virtual ~ActionCreator() {};
+
         virtual void setup(LiquidCrystal_PCF8574* lcd) = 0;
         virtual ActionCreator* update(const RtcDateTime &time, const JoystickActions &action) = 0;
 };
@@ -17,5 +19,7 @@ class CommonActionCreator: public ActionCreator {
         virtual void setup() {}
     
     public:
+        virtual ~CommonActionCreator() {};
+
         virtual void setup(LiquidCrystal_PCF8574* lcd) { this->lcd = lcd; setup(); }
 };
