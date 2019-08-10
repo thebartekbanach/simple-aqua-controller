@@ -46,7 +46,7 @@ class Program {
 
     TimeGuard timeGuard;
 
-    void buildMenu(Menu::prompt** actionItems, ushort actionsLength, Menu::menuNode** settingItems, ushort settingsSize) {
+    void buildMenu(Menu::prompt** actionItems, ushort actionsLength, Menu::prompt** settingItems, ushort settingsSize) {
         menuNode* settingsMenu = new menuNode("Ustawienia", settingsSize, (prompt**)settingItems, noAction, noEvent, wrapStyle);
 
         prompt** mainMenuItems = combineMenuParts(actionItems, actionsLength, (prompt*)settingsMenu);
@@ -62,7 +62,7 @@ class Program {
 
         logln("Collecting actions and settings")
         MenuItemsResult<Menu::prompt> actions = system.collectActions();
-        MenuItemsResult<Menu::menuNode> settings = system.collectSettings();
+        MenuItemsResult<Menu::prompt> settings = system.collectSettings();
 
         logln("Starting menu build...")
         buildMenu(actions.items, actions.length, settings.items, settings.length);

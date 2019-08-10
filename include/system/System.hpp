@@ -10,6 +10,7 @@
 #include "SystemModule.hpp"
 #include "SystemModulesList.hpp"
 #include "MenuItemsResult.hpp"
+#include "ActionReceiver.hpp"
 
 class System {
     SystemModulesList* modules;
@@ -17,6 +18,12 @@ class System {
 
     ActionManager* actionManager;
     RtcDS1302<ThreeWire>* rtc;
+
+    void restoreDefaultSettings() {
+        for (ushort i = 0; i < modules->length; ++i) {
+            modules->items[i]->resetSettings();
+        }
+    }
 
     public:
         System(SystemModulesList* modules, ActionManager &actionManager, RtcDS1302<ThreeWire> &rtc):
@@ -58,14 +65,14 @@ class System {
             return MenuItemsResult<prompt>(items, lengthOfActions);
         }
 
-        MenuItemsResult<menuNode> collectSettings() {
+        MenuItemsResult<prompt> collectSettings() {
             ushort lengthOfSettings = 0;
 
             for (ushort i = 0; i < modules->length; ++i) {
                 lengthOfSettings += modules->items[i]->getSettingsMenuItemsLength();
             }
             
-            menuNode** items = new menuNode*[lengthOfSettings];
+            prompt** items = new prompt*[lengthOfSettings + 1];
 
             for (ushort i = 0, total = 0; i < modules->length; ++i) {
                 menuNode** settings = modules->items[i]->getSettingsMenuItems();
@@ -76,7 +83,11 @@ class System {
                 }
             }
 
-            return MenuItemsResult<menuNode>(items, lengthOfSettings);
+            items[lengthOfSettings] = new prompt("Przywroc fabryczne",
+                new ActionReceiver<System>(this, &System::restoreDefaultSettings),
+                enterEvent);
+
+            return MenuItemsResult<prompt>(items, lengthOfSettings + 1);
         }
 
         void update(const RtcDateTime &time) {
