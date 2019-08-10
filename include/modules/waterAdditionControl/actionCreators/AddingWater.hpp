@@ -67,13 +67,11 @@ class AddingWaterActionCreator: public CommonActionCreator {
             }
 
             if (waterAdditionTimeout->isReached(time)) {
-                logln("Turning addional pomp OFF");
                 relayModule->set(addionalPump, OFF);
                 return waterAdditionTimeoutMessage();
             }
 
             if (action == OK) {
-                logln("Turning addional pomp OFF");
                 relayModule->set(addionalPump, OFF);
                 return waterAdditionCancelledMessage();
             }
@@ -82,7 +80,6 @@ class AddingWaterActionCreator: public CommonActionCreator {
                 addionalWaterCheckTimer.start(time, 1);
                 
                 if (!waterLevelSensor->sense(addionalWaterTank, addionalWaterTankMinLevel)) {
-                    logln("Turning addional pomp OFF");
                     relayModule->set(addionalPump, OFF);
                     return addionalWaterTankLevelIsToLowMessage();
                 }
@@ -98,13 +95,11 @@ class AddingWaterActionCreator: public CommonActionCreator {
                 );
 
                 if (average > 0.5) {
-                    logln("Turning addional pomp OFF");
                     relayModule->set(addionalPump, OFF);
                     return waterAdditionCompleteMessage();
                 }
             }
 
-            logln("Turning addional pomp ON");
             relayModule->set(addionalPump, ON);
             return this;
         }
