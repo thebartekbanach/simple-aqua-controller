@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../program/TimeGuard.hpp"
+
 #include "../system/SystemModulesList.hpp"
 
 #include "../control/relayModule/RelayModule.hpp"
@@ -15,7 +17,7 @@
 #include "sterilizationControl/Module.hpp"
 #include "serviceMode/Module.hpp"
 
-SystemModulesList* getSystemModules(navRoot* navRootDependency) {
+SystemModulesList* getSystemModules(navRoot* navRootDependency, TimeGuard* timeGuard) {
     logln("Initializing system dependencies");
 
     RelayModule* relayModule = new RelayModule(8,
@@ -38,7 +40,7 @@ SystemModulesList* getSystemModules(navRoot* navRootDependency) {
 
     logln("Initializing system modules")
     
-    TimeSetupModule* timeSetupModule = new TimeSetupModule();
+    TimeSetupModule* timeSetupModule = new TimeSetupModule(timeGuard);
     FeedingControlModule* feedingControlModule = new FeedingControlModule(relayModule);
     WaterChangeModule* waterChangeModule = new WaterChangeModule(waterLevelSensor, relayModule);
     WaterAdditionControlModule* waterAdditionControlModule = new WaterAdditionControlModule(relayModule, waterLevelSensor);

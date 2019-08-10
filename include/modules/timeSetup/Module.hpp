@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../../program/TimeGuard.hpp"
+
 #include "../../system/SystemModule.hpp"
 #include "../../system/ActionReceiver.hpp"
 
@@ -15,6 +17,8 @@
 
 class TimeSetupModule: public CommonSystemModuleWithSettings<TimeSetupModuleSettings> {
     private:
+        TimeGuard* timeGuard;
+
         SystemTime actualTime = { .hour = 0, .minute = 0 };
         bool isInEditMode = false;
 
@@ -26,7 +30,7 @@ class TimeSetupModule: public CommonSystemModuleWithSettings<TimeSetupModuleSett
             }
             
             else if (event == exitEvent && isInEditMode) {
-                rtc->SetDateTime(RtcDateTime(2000, 1, 1, actualTime.hour, actualTime.minute, 0));
+                timeGuard->setTime(RtcDateTime(2000, 1, 1, actualTime.hour, actualTime.minute, 0));
                 isInEditMode = false;
             }
         }
@@ -36,7 +40,8 @@ class TimeSetupModule: public CommonSystemModuleWithSettings<TimeSetupModuleSett
         }
 
     public:
-        TimeSetupModule():
+        TimeSetupModule(TimeGuard* timeGuard):
+            timeGuard(timeGuard),
             CommonSystemModuleWithSettings(TimeSetupModuleSettings()) {}
 
         menuNode** getSettingsMenuItems() {

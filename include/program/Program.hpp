@@ -21,10 +21,12 @@
 
 #include "ActionManager.hpp"
 #include "NavigationManager.hpp"
+#include "TimeGuard.hpp"
 
 #include "../modules/Modules.hpp"
 
 #include "../utils/log.hpp"
+
 
 
 class Program {
@@ -42,26 +44,7 @@ class Program {
     ActionManager actionManager;
     NavigationManager navigationManager;
 
-    RtcDateTime lastProperTime;
-
-    void initializeRtc() {
-        if (!rtc.IsDateTimeValid()) {
-            // Common Causes:
-            //    1) first time you ran and the device wasn't running yet
-            //    2) the battery on the device is low or even missing
-            logln("Rtc wasn't running yet or battery level is low");
-            rtc.SetDateTime(RtcDateTime(__DATE__, "00:00:00"));
-        }
-
-        if (rtc.GetIsWriteProtected()) {
-            rtc.SetIsWriteProtected(false);
-        }
-
-        if (!rtc.GetIsRunning()) {
-            logln("Starting rtc");
-            rtc.SetIsRunning(true);
-        }
-    }
+    TimeGuard timeGuard;
 
     void buildMenu(Menu::prompt** actionItems, ushort actionsLength, Menu::menuNode** settingItems, ushort settingsSize) {
         menuNode* settingsMenu = new menuNode("Ustawienia", settingsSize, (prompt**)settingItems, noAction, noEvent, wrapStyle);
@@ -85,35 +68,21 @@ class Program {
         buildMenu(actions.items, actions.length, settings.items, settings.length);
     }
 
-    RtcDateTime& getTime() {
-        const RtcDateTime time = rtc.GetDateTime();
-
-        auto totalTime = time.TotalSeconds64();
-        auto lastTotal = lastProperTime.TotalSeconds64();
-
-        if (!time.IsValid() || totalTime < lastTotal) {
-            rtc.SetDateTime(lastProperTime);
-            return lastProperTime;
-        }
-
-        lastProperTime = time;
-        return lastProperTime;
-    }
-
     public:
         Program():
             menuInput(nullptr),
             joystick(A0, A1, 150),
             rtcWiring(23, 2, 22),
             rtc(rtcWiring),
+            timeGuard(&rtc),
             nav(*(menuNode*)nullptr, nav_cursors, MAX_DEPTH, menuInput, menuOutput),
             actionManager(&lcd),
             navigationManager(&nav, &actionManager, &lcd),
-            system(getSystemModules(&nav), actionManager, rtc) {}
+            system(getSystemModules(&nav, &timeGuard), actionManager, rtc) {}
 
         void setup() {
             logln("Initializing rtc...");
-            initializeRtc();
+            timeGuard.initialize();
 
             logln("Initializing lcd...");
             initializeLcd();
@@ -124,7 +93,7 @@ class Program {
         }
 
         void update() {
-            const RtcDateTime time = getTime();
+            const RtcDateTime time = timeGuard.getTime();
             const JoystickActions jaction = joystick.collectActions();
 
             actionManager.update(time, jaction);
