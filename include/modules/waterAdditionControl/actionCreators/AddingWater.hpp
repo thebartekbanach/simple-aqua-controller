@@ -9,8 +9,6 @@
 #include "../../../control/waterLevelSensor/WaterLevelSensor.hpp"
 #include "../../../control/waterLevelSensor/WaterLevelSensorDataStream.hpp"
 
-#include "../../../utils/log.hpp"
-
 #include "../Settings.hpp"
 
 #include "messages/WaterAdditionComplete.hpp"

@@ -28,7 +28,6 @@
 #include "../utils/log.hpp"
 
 
-
 class Program {
     chainStream<0> menuInput;
     JoystickController joystick;

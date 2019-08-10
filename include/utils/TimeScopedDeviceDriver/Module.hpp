@@ -15,7 +15,6 @@
 
 #include "../DeviceWorkingMode.hpp"
 #include "../isInTimeScope.hpp"
-#include "../log.hpp"
 
 #include "Settings.hpp"
 
