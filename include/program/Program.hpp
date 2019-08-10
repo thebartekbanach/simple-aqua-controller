@@ -54,6 +54,7 @@ class Program {
 
         nav.useMenu(*mainMenu);
         nav.timeOut = 60;
+        options = new config('>', '-', defaultNavCodes, true);
     }
 
     void initializeSystem() {
