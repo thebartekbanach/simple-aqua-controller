@@ -143,10 +143,10 @@ class WaterAdditionControlModule: public CommonSystemModuleWithSettings<WaterAdd
                 new ActionReceiver<WaterAdditionControlModule>(this, &WaterAdditionControlModule::workTimesChanged);
 
             auto breaksBeetweenChecks = new menuField<ushort>(settings.data().breaksBetweenChecks,
-                "Przerwy", "m", 1, 24 * 60, 5, 0, saveWorkTimeSettings, exitEvent);
+                "Przerwy", "m", 5, 24 * 60, 10, 1, saveWorkTimeSettings, exitEvent);
 
             auto numberOfChecks = new menuField<ushort>(settings.data().numberOfChecks,
-                "Ilosc probek", "", 1, 99, 1, 0, saveSettings, exitEvent);
+                "Ilosc probek", "", 1, 9, 1, 0, saveSettings, exitEvent);
 
             auto checkingFrequency = new menuField<ushort>(settings.data().checkingFrequency,
                 "Czestotliwosc", "s", 1, 5, 1, 0, saveSettings, exitEvent);
