@@ -4,6 +4,7 @@
 #include "utils/log.hpp"
 
 #include "diagnostics/WaterLevelSensor.hpp"
+#include "diagnostics/I2cScanner.hpp"
 
 #ifndef DIAGNOSTICS_MODE
 
@@ -27,13 +28,13 @@ void setup ()
     logln("Program started!");
 }
 
-void watchdogSetup() {
+//void watchdogSetup() {
     // watchdog enable: https://forum.arduino.cc/index.php?topic=350058.msg2416416#msg2416416
-}
+//}
 
 void loop () 
 {
-    watchdogReset();
+    //watchdogReset();
     program->update();
 }
 

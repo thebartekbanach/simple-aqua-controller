@@ -5,7 +5,10 @@
 
 #include "../../../control/screen/customCharset.hpp"
 
-#include "../../../control/relayModule/RelayModule.hpp"
+#include "../../../control/valves/ValveModule.hpp"
+#include "../../../control/valves/ServoValveErrorMessage.hpp"
+#include "../../../control/valves/utility.hpp"
+
 #include "../../../control/waterLevelSensor/WaterLevelSensor.hpp"
 #include "../../../control/waterLevelSensor/WaterLevelSensorDataStream.hpp"
 
@@ -23,8 +26,20 @@ class FillAddionalWaterTankActionCreator: public CommonActionCreator {
         Timer* fillingTimeout = nullptr;
 
         WaterLevelSensor* waterLevelSensor;
-        RelayModule* relayModule;
+        ValveModule* valveModule;
         GlobalEventBus* eventBus;
+
+        ActionCreator* openValves() {
+            return openValvesSynchronusly(valveModule, addionalWaterTankValve, cleanWaterValve, this);
+        }
+
+        ActionCreator* closeValves(ActionCreator* nextTarget, bool isError = false) {
+            if (!isError && nextTarget != nullptr) {
+                return closeValvesSynchronusly(valveModule, cleanWaterValve, addionalWaterTankValve, nextTarget);
+            }
+
+            return closeValvesSynchronusly(valveModule, cleanWaterValve, addionalWaterTankValve, nextTarget, nextTarget);
+        }
 
     protected:
         void setup() {
@@ -44,11 +59,11 @@ class FillAddionalWaterTankActionCreator: public CommonActionCreator {
         FillAddionalWaterTankActionCreator(
             const float& fillingTimeoutTime,
             WaterLevelSensor* waterLevelSensor,
-            RelayModule* relayModule,
+            ValveModule* valveModule,
             GlobalEventBus* eventBus):
             fillingTimeoutTime(fillingTimeoutTime),
             waterLevelSensor(waterLevelSensor),
-            relayModule(relayModule),
+            valveModule(valveModule),
             eventBus(eventBus) {}
 
         ~FillAddionalWaterTankActionCreator() {
@@ -62,26 +77,22 @@ class FillAddionalWaterTankActionCreator: public CommonActionCreator {
             }
 
             if (fillingTimeout->isReached(time)) {
-                relayModule->set(addionalTankValve, OFF);
-                return addionalWaterTankRefillTimeoutMessage();
+                return closeValves(addionalWaterTankRefillTimeoutMessage(), true);
             }
 
             if (action == OK) {
-                relayModule->set(addionalTankValve, OFF);
-                return addionalWaterTankRefillCancelledMessage();
+                return closeValves(addionalWaterTankRefillCancelledMessage());
             }
 
             if (waterAdditionCheckTimer.isReached(time)) {
                 waterAdditionCheckTimer.start(time, 1);
 
                 if (waterLevelSensor->sense(addionalWaterTank, addionalWaterTankMaxLevel)) {
-                    relayModule->set(addionalTankValve, OFF);
-                    return addionalWaterTankRefillCompleteMessage();
+                    return closeValves(addionalWaterTankRefillCompleteMessage());
                 }
             }
 
-            relayModule->set(addionalTankValve, ON);
-            return this;
+            return openValves();
         }
 
 };

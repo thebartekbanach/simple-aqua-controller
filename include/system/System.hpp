@@ -12,6 +12,8 @@
 #include "MenuItemsResult.hpp"
 #include "ActionReceiver.hpp"
 
+#include "DefaultSettingsRestoreConfirmActionCreator.hpp"
+
 class System {
     SystemModulesList* modules;
     GlobalEventBus eventBus;
@@ -23,6 +25,12 @@ class System {
         for (ushort i = 0; i < modules->length; ++i) {
             modules->items[i]->resetSettings();
         }
+    }
+
+    void startDefaultSettingsRestoreCreator() {
+        if (actionManager->isUsedByCreator()) return;
+
+        actionManager->acquire(new DefaultSettingsRestoreConfirmActionCreator<System>(this, &System::restoreDefaultSettings));
     }
 
     public:
@@ -84,7 +92,7 @@ class System {
             }
 
             items[lengthOfSettings] = new prompt("Przywroc fabryczne",
-                new ActionReceiver<System>(this, &System::restoreDefaultSettings),
+                new ActionReceiver<System>(this, &System::startDefaultSettingsRestoreCreator),
                 enterEvent);
 
             return MenuItemsResult<prompt>(items, lengthOfSettings + 1);

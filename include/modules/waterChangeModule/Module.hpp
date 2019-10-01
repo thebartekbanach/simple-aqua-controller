@@ -3,6 +3,8 @@
 #include "../../system/SystemModule.hpp"
 #include "../../system/ActionReceiver.hpp"
 
+#include "../../control/valves/ValveModule.hpp"
+
 #include "../../menu/YesNoToggle.hpp"
 
 #include "Settings.hpp"
@@ -16,23 +18,23 @@
 class WaterChangeModule: public CommonSystemModuleWithSettings<WaterChangeModuleSettings> {
     private:
         WaterLevelSensor* waterLevelSensor;
-        RelayModule* relayModule;
+        ValveModule* valveModule;
 
         void automaticallyChangeWater() {
             actionManager->acquire(
                 ConnectSewageHose(
                     new RemoveWaterActionCreator(
-                    waterLevelSensor,
-                    relayModule,
-                    &settings.data(),
-                    rtc->GetDateTime()
+                        waterLevelSensor,
+                        valveModule,
+                        &settings.data(),
+                        rtc->GetDateTime()
             )));
         }
 
         void manuallyChangeWater() {
             actionManager->acquire(ConnectHose(
                 new ChangeWaterManuallyActionCreator(
-                    relayModule
+                    valveModule
                 )
             ));
         }
@@ -44,9 +46,9 @@ class WaterChangeModule: public CommonSystemModuleWithSettings<WaterChangeModule
     public:
         WaterChangeModule(
             WaterLevelSensor* waterLevelSensor,
-            RelayModule* relayModule):
+            ValveModule* ValveModule):
                 waterLevelSensor(waterLevelSensor),
-                relayModule(relayModule),
+                valveModule(valveModule),
                 CommonSystemModuleWithSettings<WaterChangeModuleSettings>(
                     WaterChangeModuleSettings()
                 ) {}

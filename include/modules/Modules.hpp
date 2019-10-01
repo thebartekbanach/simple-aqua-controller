@@ -6,6 +6,7 @@
 
 #include "../control/relayModule/RelayModule.hpp"
 #include "../control/waterLevelSensor/WaterLevelSensor.hpp"
+#include "../control/valves/ValveModule.hpp"
 
 #include "timeSetup/Module.hpp"
 #include "feedingControl/Module.hpp"
@@ -13,21 +14,23 @@
 #include "waterAdditionControl/Module.hpp"
 #include "aerationControl/Module.hpp"
 #include "lightingControl/Module.hpp"
-#include "heatherControl/Module.hpp"
+#include "heaterControl/Module.hpp"
 #include "sterilizationControl/Module.hpp"
 #include "serviceMode/Module.hpp"
 
 SystemModulesList* getSystemModules(navRoot* navRootDependency, TimeGuard* timeGuard) {
     logln("Initializing system dependencies");
 
-    RelayModule* relayModule = new RelayModule(8,
-        new ushort[8] { mainPumpPin,    addionalPumpPin,    heatherPin,     aerationPin,    sterilizationPin,   lightingPin,    addionalTankValvePin,   aquariumValvePin },
-        new bool[8] {   LOW,            HIGH,               HIGH,           HIGH,           HIGH,               HIGH,           HIGH,                   HIGH }
+    logln("Initializing relayModule")
+    RelayModule* relayModule = new RelayModule(6,
+        new ushort[6] { mainPumpPin,    addionalPumpPin,    aerationPin,    sterilizationPin,   lightingPin,    heaterPin },
+        new bool[6] {   LOW,            LOW,                LOW,            LOW,                HIGH,           HIGH }
     );
     
+    logln("Initializing waterLevelSensor")
     WaterLevelSensor* waterLevelSensor = new WaterLevelSensor((short unsigned int)2, new short unsigned int[2] { 2,  2 }, 
         new short unsigned int*[2] {
-            new ushort[2] { // aquariumWater
+            new short unsigned int[2] { // aquariumWater
                 changeWaterLevelPin,
                 normalWaterLevelPin
             },
@@ -38,17 +41,24 @@ SystemModulesList* getSystemModules(navRoot* navRootDependency, TimeGuard* timeG
         }
     );
 
+    logln("Initializing valveModule")
+    ValveModule* valveModule = new ValveModule(
+        4, 0, 180, 2000, 40,
+        new unsigned short[4] { 3, 4, 5, 6 },
+        new unsigned short[4] { 33, 35, 37, 39 }
+    );
+
     logln("Initializing system modules")
     
     TimeSetupModule* timeSetupModule = new TimeSetupModule(timeGuard);
     FeedingControlModule* feedingControlModule = new FeedingControlModule(relayModule);
-    WaterChangeModule* waterChangeModule = new WaterChangeModule(waterLevelSensor, relayModule);
-    WaterAdditionControlModule* waterAdditionControlModule = new WaterAdditionControlModule(relayModule, waterLevelSensor);
+    WaterChangeModule* waterChangeModule = new WaterChangeModule(waterLevelSensor, valveModule);
+    WaterAdditionControlModule* waterAdditionControlModule = new WaterAdditionControlModule(relayModule, waterLevelSensor, valveModule);
     AerationControlModule* aerationControlModule = new AerationControlModule(relayModule);
     LightingControlModule* lightingControlModule = new LightingControlModule(relayModule);
-    HeatherControlModule* heatherControlModule = new HeatherControlModule(relayModule);
+    HeaterControlModule* heaterControlModule = new HeaterControlModule(relayModule);
     SterilizationControlModule* sterilizationControlModule = new SterilizationControlModule(relayModule);
-    ServiceModeModule* serviceModeModule = new ServiceModeModule(waterLevelSensor, relayModule, navRootDependency);
+    ServiceModeModule* serviceModeModule = new ServiceModeModule(waterLevelSensor, relayModule, valveModule, navRootDependency);
 
     
     #define NUMBER_OF_MODULES 9
@@ -60,7 +70,7 @@ SystemModulesList* getSystemModules(navRoot* navRootDependency, TimeGuard* timeG
         waterAdditionControlModule,
         aerationControlModule,
         lightingControlModule,
-        heatherControlModule,
+        heaterControlModule,
         sterilizationControlModule,
         serviceModeModule
     };

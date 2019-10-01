@@ -6,6 +6,7 @@
 
 #include "../../control/relayModule/RelayModule.hpp"
 #include "../../control/waterLevelSensor/WaterLevelSensor.hpp"
+#include "../../control/valves/ValveModule.hpp"
 
 #include "../../menu/TurnStateToggle.hpp"
 #include "../../menu/TimeField.hpp"
@@ -30,6 +31,7 @@ class WaterAdditionControlModule: public CommonSystemModuleWithSettings<WaterAdd
     private:
         RelayModule* relayModule;
         WaterLevelSensor* waterLevelSensor;
+        ValveModule* valveModule;
 
         Timer waterAdditionTimer;
         DayCycle actualDayCycle;
@@ -71,7 +73,7 @@ class WaterAdditionControlModule: public CommonSystemModuleWithSettings<WaterAdd
                         new FillAddionalWaterTankActionCreator(
                             settings.data().addionalWaterTankRefillTimeout,
                             waterLevelSensor,
-                            relayModule,
+                            valveModule,
                             eventBus
                         )
                     ));
@@ -166,9 +168,10 @@ class WaterAdditionControlModule: public CommonSystemModuleWithSettings<WaterAdd
         }
     
     public:
-        WaterAdditionControlModule(RelayModule* relayModule, WaterLevelSensor* waterLevelSensor):
+        WaterAdditionControlModule(RelayModule* relayModule, WaterLevelSensor* waterLevelSensor, ValveModule* valveModule):
             relayModule(relayModule),
             waterLevelSensor(waterLevelSensor),
+            valveModule(valveModule),
             CommonSystemModuleWithSettings<WaterAdditionModuleSettings>(
                 WaterAdditionModuleSettings()
             ) {}

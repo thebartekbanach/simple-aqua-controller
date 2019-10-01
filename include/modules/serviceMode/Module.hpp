@@ -6,6 +6,7 @@
 
 #include "../../control/waterLevelSensor/WaterLevelSensor.hpp"
 #include "../../control/relayModule/RelayModule.hpp"
+#include "../../control/valves/ValveModule.hpp"
 
 #include "../../menu/OnOffToggle.hpp"
 #include "../../menu/YesNoToggle.hpp"
@@ -16,11 +17,10 @@ class ServiceModeModule: public CommonSystemModule {
     private:
         WaterLevelSensor* waterLevelSensor;
         RelayModule* relayModule;
+        ValveModule* valveModule;
         navRoot* nav;
         
         void menuInOut(eventMask event, navNode& nav, prompt &item) {
-            serviceModeEntered = event == enterEvent;
-
             if (event == enterEvent) {
                 serviceModeEntered = true;
                 this->nav->timeOut = 0;
@@ -33,12 +33,19 @@ class ServiceModeModule: public CommonSystemModule {
 
                 mainPumpActivated = false;
                 addionalPumpActivated = false;
-                heatherActivated = false;
                 aerationActivated = false;
                 sterilizationActivated = false;
                 lightingActivated = false;
-                addionalTankValveActivated = false;
-                aquariumValveActivated = false;
+                heaterActivated = false;
+
+                updateDevices();
+
+                isAquariumWaterValveActivated = false;
+                isAddionalWaterTankValveActivated = false;
+                isCleanWaterValveActivated = false;
+                isSewageWaterValveActivated = false;
+
+                updateValvesState();
 
                 this->nav->timeOut = 60;
 
@@ -47,9 +54,11 @@ class ServiceModeModule: public CommonSystemModule {
         }
 
         void sensorsInOut(eventMask event, navNode& nav, prompt &item) {
-            sensorsSubmenuEntered = event == enterEvent;
+            if (event == enterEvent) {
+                sensorsSubmenuEntered = true;
+            }
 
-            if (event == exitEvent) {
+            else if (event == exitEvent) {
                 normalWaterLevelDetected = false;
                 changeWaterLevelDetected = false;
                 addionalWaterTankMaxLevelDetected = false;
@@ -57,19 +66,58 @@ class ServiceModeModule: public CommonSystemModule {
             }
         }
 
+        void valvesInOut(eventMask event, navNode& nav, prompt &item) {
+            if (event == enterEvent) {
+                valvesSubmenuEntered = true;
+            }
+
+            else if (event == exitEvent) {
+                valvesSubmenuEntered = false;
+
+                isAquariumWaterValveClosed = false;
+                isAddionalWaterTankValveClosed = false;
+                isCleanWaterValveClosed = false;
+                isSewageWaterValveClosed = false;
+            }
+        }
+
+        menuNode* getValveControlSubmenu(char* name, bool& activationState, bool& isClosed) {
+            prompt** items = new prompt*[2] {
+                YesNoToggle("Zamkniety: ", isClosed, nullptr),
+                OnOffToggle("Stan: ", activationState,
+                    new ActionReceiver<ServiceModeModule>(this, &ServiceModeModule::updateValvesState), eventMask::enterEvent
+                )
+            };
+
+            items[0]->disable();
+
+            return new menuNode(name, 2, items);
+        }
+
+        menuNode* getValvesControlSubmenu() {
+            prompt** items = new prompt*[4] {
+                getValveControlSubmenu("Obieg akwarium", isAquariumWaterValveActivated, isAquariumWaterValveClosed),
+                getValveControlSubmenu("Zbiornik dolewki", isAddionalWaterTankValveActivated, isAddionalWaterTankValveClosed),
+                getValveControlSubmenu("Czysta woda", isCleanWaterValveActivated, isCleanWaterValveClosed),
+                getValveControlSubmenu("Scieki", isSewageWaterValveActivated, isSewageWaterValveClosed)
+            };
+            
+            auto inOutEvent = new ExactActionReceiver<ServiceModeModule>(this, &ServiceModeModule::valvesInOut);
+            
+            return new menuNode("Zawory", 4, items, inOutEvent, (eventMask)(enterEvent|exitEvent));
+        }
+
         menuNode* getDevicesControlSubmenu() {
-            prompt** devices = new prompt*[8] {
+            prompt** devices = new prompt*[6] {
                 OnOffToggle("Glowna pompa: ", mainPumpActivated, nullptr),
                 OnOffToggle("Pompa dolewki: ", addionalPumpActivated, nullptr),
-                OnOffToggle("Grzalka: ", heatherActivated, nullptr),
                 OnOffToggle("Napowietrzanie: ", aerationActivated, nullptr),
                 OnOffToggle("Sterylizacja: ", sterilizationActivated, nullptr),
                 OnOffToggle("Oswietlenie: ", lightingActivated, nullptr),
-                OnOffToggle("Zawor rezerwy: ", addionalTankValveActivated, nullptr),
-                OnOffToggle("Zawor akwarium: ", aquariumValveActivated, nullptr),
+                OnOffToggle("Ogrzewanie: ", heaterActivated, nullptr)
             };
 
-            return new menuNode("Urzadzenia", 8, devices);
+            return new menuNode("Urzadzenia", 6, devices);
         }
 
         menuNode* getSensorsCheckSubmenu() {
@@ -92,62 +140,13 @@ class ServiceModeModule: public CommonSystemModule {
         void updateDevices() {
             relayModule->set(mainPump, mainPumpActivated);
             relayModule->set(addionalPump, addionalPumpActivated);
-            relayModule->set(heather, heatherActivated);
             relayModule->set(aeration, aerationActivated);
             relayModule->set(sterilization, sterilizationActivated);
             relayModule->set(lighting, lightingActivated);
-            relayModule->set(addionalTankValve, addionalTankValveActivated);
-            relayModule->set(aquariumValve, aquariumValveActivated);
+            relayModule->set(heater, heaterActivated);
         }
 
-        bool serviceModeEntered = false;
-        bool sensorsSubmenuEntered = false;
-
-        bool normalWaterLevelDetected = false;
-        bool changeWaterLevelDetected = false;
-        bool addionalWaterTankMaxLevelDetected = false;
-        bool addionalWaterTankMinLevelDetected = false;
-
-        Timer sensorsUpdateTimer;
-
-        bool mainPumpActivated = false;
-        bool addionalPumpActivated = false;
-        bool heatherActivated = false;
-        bool aerationActivated = false;
-        bool sterilizationActivated = false;
-        bool lightingActivated = false;
-        bool addionalTankValveActivated = false;
-        bool aquariumValveActivated = false;
-
-    public:
-        ServiceModeModule(
-            WaterLevelSensor* waterLevelSensor,
-            RelayModule* relayModule,
-            navRoot* nav):
-                waterLevelSensor(waterLevelSensor),
-                relayModule(relayModule),
-                nav(nav) {}
-
-        ushort getSettingsMenuItemsLength() { return 1; }
-
-        menuNode** getSettingsMenuItems() {
-            auto inOutEvent = new ExactActionReceiver<ServiceModeModule>(this, &ServiceModeModule::menuInOut);
-
-            prompt** submenus = new prompt*[2] {
-                getSensorsCheckSubmenu(),
-                getDevicesControlSubmenu()
-            };
-
-            return new menuNode*[1] {
-                new menuNode("Tryb serwisowy", 2, submenus, inOutEvent, (eventMask)(enterEvent|exitEvent))
-            };
-        }
-
-        void update(const RtcDateTime& time) {
-            if (!serviceModeEntered) return;
-
-            updateDevices();
-            
+        void updateSensors(const RtcDateTime& time) {
             if (!sensorsSubmenuEntered) return;
 
             if (sensorsUpdateTimer.isReached(time)) {
@@ -158,5 +157,83 @@ class ServiceModeModule: public CommonSystemModule {
                 addionalWaterTankMaxLevelDetected = waterLevelSensor->sense(addionalWaterTank, addionalWaterTankMaxLevel);
                 addionalWaterTankMinLevelDetected = waterLevelSensor->sense(addionalWaterTank, addionalWaterTankMinLevel);
             }
+        }
+
+        void updateValvesInfo() {
+            if (!valvesSubmenuEntered) return;
+            isAquariumWaterValveClosed = valveModule->isClosed(aquariumWaterValve);
+            isAddionalWaterTankValveClosed = valveModule->isClosed(addionalWaterTankValve);
+            isCleanWaterValveClosed = valveModule->isClosed(cleanWaterValve);
+            isSewageWaterValveClosed = valveModule->isClosed(sewageWaterValve);
+        }
+
+        void updateValvesState() {
+            valveModule->set(aquariumWaterValve, isAquariumWaterValveActivated);
+            valveModule->set(addionalWaterTankValve, isAddionalWaterTankValveActivated);
+            valveModule->set(cleanWaterValve, isCleanWaterValveActivated);
+            valveModule->set(sewageWaterValve, isSewageWaterValveActivated);
+        }
+
+        bool serviceModeEntered = false;
+        bool sensorsSubmenuEntered = false;
+        bool valvesSubmenuEntered = false;
+
+        bool normalWaterLevelDetected = false;
+        bool changeWaterLevelDetected = false;
+        bool addionalWaterTankMaxLevelDetected = false;
+        bool addionalWaterTankMinLevelDetected = false;
+
+        bool isAquariumWaterValveClosed = false;
+        bool isAddionalWaterTankValveClosed = false;
+        bool isCleanWaterValveClosed = false;
+        bool isSewageWaterValveClosed = false;
+
+        bool isAquariumWaterValveActivated = false;
+        bool isAddionalWaterTankValveActivated = false;
+        bool isCleanWaterValveActivated = false;
+        bool isSewageWaterValveActivated = false;
+
+        Timer sensorsUpdateTimer;
+
+        bool mainPumpActivated = false;
+        bool addionalPumpActivated = false;
+        bool aerationActivated = false;
+        bool sterilizationActivated = false;
+        bool lightingActivated = false;
+        bool heaterActivated = false;
+
+    public:
+        ServiceModeModule(
+            WaterLevelSensor* waterLevelSensor,
+            RelayModule* relayModule,
+            ValveModule* valveModule,
+            navRoot* nav):
+                waterLevelSensor(waterLevelSensor),
+                relayModule(relayModule),
+                valveModule(valveModule),
+                nav(nav) {}
+
+        ushort getSettingsMenuItemsLength() { return 1; }
+
+        menuNode** getSettingsMenuItems() {
+            auto inOutEvent = new ExactActionReceiver<ServiceModeModule>(this, &ServiceModeModule::menuInOut);
+
+            prompt** submenus = new prompt*[3] {
+                getSensorsCheckSubmenu(),
+                getDevicesControlSubmenu(),
+                getValvesControlSubmenu()
+            };
+
+            return new menuNode*[1] {
+                new menuNode("Tryb serwisowy", 3, submenus, inOutEvent, (eventMask)(enterEvent|exitEvent))
+            };
+        }
+
+        void update(const RtcDateTime& time) {
+            if (!serviceModeEntered) return;
+
+            updateDevices();
+            updateSensors(time);
+            updateValvesInfo();
         }
 };

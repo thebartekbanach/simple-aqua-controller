@@ -5,6 +5,10 @@
 #include "../../../control/waterLevelSensor/WaterLevelSensor.hpp"
 #include "../../../control/relayModule/RelayModule.hpp"
 
+#include "../../../control/valves/ValveModule.hpp"
+#include "../../../control/valves/ServoValveErrorMessage.hpp"
+#include "../../../control/valves/utility.hpp"
+
 #include "../Settings.hpp"
 
 #include "RefillAddionalWaterTank.hpp"
@@ -14,12 +18,24 @@
 class RefillAquariumActionCreator: public CommonActionCreator {
     private:
         WaterLevelSensor* waterLevelSensor;
-        RelayModule* relayModule;
+        ValveModule* valveModule;
 
         WaterChangeModuleSettings* settings;
 
         Timer waterRefillTimeoutTimer;
         Timer waterLevelCheckTimer;
+
+        ActionCreator* openAquariumRefillValves() {
+            return openValvesSynchronusly(valveModule, aquariumWaterValve, cleanWaterValve, this);
+        }
+
+        ActionCreator* closeAquariumRefillValves(ActionCreator* nextTarget, bool isError = false) {
+            if (!isError && nextTarget != nullptr) {
+                return closeValvesSynchronusly(valveModule, cleanWaterValve, aquariumWaterValve, nextTarget);
+            }
+
+            return closeValvesSynchronusly(valveModule, cleanWaterValve, aquariumWaterValve, nextTarget, nextTarget);
+        }
 
     protected:
         void setup() {
@@ -35,43 +51,41 @@ class RefillAquariumActionCreator: public CommonActionCreator {
     public:
         RefillAquariumActionCreator(
             WaterLevelSensor* waterLevelSensor,
-            RelayModule* relayModule,
+            ValveModule* valveModule,
             WaterChangeModuleSettings* settings,
             const RtcDateTime& actualTime):
                 waterLevelSensor(waterLevelSensor),
-                relayModule(relayModule),
+                valveModule(valveModule),
                 settings(settings),
                 waterRefillTimeoutTimer(actualTime, settings->aquariumRefillTimeout * 60) {}
 
         ActionCreator* update(const RtcDateTime& time, const JoystickActions &action) {
             if (waterRefillTimeoutTimer.isReached(time)) {
-                relayModule->set(aquariumValve, OFF);
-                return AquariumRefillTimeout(nullptr);
+                return closeAquariumRefillValves(AquariumRefillTimeout(nullptr), true);
             }
 
             if (waterLevelCheckTimer.isReached(time)) {
                 waterLevelCheckTimer.start(time, 1);
 
                 if (waterLevelSensor->sense(aquariumWater, normalWaterLevel)) {
-                    relayModule->set(aquariumValve, OFF);
-
                     bool addionalWaterTankRefillEnabled = settings->refillAddionalWaterTankDuringWaterChange;
                     bool addionalWaterTankFull = waterLevelSensor->sense(addionalWaterTank, addionalWaterTankMaxLevel);
 
                     if (addionalWaterTankRefillEnabled && !addionalWaterTankFull) {
-                        return new RefillAddionalWaterTankActionCreator(
-                            waterLevelSensor,
-                            relayModule,
-                            settings,
-                            time
+                        return closeAquariumRefillValves(
+                            new RefillAddionalWaterTankActionCreator(
+                                waterLevelSensor,
+                                valveModule,
+                                settings,
+                                time
+                            )
                         );
                     }
 
-                    return DisconnectCleanWaterSupply(nullptr);
+                    return closeAquariumRefillValves(DisconnectCleanWaterSupply(nullptr));
                 }
             }
 
-            relayModule->set(aquariumValve, ON);
-            return this;
+            return openAquariumRefillValves();
         }
 };
