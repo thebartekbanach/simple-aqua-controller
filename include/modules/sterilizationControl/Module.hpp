@@ -9,5 +9,5 @@ class SterilizationControlModule: public TimeScopedDeviceDriver {
     public:
         SterilizationControlModule(RelayModule* relayModule):
             TimeScopedDeviceDriver("Sterylizacja", -1, relayModule, sterilization,
-                TimeScopedDeviceDriverSettings(CONTINUOUS_OFF)) {}
+                TimeScopedDeviceDriverSettings(CONTINUOUS_ON)) {}
 };
