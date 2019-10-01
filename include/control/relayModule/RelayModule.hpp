@@ -15,6 +15,7 @@ class RelayModule {
             for (ushort i = 0; i < numberOfModules; ++i) {
                 pinMode(modulePins[i], OUTPUT);
                 digitalWrite(modulePins[i], turnedOffStates[i]);
+                stateList[i] = false;
             }
         }
 
@@ -23,7 +24,7 @@ class RelayModule {
             modulePins(modulePins),
             turnedOffStates(turnedOffStates),
             numberOfModules(numberOfModules),
-            stateList(new bool[numberOfModules] { false }) {
+            stateList(new bool[numberOfModules]) {
                 initialize();
             }
 
@@ -31,7 +32,7 @@ class RelayModule {
             if (module >= numberOfModules || module < 0) return;
             if (stateList[module] == newState) return;
             
-            digitalWrite(modulePins[module], newState == ON ? turnedOffStates[module] : !turnedOffStates[module]);
+            digitalWrite(modulePins[module], newState == ON ? !turnedOffStates[module] : turnedOffStates[module]);
 
             stateList[module] = newState;
         }
