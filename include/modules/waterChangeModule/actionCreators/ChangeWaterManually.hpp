@@ -23,13 +23,13 @@ class ChangeWaterManuallyActionCreator: public CommonActionCreator {
         ValveModule* valveModule;
 
         void updateValvesInfo() {
-            lcd->setCursor(9, 1);
+            lcd->setCursor(8, 1);
             
             lcd->print(
                 state == WAITING ?      "oczekiwanie " :
                 state == REMOVING ?     "usuwanie    " :
                 state == REFILLING ?    "uzupelnianie" :
-                "blad zaworu"
+                "blad zaworow"
             );
         }
 
@@ -38,6 +38,7 @@ class ChangeWaterManuallyActionCreator: public CommonActionCreator {
                 case WAITING: closeValves(); break;
                 case REFILLING: startRefilling(); break;
                 case REMOVING: startRemoving(); break;
+                default: break;
             }
         }
 
@@ -62,7 +63,7 @@ class ChangeWaterManuallyActionCreator: public CommonActionCreator {
 
             if (state == ERROR) return;
 
-            if (!valveModule->open(sewageWaterValve) || !valveModule->open(aquariumWater)) {
+            if (!valveModule->open(aquariumWaterValve) || !valveModule->open(sewageWaterValve)) {
                 state = ERROR;
                 closeValves();
             }
@@ -77,8 +78,6 @@ class ChangeWaterManuallyActionCreator: public CommonActionCreator {
             if (!valveModule->close(addionalWaterTank)) error = true;
 
             if (error) state = ERROR;
-
-            updateValvesInfo();
         }
 
     protected:
