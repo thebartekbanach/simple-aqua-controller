@@ -67,15 +67,16 @@ class ValveModule {
             unsigned long servoMoveStart = millis();
 
             while (millis() - servoMoveStart < waitTime) {
-                if (isClosed(valveId) == !state) break;
-            }
+                if (state == true && !isClosed(valveId)) return true;
 
-            if (state == true) {
-                return !isClosed(valveId);
+                if (state == false && isClosed(valveId)) {
+                    valve.detach();
+                    return true;
+                }
             }
 
             valve.detach();
-            return isClosed(valveId);
+            return false;
         }
 
         bool isClosed(unsigned short valveId) {
