@@ -46,7 +46,7 @@ class WaterChangeModule: public CommonSystemModuleWithSettings<WaterChangeModule
     public:
         WaterChangeModule(
             WaterLevelSensor* waterLevelSensor,
-            ValveModule* ValveModule):
+            ValveModule* valveModule):
                 waterLevelSensor(waterLevelSensor),
                 valveModule(valveModule),
                 CommonSystemModuleWithSettings<WaterChangeModuleSettings>(
