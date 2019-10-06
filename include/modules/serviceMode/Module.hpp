@@ -95,16 +95,19 @@ class ServiceModeModule: public CommonSystemModule {
         }
 
         menuNode* getValvesControlSubmenu() {
-            prompt** items = new prompt*[4] {
+            prompt** items = new prompt*[5] {
                 getValveControlSubmenu("Obieg akwarium", isAquariumWaterValveActivated, isAquariumWaterValveClosed),
                 getValveControlSubmenu("Zbiornik dolewki", isAddionalWaterTankValveActivated, isAddionalWaterTankValveClosed),
                 getValveControlSubmenu("Czysta woda", isCleanWaterValveActivated, isCleanWaterValveClosed),
-                getValveControlSubmenu("Scieki", isSewageWaterValveActivated, isSewageWaterValveClosed)
+                getValveControlSubmenu("Scieki", isSewageWaterValveActivated, isSewageWaterValveClosed),
+                YesNoToggle("Zdalne zawory: ", areRemotesAvailable, nullptr)
             };
+
+            items[4]->disable();
             
             auto inOutEvent = new ExactActionReceiver<ServiceModeModule>(this, &ServiceModeModule::valvesInOut);
             
-            return new menuNode("Zawory", 4, items, inOutEvent, (eventMask)(enterEvent|exitEvent));
+            return new menuNode("Zawory", 5, items, inOutEvent, (eventMask)(enterEvent|exitEvent));
         }
 
         menuNode* getDevicesControlSubmenu() {
@@ -165,6 +168,7 @@ class ServiceModeModule: public CommonSystemModule {
             isAddionalWaterTankValveClosed = valveModule->isClosed(addionalWaterTankValve);
             isCleanWaterValveClosed = valveModule->isClosed(cleanWaterValve);
             isSewageWaterValveClosed = valveModule->isClosed(sewageWaterValve);
+            areRemotesAvailable = valveModule->areRemotesAvailable();
         }
 
         void updateValvesState() {
@@ -192,6 +196,7 @@ class ServiceModeModule: public CommonSystemModule {
         bool isAddionalWaterTankValveActivated = false;
         bool isCleanWaterValveActivated = false;
         bool isSewageWaterValveActivated = false;
+        bool areRemotesAvailable = false;
 
         Timer sensorsUpdateTimer;
 
