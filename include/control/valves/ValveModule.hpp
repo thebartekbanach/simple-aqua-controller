@@ -61,15 +61,19 @@ class ValveModule {
             if (!valve.attached()) {
                 valve.attach(valveSteeringPins[valveId]);
             }
-
+            
             valve.write(state == true ? servosOpenAngle : servosCloseAngle);
 
             unsigned long servoMoveStart = millis();
 
             while (millis() - servoMoveStart < waitTime) {
-                if (state == true && !isClosed(valveId)) return true;
+                const bool closed = isClosed(valveId);
 
-                if (state == false && isClosed(valveId)) {
+                if (state == true && !closed) {
+                    return true;
+                }
+
+                if (state == false && closed) {
                     valve.detach();
                     return true;
                 }
