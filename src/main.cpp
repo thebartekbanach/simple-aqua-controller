@@ -17,10 +17,10 @@ void setup ()
     DEBUG_SERIAL_OUTPUT.begin(115200);
 
     logln("Enabling watchdog");
-    watchdogEnable(1000);
+    watchdogEnable(8000);
 
     logln("Starting program...");
-    program = new Program();
+    program = new Program(); 
 
     logln("Starting setup...");
     program->setup();
@@ -28,13 +28,13 @@ void setup ()
     logln("Program started!");
 }
 
-//void watchdogSetup() {
+void watchdogSetup() {
     // watchdog enable: https://forum.arduino.cc/index.php?topic=350058.msg2416416#msg2416416
-//}
+}
 
 void loop () 
 {
-    //watchdogReset();
+    watchdogReset();
     program->update();
 }
 
