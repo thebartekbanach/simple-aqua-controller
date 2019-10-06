@@ -14,7 +14,7 @@
 
 #include "RefillAquarium.hpp"
 
-#include "messages/ConnectCleanWaterSupply.hpp"
+#include "../../../control/valves/DisconnectExternalWaterControl.hpp"
 #include "messages/AquariumWaterOutletTimeout.hpp"
 
 class RemoveWaterActionCreator: public CommonActionCreator {
@@ -42,10 +42,12 @@ class RemoveWaterActionCreator: public CommonActionCreator {
     protected:
         void setup() {
             lcd->clear();
-            lcd->setCursor(0, 1);
+            lcd->setCursor(0, 0);
             lcd->print("   Podmiana wody");
-            lcd->setCursor(0, 2);
+            lcd->setCursor(0, 1);
             lcd->print("   Usuwanie wody");
+            lcd->setCursor(0, 3);
+            lcd->print("            anuluj >");
         }
 
     public:
@@ -62,6 +64,12 @@ class RemoveWaterActionCreator: public CommonActionCreator {
         ActionCreator* update(const RtcDateTime& time, const JoystickActions &action) {
             if (waterOutletTimeoutTimer.isReached(time)) {
                 return closeWaterRemoveValves(AquariumWaterOutletTimeout(nullptr), true);
+            }
+
+            if (action == OK) {
+                return closeWaterRemoveValves(
+                    DisconnectExternalWaterControl("   Podmiana wody", nullptr)
+                );
             }
 
             if (waterLevelCheckTimer.isReached(time)) {

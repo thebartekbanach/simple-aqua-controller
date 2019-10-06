@@ -14,7 +14,7 @@
 
 #include "../Settings.hpp"
 
-#include "messages/AddionalWaterTankRefillComplete.hpp"
+#include "../../../control/valves/DisconnectExternalWaterControl.hpp"
 #include "messages/AddionalWaterTankRefillCancelled.hpp"
 #include "messages/AddionalWaterTankRefillTimeout.hpp"
 
@@ -81,14 +81,14 @@ class FillAddionalWaterTankActionCreator: public CommonActionCreator {
             }
 
             if (action == OK) {
-                return closeValves(addionalWaterTankRefillCancelledMessage());
+                return closeValves(DisconnectExternalWaterControl("    Dolewka wody", nullptr));
             }
 
             if (waterAdditionCheckTimer.isReached(time)) {
                 waterAdditionCheckTimer.start(time, 1);
 
                 if (waterLevelSensor->sense(addionalWaterTank, addionalWaterTankMaxLevel)) {
-                    return closeValves(addionalWaterTankRefillCompleteMessage());
+                    return closeValves(DisconnectExternalWaterControl("    Dolewka wody", nullptr));
                 }
             }
 

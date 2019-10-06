@@ -13,6 +13,7 @@
 
 #include "RefillAddionalWaterTank.hpp"
 
+#include "../../../control/valves/DisconnectExternalWaterControl.hpp"
 #include "messages/AquariumRefillTimeout.hpp"
 
 class RefillAquariumActionCreator: public CommonActionCreator {
@@ -42,10 +43,12 @@ class RefillAquariumActionCreator: public CommonActionCreator {
             lcd->clear();
             lcd->setCursor(0, 0);
             lcd->print("   Podmiana wody");
-            lcd->setCursor(0, 2);
+            lcd->setCursor(0, 1);
             lcd->print(" Uzupelnianie wody");
-            lcd->setCursor(0, 3);
+            lcd->setCursor(0, 2);
             lcd->print("    w akwarium");
+            lcd->setCursor(0, 3);
+            lcd->print("            anuluj >");
         }
 
     public:
@@ -62,6 +65,12 @@ class RefillAquariumActionCreator: public CommonActionCreator {
         ActionCreator* update(const RtcDateTime& time, const JoystickActions &action) {
             if (waterRefillTimeoutTimer.isReached(time)) {
                 return closeAquariumRefillValves(AquariumRefillTimeout(nullptr), true);
+            }
+
+            if (action == OK) {
+                return closeAquariumRefillValves(
+                    DisconnectExternalWaterControl("   Podmiana wody", nullptr)
+                );
             }
 
             if (waterLevelCheckTimer.isReached(time)) {
@@ -82,7 +91,9 @@ class RefillAquariumActionCreator: public CommonActionCreator {
                         );
                     }
 
-                    return closeAquariumRefillValves(DisconnectCleanWaterSupply(nullptr));
+                    return closeAquariumRefillValves(
+                        DisconnectExternalWaterControl("   Podmiana wody", nullptr)
+                    );
                 }
             }
 

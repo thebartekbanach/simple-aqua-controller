@@ -7,7 +7,8 @@
 #include "../../../control/waterLevelSensor/WaterLevelSensor.hpp"
 #include "../../../control/valves/ValveModule.hpp"
 
-#include "messages/ServoValvesCloseFailture.hpp"
+#include "../../../control/valves/DisconnectExternalWaterControl.hpp"
+#include "messages/ServoValvesControlFailture.hpp"
 
 class ChangeWaterManuallyActionCreator: public CommonActionCreator {
     private:
@@ -103,10 +104,10 @@ class ChangeWaterManuallyActionCreator: public CommonActionCreator {
                 closeValves();
 
                 if (state == ERROR) {
-                    return ServoValvesCloseFailture(nullptr);
+                    return ServoValvesControlFailture(nullptr);
                 }
 
-                return nullptr;
+                return DisconnectExternalWaterControl("   Podmiana wody", nullptr);
             }
 
             if (state == ERROR) {

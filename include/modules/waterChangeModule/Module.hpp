@@ -12,8 +12,7 @@
 #include "actionCreators/RemoveWater.hpp"
 #include "actionCreators/ChangeWaterManually.hpp"
 
-#include "actionCreators/messages/ConnectSewageHose.hpp"
-#include "actionCreators/messages/ConnectHose.hpp"
+#include "../../control/valves/ConnectExternalWaterControl.hpp"
 
 class WaterChangeModule: public CommonSystemModuleWithSettings<WaterChangeModuleSettings> {
     private:
@@ -22,7 +21,8 @@ class WaterChangeModule: public CommonSystemModuleWithSettings<WaterChangeModule
 
         void automaticallyChangeWater() {
             actionManager->acquire(
-                ConnectSewageHose(
+                new ConnectExternalWaterControl(
+                    valveModule, "   Podmiana wody",
                     new RemoveWaterActionCreator(
                         waterLevelSensor,
                         valveModule,
@@ -32,7 +32,8 @@ class WaterChangeModule: public CommonSystemModuleWithSettings<WaterChangeModule
         }
 
         void manuallyChangeWater() {
-            actionManager->acquire(ConnectHose(
+            actionManager->acquire(new ConnectExternalWaterControl(
+                valveModule, "   Podmiana wody",
                 new ChangeWaterManuallyActionCreator(
                     valveModule
                 )

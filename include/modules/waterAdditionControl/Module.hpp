@@ -24,7 +24,7 @@
 #include "actionCreators/WaterLevelChecking.hpp"
 #include "actionCreators/FillAddionalWaterTank.hpp"
 
-#include "actionCreators/messages/ConnectCleanWaterSupply.hpp"
+#include "../../control/valves/ConnectExternalWaterControl.hpp"
 #include "actionCreators/messages/AddionalWaterTankRefillUnnecessary.hpp"
 
 class WaterAdditionControlModule: public CommonSystemModuleWithSettings<WaterAdditionModuleSettings> {
@@ -55,12 +55,14 @@ class WaterAdditionControlModule: public CommonSystemModuleWithSettings<WaterAdd
 
         void testWaterLevel() {
             if (!actionManager->isUsedByCreator()) {
-                actionManager->acquire(new WaterLevelCheckingActionCreator(
-                    settings.data(),
-                    relayModule,
-                    waterLevelSensor,
-                    eventBus
-                ));
+                actionManager->acquire(new ConnectExternalWaterControl(
+                    valveModule, "    Dolewka wody",
+                    new WaterLevelCheckingActionCreator(
+                        settings.data(),
+                        relayModule,
+                        waterLevelSensor,
+                        eventBus
+                )));
             }
         }
 
@@ -69,14 +71,14 @@ class WaterAdditionControlModule: public CommonSystemModuleWithSettings<WaterAdd
                 if (waterLevelSensor->sense(addionalWaterTank, addionalWaterTankMaxLevel)) {
                     actionManager->acquire(addionalWaterTankRefillUnnecessaryMessage());
                 } else {
-                    actionManager->acquire(connectCleanWaterSupplyMessage(
+                    actionManager->acquire(new ConnectExternalWaterControl(
+                        valveModule, "    Dolewka wody",
                         new FillAddionalWaterTankActionCreator(
                             settings.data().addionalWaterTankRefillTimeout,
                             waterLevelSensor,
                             valveModule,
                             eventBus
-                        )
-                    ));
+                    )));
                 }
             } 
         }

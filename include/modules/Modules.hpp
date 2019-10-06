@@ -43,7 +43,7 @@ SystemModulesList* getSystemModules(navRoot* navRootDependency, TimeGuard* timeG
 
     logln("Initializing valveModule")
     ValveModule* valveModule = new ValveModule(
-        4, 0, 180, 2000, 40,
+        4, 0, 180, 3000, 40,
         new unsigned short[4] { 3, 4, 5, 6 },
         new unsigned short[4] { 33, 35, 37, 39 }
     );

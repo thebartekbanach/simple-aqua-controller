@@ -11,8 +11,8 @@
 
 #include "../Settings.hpp"
 
+#include "../../../control/valves/DisconnectExternalWaterControl.hpp"
 #include "messages/AddionalWaterTankRefillTimeout.hpp"
-#include "messages/DisconnectCleanWaterSupply.hpp"
 
 class RefillAddionalWaterTankActionCreator: public CommonActionCreator {
     private:
@@ -41,8 +41,10 @@ class RefillAddionalWaterTankActionCreator: public CommonActionCreator {
             lcd->clear();
             lcd->setCursor(0, 0);
             lcd->print("   Podmiana wody");
-            lcd->setCursor(0, 2);
+            lcd->setCursor(0, 1);
             lcd->print("Uzupelnianie rezerwy");
+            lcd->setCursor(0, 3);
+            lcd->print("            anuluj >");
         }
 
     public:
@@ -60,12 +62,20 @@ class RefillAddionalWaterTankActionCreator: public CommonActionCreator {
             if (waterRefillTimeoutTimer.isReached(time)) {
                 return closeRefillValves(AddionalWaterTankRefillTimeout(nullptr), true);
             }
+
+            if (action == OK) {
+                return closeRefillValves(
+                    DisconnectExternalWaterControl("   Podmiana wody", nullptr)
+                );
+            }
  
             if (waterLevelCheckTimer.isReached(time)) {
                 waterLevelCheckTimer.start(time, 1);
 
                 if (waterLevelSensor->sense(addionalWaterTank, addionalWaterTankMaxLevel)) {
-                    return closeRefillValves(DisconnectCleanWaterSupply(nullptr));
+                    return closeRefillValves(
+                        DisconnectExternalWaterControl("   Podmiana wody", nullptr)
+                    );
                 }
             }
 

@@ -2,11 +2,11 @@
 
 #include "../../../../utils/informationBanner/InformationBannerActionCreator.hpp"
 
-InformationBannerActionCreator* ServoValvesCloseFailture(ActionCreator* nextTarget) {
+InformationBannerActionCreator* ServoValvesControlFailture(ActionCreator* nextTarget) {
     return new InformationBannerActionCreator(nextTarget, 0, true,
-        "Uwaga! Nie udalo sie",
-        " zamknac wszystkich",
-        "    serwozaworow",
+        "       Uwaga!",
+        "Niektore serwozawory",
+        "moga byc uszkodzone!",
         "    Sprawdz to!"
     );
 }
