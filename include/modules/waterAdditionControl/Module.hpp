@@ -149,10 +149,10 @@ class WaterAdditionControlModule: public CommonSystemModuleWithSettings<WaterAdd
                 "Przerwy", "m", 5, 24 * 60, 10, 1, saveWorkTimeSettings, exitEvent);
 
             auto numberOfChecks = new menuField<ushort>(settings.data().numberOfChecks,
-                "Ilosc probek", "", 1, 9, 1, 0, saveSettings, exitEvent);
+                "Ilosc probek", "", 1, 20, 1, 0, saveSettings, exitEvent);
 
             auto checkingFrequency = new menuField<ushort>(settings.data().checkingFrequency,
-                "Czestotliwosc", "s", 1, 5, 1, 0, saveSettings, exitEvent);
+                "Czestotliwosc", "ms", 100, 5000, 100, 50, saveSettings, exitEvent);
 
             auto percentOfUnsuccessfullAttempts = new menuField<ushort>(settings.data().minNumberOfUnsuccessfullAttempts,
                 "Min nieudanych", "%", 1, 99, 1, 0, saveSettings, exitEvent);

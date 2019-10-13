@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../../../system/ActionCreator.hpp"
-#include "../../../system/Timer.hpp"
+#include "../../../system/PreciseTimer.hpp"
 
 #include "../../../control/screen/customCharset.hpp"
 #include "../../../control/relayModule/RelayModule.hpp"
@@ -27,7 +27,7 @@ class WaterLevelCheckingActionCreator: public CommonActionCreator {
 
     ushort displayedNumOfAllChecks = 0;
 
-    Timer checkTimer;
+    PreciseTimer checkTimer;
 
     protected:
         void setup() {
@@ -85,10 +85,10 @@ class WaterLevelCheckingActionCreator: public CommonActionCreator {
                 return waterAdditionCancelledMessage();
             }
 
-            if (checkTimer.isReached(time)) {
+            if (checkTimer.done()) {
                 numOfAllChecks += 1;
                 numOfUnsuccessfullChceks += !waterLevelSensor->sense(aquariumWater, normalWaterLevel);
-                checkTimer.start(time, settings.checkingFrequency);
+                checkTimer.start(settings.checkingFrequency);
             }
 
             if (isWaterLevelNotEnought()) {
