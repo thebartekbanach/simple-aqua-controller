@@ -5,6 +5,8 @@
 
 #include "devices.hpp"
 
+#include "../../system/PreciseTimer.hpp"
+
 class ValveModule {
     Servo* servoValves;
     unsigned short noOfValves;
@@ -64,9 +66,9 @@ class ValveModule {
             
             valve.write(state == true ? servosOpenAngle : servosCloseAngle);
 
-            unsigned long servoMoveStart = millis();
+            PreciseTimer servoMoveTimer(waitTime);
 
-            while (millis() - servoMoveStart < waitTime) {
+            while (!servoMoveTimer.done()) {
                 const bool closed = isClosed(valveId);
 
                 if (state == true && !closed) {
@@ -74,6 +76,7 @@ class ValveModule {
                 }
 
                 if (state == false && closed) {
+                    delay(200);
                     valve.detach();
                     return true;
                 }
