@@ -50,9 +50,8 @@ class FillAddionalWaterTankActionCreator: public CommonActionCreator {
             lcd->print(" Trwa uzupelnianie");
             lcd->setCursor(0, 1);
             lcd->print("   rezerwy wody");
-            lcd->setCursor(10, 3);
-            lcd->write(arrowRightCustomChar);
-            lcd->print(" anuluj");
+            lcd->setCursor(0, 3);
+            lcd->print("            anuluj >");
         }
 
     public:

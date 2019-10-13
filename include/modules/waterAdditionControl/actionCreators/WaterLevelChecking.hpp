@@ -38,9 +38,8 @@ class WaterLevelCheckingActionCreator: public CommonActionCreator {
             lcd->print(" Testowanie poziomu ");
             lcd->setCursor(0, 2);
             lcd->print("  wody: ");
-            lcd->setCursor(6, 3);
-            lcd->write(arrowRightCustomChar);
-            lcd->print(" anuluj");
+            lcd->setCursor(0, 3);
+            lcd->print("            anuluj >");
         }
 
         void updateScreenInfo() {

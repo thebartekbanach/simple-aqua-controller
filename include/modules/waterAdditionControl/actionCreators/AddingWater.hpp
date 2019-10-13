@@ -37,9 +37,8 @@ class AddingWaterActionCreator: public CommonActionCreator {
             lcd->print(" Uzupelnianie wody");
             lcd->setCursor(0, 1);
             lcd->print("   Prosze czekac");
-            lcd->setCursor(1, 3);
-            lcd->write(arrowRightCustomChar);
-            lcd->print(" dokoncz pozniej");
+            lcd->setCursor(0, 3);
+            lcd->print("            anuluj >");
         }
     
     public:
