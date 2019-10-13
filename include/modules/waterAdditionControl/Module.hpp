@@ -55,14 +55,13 @@ class WaterAdditionControlModule: public CommonSystemModuleWithSettings<WaterAdd
 
         void testWaterLevel() {
             if (!actionManager->isUsedByCreator()) {
-                actionManager->acquire(new ConnectExternalWaterControl(
-                    valveModule, "    Dolewka wody",
+                actionManager->acquire(
                     new WaterLevelCheckingActionCreator(
                         settings.data(),
                         relayModule,
                         waterLevelSensor,
                         eventBus
-                )));
+                ));
             }
         }
 
