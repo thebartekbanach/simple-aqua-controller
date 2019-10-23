@@ -62,8 +62,11 @@ class TimeScopedDeviceDriver: public CommonSystemModuleWithSettings<TimeScopedDe
             return result;
         }
 
-        void update(const RtcDateTime &time) {
+        virtual bool isDeviceEnabled() { return true; }
+
+        virtual void update(const RtcDateTime &time) {
             if (serviceModeActive) return;
+            if (!isDeviceEnabled()) return;
 
             TimeScopedDeviceDriverSettings& settings = this->settings.data();
             
@@ -92,7 +95,7 @@ class TimeScopedDeviceDriver: public CommonSystemModuleWithSettings<TimeScopedDe
             }
         }
 
-        void onEvent(const int &moduleId, const int &eventCode, void* data = nullptr) {
+        virtual void onEvent(const int &moduleId, const int &eventCode, void* data = nullptr) {
             if (moduleId == TIME_SETUP_MODULE_ID) {
                 if (eventCode == DAY_CYCLE_BEGIN) {
                     actualCycle = DAY;
