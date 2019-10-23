@@ -8,6 +8,8 @@
 
 #include "../../utils/log.hpp"
 
+#include "../heaterControl/Events.hpp"
+
 #include "Events.hpp"
 
 class FeedingActionCreator: public CommonActionCreator {
@@ -72,6 +74,7 @@ class FeedingActionCreator: public CommonActionCreator {
         ActionCreator* update(const RtcDateTime &time, const JoystickActions &action) {
             if (timer.isReached(time) || action == OK) {
                 eventBus->send(FEEDING_MODULE_ID, ABORT_FEEDING);
+                eventBus->send(HEATER_MODULE_ID, HEATER_SAFETY_UNLOCK);
                 return nullptr;
             }
 

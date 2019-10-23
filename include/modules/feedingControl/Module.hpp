@@ -8,6 +8,8 @@
 
 #include "../serviceMode/Events.hpp"
 
+#include "../heaterControl/Events.hpp"
+
 #include "Settings.hpp"
 #include "Events.hpp"
 
@@ -28,6 +30,7 @@ class FeedingControlModule: public CommonSystemModuleWithSettings<FeedingControl
                 eventBus
             ));
 
+            eventBus->send(HEATER_MODULE_ID, HEATER_SAFETY_LOCK);
             relayModule->set(mainPump, OFF);
         }
 
