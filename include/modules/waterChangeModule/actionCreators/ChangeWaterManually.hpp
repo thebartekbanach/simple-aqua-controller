@@ -4,6 +4,7 @@
 
 #include "../../../control/screen/customCharset.hpp"
 
+#include "../../../control/relayModule/RelayModule.hpp"
 #include "../../../control/waterLevelSensor/WaterLevelSensor.hpp"
 #include "../../../control/valves/ValveModule.hpp"
 
@@ -22,6 +23,7 @@ class ChangeWaterManuallyActionCreator: public CommonActionCreator {
         WaterChangeState state = WAITING;
 
         ValveModule* valveModule;
+        RelayModule* relayModule;
 
         void updateValvesInfo() {
             lcd->setCursor(8, 1);
@@ -96,10 +98,15 @@ class ChangeWaterManuallyActionCreator: public CommonActionCreator {
         }
 
     public:
-        ChangeWaterManuallyActionCreator(ValveModule* valveModule):
+        ChangeWaterManuallyActionCreator(
+            RelayModule* relayModule,
+            ValveModule* valveModule):
+                relayModule(relayModule),
                 valveModule(valveModule) {}
 
         ActionCreator* update(const RtcDateTime& time, const JoystickActions &action) {
+            relayModule->set(mainPump, state != REFILLING); // too strong water draft when refilling and main pump is turned on
+
             if (action == OK) {
                 closeValves();
 

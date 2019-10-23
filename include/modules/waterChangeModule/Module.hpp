@@ -16,6 +16,7 @@
 
 class WaterChangeModule: public CommonSystemModuleWithSettings<WaterChangeModuleSettings> {
     private:
+        RelayModule* relayModule;
         WaterLevelSensor* waterLevelSensor;
         ValveModule* valveModule;
 
@@ -24,8 +25,10 @@ class WaterChangeModule: public CommonSystemModuleWithSettings<WaterChangeModule
                 new ConnectExternalWaterControl(
                     valveModule, "   Podmiana wody",
                     new RemoveWaterActionCreator(
+                        relayModule,
                         waterLevelSensor,
                         valveModule,
+                        eventBus,
                         &settings.data(),
                         rtc->GetDateTime()
             )));
@@ -35,6 +38,7 @@ class WaterChangeModule: public CommonSystemModuleWithSettings<WaterChangeModule
             actionManager->acquire(new ConnectExternalWaterControl(
                 valveModule, "   Podmiana wody",
                 new ChangeWaterManuallyActionCreator(
+                    relayModule,
                     valveModule
                 )
             ));
@@ -46,8 +50,10 @@ class WaterChangeModule: public CommonSystemModuleWithSettings<WaterChangeModule
 
     public:
         WaterChangeModule(
+            RelayModule* relayModule,
             WaterLevelSensor* waterLevelSensor,
             ValveModule* valveModule):
+                relayModule(relayModule),
                 waterLevelSensor(waterLevelSensor),
                 valveModule(valveModule),
                 CommonSystemModuleWithSettings<WaterChangeModuleSettings>(

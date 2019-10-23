@@ -2,6 +2,7 @@
 
 #include "../../../system/ActionCreator.hpp"
 #include "../../../system/Timer.hpp"
+#include "../../../system/GlobalEventBus.hpp"
 
 #include "../../../control/waterLevelSensor/WaterLevelSensor.hpp"
 #include "../../../control/relayModule/RelayModule.hpp"
@@ -9,6 +10,8 @@
 #include "../../../control/valves/ValveModule.hpp"
 #include "../../../control/valves/ServoValveErrorMessage.hpp"
 #include "../../../control/valves/utility.hpp"
+
+#include "../../heaterControl/Events.hpp"
 
 #include "../Settings.hpp"
 
@@ -19,6 +22,9 @@
 
 class RemoveWaterActionCreator: public CommonActionCreator {
     private:
+        GlobalEventBus* eventBus;
+
+        RelayModule* relayModule;
         WaterLevelSensor* waterLevelSensor;
         ValveModule* valveModule;
         
@@ -32,6 +38,8 @@ class RemoveWaterActionCreator: public CommonActionCreator {
         }
 
         ActionCreator* closeWaterRemoveValves(ActionCreator* nextTarget, bool isError = false) {
+            eventBus->send(HEATER_MODULE_ID, HEATER_SAFETY_UNLOCK);
+
             if (!isError && nextTarget != nullptr) {
                 return closeValvesSynchronusly(valveModule, aquariumWaterValve, sewageWaterValve, nextTarget);
             }
@@ -41,6 +49,8 @@ class RemoveWaterActionCreator: public CommonActionCreator {
 
     protected:
         void setup() {
+            eventBus->send(HEATER_MODULE_ID, HEATER_SAFETY_LOCK);
+
             lcd->clear();
             lcd->setCursor(0, 0);
             lcd->print("   Podmiana wody");
@@ -52,12 +62,16 @@ class RemoveWaterActionCreator: public CommonActionCreator {
 
     public:
         RemoveWaterActionCreator(
+            RelayModule* relayModule,
             WaterLevelSensor* waterLevelSensor,
             ValveModule* valveModule,
+            GlobalEventBus* eventBus,
             WaterChangeModuleSettings* settings,
             const RtcDateTime& actualTime):
+                relayModule(relayModule),
                 waterLevelSensor(waterLevelSensor),
                 valveModule(valveModule),
+                eventBus(eventBus),
                 settings(settings),
                 waterOutletTimeoutTimer(actualTime, settings->aquariumWaterOutflowTimeout * 60) {}
 
@@ -78,6 +92,7 @@ class RemoveWaterActionCreator: public CommonActionCreator {
                 if (!waterLevelSensor->sense(aquariumWater, changeWaterLevel)) {
                     return closeWaterRemoveValves(
                         new RefillAquariumActionCreator(
+                            relayModule,
                             waterLevelSensor,
                             valveModule,
                             settings,

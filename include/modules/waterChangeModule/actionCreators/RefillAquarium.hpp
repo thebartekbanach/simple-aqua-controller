@@ -18,6 +18,7 @@
 
 class RefillAquariumActionCreator: public CommonActionCreator {
     private:
+        RelayModule* relayModule;
         WaterLevelSensor* waterLevelSensor;
         ValveModule* valveModule;
 
@@ -27,10 +28,13 @@ class RefillAquariumActionCreator: public CommonActionCreator {
         Timer waterLevelCheckTimer;
 
         ActionCreator* openAquariumRefillValves() {
+            relayModule->set(mainPump, OFF); // too strong water draft
             return openValvesSynchronusly(valveModule, aquariumWaterValve, cleanWaterValve, this);
         }
 
         ActionCreator* closeAquariumRefillValves(ActionCreator* nextTarget, bool isError = false) {
+            relayModule->set(mainPump, ON); // too strong water draft
+
             if (!isError && nextTarget != nullptr) {
                 return closeValvesSynchronusly(valveModule, cleanWaterValve, aquariumWaterValve, nextTarget);
             }
@@ -53,10 +57,12 @@ class RefillAquariumActionCreator: public CommonActionCreator {
 
     public:
         RefillAquariumActionCreator(
+            RelayModule* relayModule,
             WaterLevelSensor* waterLevelSensor,
             ValveModule* valveModule,
             WaterChangeModuleSettings* settings,
             const RtcDateTime& actualTime):
+                relayModule(relayModule),
                 waterLevelSensor(waterLevelSensor),
                 valveModule(valveModule),
                 settings(settings),
