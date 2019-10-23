@@ -18,7 +18,7 @@ struct WaterAdditionModuleSettings {
 
     unsigned short breaksBetweenChecks = 60; // minutes
     unsigned short numberOfChecks = 10;
-    unsigned short checkingFrequency = 200; // seconds
+    unsigned short checkingFrequency = 200; // ms
     unsigned short minNumberOfUnsuccessfullAttempts = 70; // %
 
     float waterAdditionTimeout = 5; // minutes
