@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../../../system/ActionCreator.hpp"
+#include "../../../system/PreciseTimer.hpp"
 #include "../../../system/Timer.hpp"
 
 #include "../../../control/screen/customCharset.hpp"
@@ -12,7 +13,6 @@
 #include "../Settings.hpp"
 
 #include "messages/WaterAdditionComplete.hpp"
-#include "messages/WaterAdditionCancelled.hpp"
 #include "messages/WaterAdditionTimeout.hpp"
 #include "messages/AddionalWaterTankLevelIsToLow.hpp"
 
@@ -23,7 +23,7 @@ class AddingWaterActionCreator: public CommonActionCreator {
     WaterLevelSensor* waterLevelSensor;
     GlobalEventBus* eventBus;
 
-    Timer aquariumWaterCheckTimer;
+    PreciseTimer aquariumWaterCheckTimer;
     Timer addionalWaterCheckTimer;
     Timer* waterAdditionTimeout = nullptr;
     WaterLevelSensorDataStream wlsDataStream;
@@ -65,12 +65,14 @@ class AddingWaterActionCreator: public CommonActionCreator {
 
             if (waterAdditionTimeout->isReached(time)) {
                 relayModule->set(addionalPump, OFF);
+                relayModule->set(mainPump, ON);
                 return waterAdditionTimeoutMessage();
             }
 
             if (action == OK) {
                 relayModule->set(addionalPump, OFF);
-                return waterAdditionCancelledMessage();
+                relayModule->set(mainPump, ON);
+                return nullptr;
             }
 
             if (addionalWaterCheckTimer.isReached(time)) {
@@ -78,12 +80,13 @@ class AddingWaterActionCreator: public CommonActionCreator {
                 
                 if (!waterLevelSensor->sense(addionalWaterTank, addionalWaterTankMinLevel)) {
                     relayModule->set(addionalPump, OFF);
+                    relayModule->set(mainPump, ON);
                     return addionalWaterTankLevelIsToLowMessage();
                 }
             }
 
-            if (aquariumWaterCheckTimer.isReached(time)) {
-                aquariumWaterCheckTimer.start(time, settings.checkingFrequency);
+            if (aquariumWaterCheckTimer.done()) {
+                aquariumWaterCheckTimer.start(settings.checkingFrequency);
 
                 float average = wlsDataStream.senseAndGetAverage(
                     waterLevelSensor,
@@ -93,10 +96,12 @@ class AddingWaterActionCreator: public CommonActionCreator {
 
                 if (average > 0.5) {
                     relayModule->set(addionalPump, OFF);
+                    relayModule->set(mainPump, ON);
                     return waterAdditionCompleteMessage();
                 }
             }
 
+            relayModule->set(mainPump, OFF);
             relayModule->set(addionalPump, ON);
             return this;
         }

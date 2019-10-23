@@ -10,7 +10,6 @@
 #include "../Settings.hpp"
 
 #include "messages/WaterLevelIsEnough.hpp"
-#include "messages/WaterAdditionCancelled.hpp"
 #include "messages/AddionalWaterTankLevelIsToLow.hpp"
 
 #include "AddingWater.hpp"
@@ -82,7 +81,7 @@ class WaterLevelCheckingActionCreator: public CommonActionCreator {
             }
 
             if (action == OK) {
-                return waterAdditionCancelledMessage();
+                return nullptr;
             }
 
             if (checkTimer.done()) {
