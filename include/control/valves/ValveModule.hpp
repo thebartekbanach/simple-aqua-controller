@@ -56,7 +56,7 @@ class ValveModule {
 
         bool set(unsigned short valveId, bool state) {
             if (valveId > noOfValves) return false;
-            if (state == !isClosed(valveId)) return true;
+            if (state != isClosed(valveId)) return true;
 
             Servo& valve = servoValves[valveId];
 
