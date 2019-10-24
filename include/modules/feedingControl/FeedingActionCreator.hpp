@@ -70,7 +70,7 @@ class FeedingActionCreator: public CommonActionCreator {
             eventBus(eventBus) {}
 
         ActionCreator* update(const RtcDateTime &time, const JoystickActions &action) {
-            if (timer.isReached(time) || action == OK) {
+            if (timer.isReached(time) || action == BACK) {
                 eventBus->send(FEEDING_MODULE_ID, ABORT_FEEDING);
                 eventBus->send(HEATER_MODULE_ID, HEATER_SAFETY_UNLOCK);
                 return nullptr;
