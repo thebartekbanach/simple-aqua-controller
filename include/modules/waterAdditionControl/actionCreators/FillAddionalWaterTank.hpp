@@ -8,6 +8,7 @@
 
 #include "../../../control/valves/ValveModule.hpp"
 #include "../../../control/valves/ServoValveErrorMessage.hpp"
+#include "../../../control/valves/LowerThePressure.hpp"
 #include "../../../control/valves/utility.hpp"
 
 #include "../../../control/waterLevelSensor/WaterLevelSensor.hpp"
@@ -77,18 +78,31 @@ class FillAddionalWaterTankActionCreator: public CommonActionCreator {
             }
 
             if (fillingTimeout->isReached(time)) {
-                return closeValves(addionalWaterTankRefillTimeoutMessage(), true);
+                return closeValves(
+                    new LowerThePressure(
+                        valveModule, "    Dolewka wody",
+                        addionalWaterTankRefillTimeoutMessage()
+                    ),
+                    true
+                );
             }
 
             if (action == OK) {
-                return closeValves(nullptr);
+                return closeValves(
+                    new LowerThePressure(valveModule, "    Dolewka wody", nullptr)
+                );
             }
 
             if (waterAdditionCheckTimer.isReached(time)) {
                 waterAdditionCheckTimer.start(time, 1);
 
                 if (waterLevelSensor->sense(addionalWaterTank, addionalWaterTankMaxLevel)) {
-                    return closeValves(addionalWaterTankIsNowFullMessage(nullptr));
+                    return closeValves(
+                        new LowerThePressure(
+                            valveModule, "    Dolewka wody",
+                            addionalWaterTankIsNowFullMessage(nullptr)
+                        )
+                    );
                 }
             }
 
