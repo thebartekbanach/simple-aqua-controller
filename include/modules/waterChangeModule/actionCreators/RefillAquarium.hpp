@@ -7,6 +7,7 @@
 
 #include "../../../control/valves/ValveModule.hpp"
 #include "../../../control/valves/ServoValveErrorMessage.hpp"
+#include "../../../control/valves/LowerThePressure.hpp"
 #include "../../../control/valves/utility.hpp"
 
 #include "../Settings.hpp"
@@ -52,7 +53,7 @@ class RefillAquariumActionCreator: public CommonActionCreator {
             lcd->setCursor(0, 2);
             lcd->print("    w akwarium");
             lcd->setCursor(0, 3);
-            lcd->print("            anuluj >");
+            lcd->print("< anuluj");
         }
 
     public:
@@ -70,12 +71,21 @@ class RefillAquariumActionCreator: public CommonActionCreator {
 
         ActionCreator* update(const RtcDateTime& time, const JoystickActions &action) {
             if (waterRefillTimeoutTimer.isReached(time)) {
-                return closeAquariumRefillValves(AquariumRefillTimeout(nullptr), true);
+                return closeAquariumRefillValves(
+                    new LowerThePressure(
+                        valveModule, "   Podmiana wody",
+                        AquariumRefillTimeout(nullptr)
+                    ),
+                    true
+                );
             }
 
-            if (action == OK) {
+            if (action == BACK) {
                 return closeAquariumRefillValves(
-                    DisconnectExternalWaterControl("   Podmiana wody", nullptr)
+                    new LowerThePressure(
+                        valveModule, "   Podmiana wody",
+                        DisconnectExternalWaterControl("   Podmiana wody", nullptr)
+                    )
                 );
             }
 
@@ -98,7 +108,10 @@ class RefillAquariumActionCreator: public CommonActionCreator {
                     }
 
                     return closeAquariumRefillValves(
-                        DisconnectExternalWaterControl("   Podmiana wody", nullptr)
+                        new LowerThePressure(
+                            valveModule, "   Podmiana wody",
+                            DisconnectExternalWaterControl("   Podmiana wody", nullptr)
+                        )
                     );
                 }
             }
