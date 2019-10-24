@@ -38,7 +38,7 @@ class AddingWaterActionCreator: public CommonActionCreator {
             lcd->setCursor(0, 1);
             lcd->print("   Prosze czekac");
             lcd->setCursor(0, 3);
-            lcd->print("            anuluj >");
+            lcd->print("< anuluj");
         }
     
     public:
@@ -69,7 +69,7 @@ class AddingWaterActionCreator: public CommonActionCreator {
                 return waterAdditionTimeoutMessage();
             }
 
-            if (action == OK) {
+            if (action == BACK) {
                 relayModule->set(addionalPump, OFF);
                 relayModule->set(mainPump, ON);
                 return nullptr;

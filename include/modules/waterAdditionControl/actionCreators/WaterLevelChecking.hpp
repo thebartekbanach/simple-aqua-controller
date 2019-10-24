@@ -38,7 +38,7 @@ class WaterLevelCheckingActionCreator: public CommonActionCreator {
             lcd->setCursor(0, 2);
             lcd->print("  wody: ");
             lcd->setCursor(0, 3);
-            lcd->print("            anuluj >");
+            lcd->print("< anuluj");
         }
 
         void updateScreenInfo() {
@@ -80,7 +80,7 @@ class WaterLevelCheckingActionCreator: public CommonActionCreator {
                 return addionalWaterTankLevelIsToLowMessage();
             }
 
-            if (action == OK) {
+            if (action == BACK) {
                 return nullptr;
             }
 

@@ -57,7 +57,7 @@ class RemoveWaterActionCreator: public CommonActionCreator {
             lcd->setCursor(0, 1);
             lcd->print("   Usuwanie wody");
             lcd->setCursor(0, 3);
-            lcd->print("            anuluj >");
+            lcd->print("< anuluj");
         }
 
     public:
@@ -80,7 +80,7 @@ class RemoveWaterActionCreator: public CommonActionCreator {
                 return closeWaterRemoveValves(AquariumWaterOutletTimeout(nullptr), true);
             }
 
-            if (action == OK) {
+            if (action == BACK) {
                 return closeWaterRemoveValves(
                     DisconnectExternalWaterControl("   Podmiana wody", nullptr)
                 );

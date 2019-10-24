@@ -59,11 +59,9 @@ class FeedingActionCreator: public CommonActionCreator {
             lcd->print("Tryb karmienia");
             lcd->setCursor(0, 1);
             lcd->print("Wznowienie pracy za:");
-            lcd->setCursor(1, 3);
+            lcd->setCursor(0, 3);
+            lcd->print("< anuluj      czas ");
             lcd->write(doubleVerticalArrowCustomChar);
-            lcd->print(" czas    ");
-            lcd->write(arrowRightCustomChar);
-            lcd->print(" anuluj");
         }
 
     public:

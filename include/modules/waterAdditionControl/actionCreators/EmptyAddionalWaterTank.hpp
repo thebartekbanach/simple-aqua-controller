@@ -62,7 +62,7 @@ class EmptyAddionalWaterTankActionCreator: public CommonActionCreator {
             lcd->setCursor(0, 1);
             lcd->print("   rezerwy wody");
             lcd->setCursor(0, 3);
-            lcd->print("            anuluj >");
+            lcd->print("< anuluj");
         }
 
     public:

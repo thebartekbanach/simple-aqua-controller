@@ -26,9 +26,7 @@ class DefaultSettingsRestoreConfirmActionCreator: public CommonActionCreator {
             lcd->setCursor(0, 2);
             lcd->print("   fabrycznych?");
             lcd->setCursor(0, 3);
-            lcd->write(arrowLeftCustomChar);
-            lcd->print(" anuluj  przywroc ");
-            lcd->write(arrowRightCustomChar);
+            lcd->print("< anuluj  przywroc >");
         }
 
         ActionCreator* update(const RtcDateTime &time, const JoystickActions &action) {
@@ -40,7 +38,7 @@ class DefaultSettingsRestoreConfirmActionCreator: public CommonActionCreator {
                     "    Przywrocono",
                     "     ustawienia",
                     "      domyslne",
-                    "                OK >"
+                    "                ok >"
                 );
             }
 

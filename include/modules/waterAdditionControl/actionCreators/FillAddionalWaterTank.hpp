@@ -53,7 +53,7 @@ class FillAddionalWaterTankActionCreator: public CommonActionCreator {
             lcd->setCursor(0, 1);
             lcd->print("   rezerwy wody");
             lcd->setCursor(0, 3);
-            lcd->print("            anuluj >");
+            lcd->print("< anuluj");
         }
 
     public:
@@ -87,7 +87,7 @@ class FillAddionalWaterTankActionCreator: public CommonActionCreator {
                 );
             }
 
-            if (action == OK) {
+            if (action == BACK) {
                 return closeValves(
                     new LowerThePressure(valveModule, "    Dolewka wody", nullptr)
                 );
