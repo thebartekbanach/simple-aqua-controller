@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../../../system/ActionCreator.hpp"
+#include "../../../system/GlobalEventBus.hpp"
 
 #include "../../../control/screen/customCharset.hpp"
 
@@ -8,6 +9,8 @@
 #include "../../../control/waterLevelSensor/WaterLevelSensor.hpp"
 #include "../../../control/valves/ValveModule.hpp"
 #include "../../../control/valves/LowerThePressure.hpp"
+
+#include "../../heaterControl/Events.hpp"
 
 #include "../../../control/valves/DisconnectExternalWaterControl.hpp"
 #include "messages/ServoValvesControlFailture.hpp"
@@ -25,6 +28,8 @@ class ChangeWaterManuallyActionCreator: public CommonActionCreator {
 
         ValveModule* valveModule;
         RelayModule* relayModule;
+
+        GlobalEventBus* eventBus;
 
         void updateValvesInfo() {
             lcd->setCursor(8, 1);
@@ -67,6 +72,8 @@ class ChangeWaterManuallyActionCreator: public CommonActionCreator {
 
             if (state == ERROR) return;
 
+            eventBus->send(HEATER_MODULE_ID, HEATER_SAFETY_LOCK);
+
             if (!valveModule->open(aquariumWaterValve) || !valveModule->open(sewageWaterValve)) {
                 state = ERROR;
                 closeValves();
@@ -82,6 +89,8 @@ class ChangeWaterManuallyActionCreator: public CommonActionCreator {
             if (!valveModule->close(addionalWaterTankValve)) error = true;
 
             if (error) state = ERROR;
+            
+            eventBus->send(HEATER_MODULE_ID, HEATER_SAFETY_UNLOCK);
         }
 
     protected:
@@ -101,15 +110,18 @@ class ChangeWaterManuallyActionCreator: public CommonActionCreator {
     public:
         ChangeWaterManuallyActionCreator(
             RelayModule* relayModule,
-            ValveModule* valveModule):
+            ValveModule* valveModule,
+            GlobalEventBus* eventBus):
                 relayModule(relayModule),
-                valveModule(valveModule) {}
+                valveModule(valveModule),
+                eventBus(eventBus) {}
 
         ActionCreator* update(const RtcDateTime& time, const JoystickActions &action) {
             relayModule->set(mainPump, state != REFILLING); // too strong water draft when refilling and main pump is turned on
 
             if (action == OK) {
                 closeValves();
+                relayModule->set(mainPump, ON);
 
                 if (state == ERROR) {
                     return ServoValvesControlFailture(nullptr);

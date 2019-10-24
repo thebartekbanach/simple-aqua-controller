@@ -39,7 +39,8 @@ class WaterChangeModule: public CommonSystemModuleWithSettings<WaterChangeModule
                 valveModule, "   Podmiana wody",
                 new ChangeWaterManuallyActionCreator(
                     relayModule,
-                    valveModule
+                    valveModule,
+                    eventBus
                 )
             ));
         }
