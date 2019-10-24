@@ -75,7 +75,6 @@ class WaterAdditionControlModule: public CommonSystemModuleWithSettings<WaterAdd
                     actionManager->acquire(new ConnectExternalWaterControl(
                         valveModule, "    Dolewka wody",
                         new FillAddionalWaterTankActionCreator(
-                            "    Dolewka wody",
                             settings.data().addionalWaterTankRefillTimeout,
                             waterLevelSensor,
                             valveModule,
