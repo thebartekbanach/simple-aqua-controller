@@ -92,7 +92,7 @@ class EmptyAddionalWaterTankActionCreator: public CommonActionCreator {
                 return stopEmptying(addionalWaterTankEmptyingTimeoutMessage(), true);
             }
 
-            if (action == OK) {
+            if (action == BACK) {
                 return stopEmptying(nullptr);
             }
 
