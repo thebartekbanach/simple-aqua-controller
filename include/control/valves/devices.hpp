@@ -1,5 +1,6 @@
 #pragma once
 
+#define unknownValve -1
 #define aquariumWaterValve 0
 #define addionalWaterTankValve 1
 #define cleanWaterValve 2

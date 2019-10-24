@@ -12,9 +12,17 @@ InformationBannerActionCreator* servoValveErrorMessage(unsigned short valveId, A
         case addionalWaterTankValve:    name = "     rezerwy";          break;
         case cleanWaterValve:           name = "   czystej wody";       break;
         case sewageWaterValve:          name = "   brudnej wody";       break;
+        default:                        name = "";                      break;
     }
 
-    return new InformationBannerActionCreator(target, 0, true,
+    if (name == "") return new InformationBannerActionCreator(target, 0, true,
+        "   Blad krytyczny",
+        "",
+        "    Zablokowany",
+        "    serwozawor"
+    );
+
+    else return new InformationBannerActionCreator(target, 0, true,
         "   Blad krytyczny",
         "    Zablokowany",
         "    serwozawor:",
