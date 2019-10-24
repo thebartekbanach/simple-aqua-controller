@@ -7,6 +7,7 @@
 
 #include "../../../control/valves/ValveModule.hpp"
 #include "../../../control/valves/ServoValveErrorMessage.hpp"
+#include "../../../control/valves/LowerThePressure.hpp"
 #include "../../../control/valves/utility.hpp"
 
 #include "../Settings.hpp"
@@ -44,7 +45,7 @@ class RefillAddionalWaterTankActionCreator: public CommonActionCreator {
             lcd->setCursor(0, 1);
             lcd->print("Uzupelnianie rezerwy");
             lcd->setCursor(0, 3);
-            lcd->print("            anuluj >");
+            lcd->print("< anuluj");
         }
 
     public:
@@ -60,12 +61,18 @@ class RefillAddionalWaterTankActionCreator: public CommonActionCreator {
 
         ActionCreator* update(const RtcDateTime& time, const JoystickActions &action) {
             if (waterRefillTimeoutTimer.isReached(time)) {
-                return closeRefillValves(AddionalWaterTankRefillTimeout(nullptr), true);
+                return closeRefillValves(
+                    new LowerThePressure(
+                        valveModule, "   Podmiana wody",
+                        AddionalWaterTankRefillTimeout(nullptr)
+                    ),
+                    true
+                );
             }
 
-            if (action == OK) {
+            if (action == BACK) {
                 return closeRefillValves(
-                    DisconnectExternalWaterControl("   Podmiana wody", nullptr)
+                    new LowerThePressure(valveModule, "   Podmiana wody", nullptr)
                 );
             }
  
@@ -74,7 +81,10 @@ class RefillAddionalWaterTankActionCreator: public CommonActionCreator {
 
                 if (waterLevelSensor->sense(addionalWaterTank, addionalWaterTankMaxLevel)) {
                     return closeRefillValves(
-                        DisconnectExternalWaterControl("   Podmiana wody", nullptr)
+                        new LowerThePressure(
+                            valveModule, "   Podmiana wody",
+                            DisconnectExternalWaterControl("   Podmiana wody", nullptr)
+                        )
                     );
                 }
             }
