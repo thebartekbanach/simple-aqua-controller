@@ -19,11 +19,7 @@ class FeedingControlModule: public CommonSystemModuleWithSettings<FeedingControl
     private:
         RelayModule* relayModule;
 
-        bool feedingActive = false;
-
         void startFeedingModeEvent() {
-            feedingActive = true;
-
             actionManager->acquire(new FeedingActionCreator(
                 rtc->GetDateTime(),
                 settings.data().feedingLength * 60,
@@ -77,19 +73,14 @@ class FeedingControlModule: public CommonSystemModuleWithSettings<FeedingControl
             return result;
         }
 
-        void update(const RtcDateTime& time) {
-            if (serviceModeActive) return;
-
-            relayModule->set(mainPump, !feedingActive);
-        }
-
         void onEvent(const int &moduleId, const int &eventCode, void* data = nullptr) {
             if (moduleId == FEEDING_MODULE_ID && eventCode == ABORT_FEEDING) {
-                feedingActive = false;
+                relayModule->set(mainPump, ON);
             }
 
             if (moduleId == SERVICE_MODE_MODULE_ID) {
                 serviceModeActive = eventCode;
+                relayModule->set(mainPump, !serviceModeActive);
             }
         }
 };
