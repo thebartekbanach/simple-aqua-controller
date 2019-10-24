@@ -23,4 +23,5 @@ struct WaterAdditionModuleSettings {
 
     float waterAdditionTimeout = 5; // minutes
     float addionalWaterTankRefillTimeout = 5; // minutes
+    float addionalWaterTankEmptyingTimeout = 5; // minutes
 };
