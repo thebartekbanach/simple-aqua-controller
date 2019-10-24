@@ -23,9 +23,11 @@
 
 #include "actionCreators/WaterLevelChecking.hpp"
 #include "actionCreators/FillAddionalWaterTank.hpp"
+#include "actionCreators/EmptyAddionalWaterTank.hpp"
 
 #include "../../control/valves/ConnectExternalWaterControl.hpp"
 #include "actionCreators/messages/AddionalWaterTankRefillUnnecessary.hpp"
+#include "actionCreators/messages/AddionalWaterTankIsAlredyEmpty.hpp"
 
 class WaterAdditionControlModule: public CommonSystemModuleWithSettings<WaterAdditionModuleSettings> {
     private:
@@ -73,6 +75,7 @@ class WaterAdditionControlModule: public CommonSystemModuleWithSettings<WaterAdd
                     actionManager->acquire(new ConnectExternalWaterControl(
                         valveModule, "    Dolewka wody",
                         new FillAddionalWaterTankActionCreator(
+                            "    Dolewka wody",
                             settings.data().addionalWaterTankRefillTimeout,
                             waterLevelSensor,
                             valveModule,
@@ -80,6 +83,25 @@ class WaterAdditionControlModule: public CommonSystemModuleWithSettings<WaterAdd
                     )));
                 }
             } 
+        }
+
+        void startAddionalWaterTankEmptying() {
+            if (!actionManager->isUsedByCreator()) {
+                if (!waterLevelSensor->sense(addionalWaterTank, addionalWaterTankMinLevel)) {
+                    actionManager->acquire(addionalWaterTankIsAlredyEmpty());
+                } else {
+                    actionManager->acquire(new ConnectExternalWaterControl(
+                        valveModule, "Oproznianie dolewki",
+                        new EmptyAddionalWaterTankActionCreator(
+                            settings.data().addionalWaterTankEmptyingTimeout,
+                            relayModule,
+                            waterLevelSensor,
+                            valveModule,
+                            eventBus
+                        )
+                    ));
+                }
+            }
         }
 
         menuNode* getWorkModeSubmenu() {
@@ -129,13 +151,17 @@ class WaterAdditionControlModule: public CommonSystemModuleWithSettings<WaterAdd
 
             auto waterRefillTimeout = new menuField<float>(settings.data().addionalWaterTankRefillTimeout,
                 "Czas uzupel.", "m", 0.5, 90, 1, 0.5, saveSettings, exitEvent);
+                
+            auto waterEmptyingTimeout = new menuField<float>(settings.data().addionalWaterTankRefillTimeout,
+                "Czas oprozn.", "m", 0.5, 90, 1, 0.5, saveSettings, exitEvent);
 
-            auto timeoutMenuItems = new prompt*[2] {
+            auto timeoutMenuItems = new prompt*[3] {
                 waterAdditionTimeout,
-                waterRefillTimeout
+                waterRefillTimeout,
+                waterEmptyingTimeout
             };
 
-            return new menuNode("Bezpieczenstwo", 2, timeoutMenuItems);
+            return new menuNode("Bezpieczenstwo", 3, timeoutMenuItems);
         }
 
         menuNode* getFrequencySubmenu() {
@@ -202,13 +228,17 @@ class WaterAdditionControlModule: public CommonSystemModuleWithSettings<WaterAdd
             auto fillWaterTank =
                 new ActionReceiver<WaterAdditionControlModule>(this, &WaterAdditionControlModule::startAddionalWaterTankRefill);
 
-            prompt** waterAdditionActionsMenuItems = new prompt*[2] {
+            auto emptyWaterTank =
+                new ActionReceiver<WaterAdditionControlModule>(this, &WaterAdditionControlModule::startAddionalWaterTankEmptying);
+
+            prompt** waterAdditionActionsMenuItems = new prompt*[3] {
                 new prompt("Dolej wody", testWaterLevelActionCreator, enterEvent),
-                new prompt("Uzupelnij rezerwe", fillWaterTank, enterEvent)
+                new prompt("Uzupelnij rezerwe", fillWaterTank, enterEvent),
+                new prompt("Oproznij rezerwe", emptyWaterTank, enterEvent)
             };
 
             return new prompt*[1] {
-                new menuNode("Dolewka wody", 2, waterAdditionActionsMenuItems)
+                new menuNode("Dolewka wody", 3, waterAdditionActionsMenuItems)
             };
         }
         
