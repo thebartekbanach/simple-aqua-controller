@@ -7,6 +7,7 @@
 #include "../../../control/relayModule/RelayModule.hpp"
 #include "../../../control/waterLevelSensor/WaterLevelSensor.hpp"
 #include "../../../control/valves/ValveModule.hpp"
+#include "../../../control/valves/LowerThePressure.hpp"
 
 #include "../../../control/valves/DisconnectExternalWaterControl.hpp"
 #include "messages/ServoValvesControlFailture.hpp"
@@ -78,7 +79,7 @@ class ChangeWaterManuallyActionCreator: public CommonActionCreator {
             if (!valveModule->close(sewageWaterValve)) error = true;
             if (!valveModule->close(cleanWaterValve)) error = true;
             if (!valveModule->close(aquariumWaterValve)) error = true;
-            if (!valveModule->close(addionalWaterTank)) error = true;
+            if (!valveModule->close(addionalWaterTankValve)) error = true;
 
             if (error) state = ERROR;
         }
@@ -114,7 +115,10 @@ class ChangeWaterManuallyActionCreator: public CommonActionCreator {
                     return ServoValvesControlFailture(nullptr);
                 }
 
-                return DisconnectExternalWaterControl("   Podmiana wody", nullptr);
+                return new LowerThePressure(
+                    valveModule, "   Podmiana wody", 
+                    DisconnectExternalWaterControl("   Podmiana wody", nullptr)
+                );
             }
 
             if (state == ERROR) {
