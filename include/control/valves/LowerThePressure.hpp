@@ -24,8 +24,19 @@ class LowerThePressure: public CommonActionCreator {
 
         Stages stage = BEGINNING;
 
+        bool closeEveryValve() {
+            bool error = false;
+            
+            if (!valveModule->close(sewageWaterValve)) error = true;
+            if (!valveModule->close(cleanWaterValve)) error = true;
+            if (!valveModule->close(aquariumWaterValve)) error = true;
+            if (!valveModule->close(addionalWaterTankValve)) error = true;
+
+            return !error;
+        }
+
         void openValve() {
-            if (valveModule->open(sewageWaterValve)) {
+            if (closeEveryValve() && valveModule->open(sewageWaterValve)) {
                 stage = OPENING;
                 openingTimer.start(3000);
             } else stage = ERROR;
@@ -48,9 +59,9 @@ class LowerThePressure: public CommonActionCreator {
             lcd->clear();
             lcd->setCursor(0, 0);
             lcd->print(title);
-            lcd->setCursor(0, 1);
-            lcd->print("Zerowanie cisnienia");
             lcd->setCursor(0, 2);
+            lcd->print("Zerowanie cisnienia");
+            lcd->setCursor(0, 3);
             lcd->print("   w zlaczu wody");
         }
 
@@ -76,7 +87,7 @@ class LowerThePressure: public CommonActionCreator {
                     return nextTarget;
                     
                 default: // ERROR
-                    return servoValveErrorMessage(sewageWaterValve, nextTarget);
+                    return servoValveErrorMessage(unknownValve, nextTarget);
             }
 
             return this;
