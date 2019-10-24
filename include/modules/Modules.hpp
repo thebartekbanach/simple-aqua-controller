@@ -68,8 +68,8 @@ SystemModulesList* getSystemModules(navRoot* navRootDependency, TimeGuard* timeG
         feedingControlModule,
         waterChangeModule,
         waterAdditionControlModule,
-        aerationControlModule,
         lightingControlModule,
+        aerationControlModule,
         heaterControlModule,
         sterilizationControlModule,
         serviceModeModule
