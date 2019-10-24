@@ -54,8 +54,8 @@ SystemModulesList* getSystemModules(navRoot* navRootDependency, TimeGuard* timeG
     FeedingControlModule* feedingControlModule = new FeedingControlModule(relayModule);
     WaterChangeModule* waterChangeModule = new WaterChangeModule(relayModule, waterLevelSensor, valveModule);
     WaterAdditionControlModule* waterAdditionControlModule = new WaterAdditionControlModule(relayModule, waterLevelSensor, valveModule);
-    AerationControlModule* aerationControlModule = new AerationControlModule(relayModule);
     LightingControlModule* lightingControlModule = new LightingControlModule(relayModule);
+    AerationControlModule* aerationControlModule = new AerationControlModule(relayModule);
     HeaterControlModule* heaterControlModule = new HeaterControlModule(relayModule);
     SterilizationControlModule* sterilizationControlModule = new SterilizationControlModule(relayModule);
     ServiceModeModule* serviceModeModule = new ServiceModeModule(waterLevelSensor, relayModule, valveModule, navRootDependency);
