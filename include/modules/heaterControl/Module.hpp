@@ -24,6 +24,7 @@ class HeaterControlModule: public TimeScopedDeviceDriver {
             if (moduleId == HEATER_MODULE_ID) {
                 switch (eventCode) {
                     case HEATER_SAFETY_LOCK:
+                        relayModule->set(heater, OFF);
                         heaterSafetyLock = true;
                         break;
                     case HEATER_SAFETY_UNLOCK:
