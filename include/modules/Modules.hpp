@@ -45,11 +45,11 @@ SystemModulesList* getSystemModules(navRoot* navRootDependency, TimeGuard* timeG
 
     logln("Initializing valveModule")
     ValveModule* valveModule = new ValveModule(
-        (unsigned short) NUMBER_OF_VALVES,
-        (unsigned short) SERVOS_OPEN_ANGLE,
-        (unsigned short) SERVOS_CLOSE_ANGLE, 
-        (unsigned short) SERVOS_OPEN_CLOSE_TIMEOUT,
-        (unsigned short) REMOTES_DETECTION_PIN,
+        NUMBER_OF_VALVES,
+        SERVOS_OPEN_ANGLE,
+        SERVOS_CLOSE_ANGLE, 
+        SERVOS_OPEN_CLOSE_TIMEOUT,
+        REMOTES_DETECTION_PIN,
 
         // servo pwm pinout
         new unsigned short[NUMBER_OF_VALVES] {
