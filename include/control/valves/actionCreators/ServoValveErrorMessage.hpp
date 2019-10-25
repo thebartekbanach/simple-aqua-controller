@@ -4,7 +4,7 @@
 
 #include "../devices.hpp"
 
-InformationBannerActionCreator* servoValveErrorMessage(unsigned short valveId, ActionCreator* target = nullptr) {
+InformationBannerActionCreator* servoValveErrorMessage(short valveId, ActionCreator* target = nullptr) {
     char* name = nullptr;
     
     switch (valveId) {
