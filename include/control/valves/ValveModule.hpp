@@ -8,6 +8,8 @@
 #include "../../system/PreciseTimer.hpp"
 
 class ValveModule {
+    friend class ServoValvesStandbyControlModule;
+
     Servo* servoValves;
     unsigned short noOfValves;
     unsigned short* valveSteeringPins;

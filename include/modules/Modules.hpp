@@ -16,7 +16,9 @@
 #include "lightingControl/Module.hpp"
 #include "heaterControl/Module.hpp"
 #include "sterilizationControl/Module.hpp"
+#include "servoValvesStandbyControl/Module.hpp"
 #include "serviceMode/Module.hpp"
+
 
 SystemModulesList* getSystemModules(navRoot* navRootDependency, TimeGuard* timeGuard) {
     logln("Initializing system dependencies");
@@ -58,10 +60,11 @@ SystemModulesList* getSystemModules(navRoot* navRootDependency, TimeGuard* timeG
     AerationControlModule* aerationControlModule = new AerationControlModule(relayModule);
     HeaterControlModule* heaterControlModule = new HeaterControlModule(relayModule);
     SterilizationControlModule* sterilizationControlModule = new SterilizationControlModule(relayModule);
+    ServoValvesStandbyControlModule* servoValvesStandbyControlModule = new ServoValvesStandbyControlModule(valveModule);
     ServiceModeModule* serviceModeModule = new ServiceModeModule(waterLevelSensor, relayModule, valveModule, navRootDependency);
 
     
-    #define NUMBER_OF_MODULES 9
+    #define NUMBER_OF_MODULES 10
 
     SystemModule** modules = new SystemModule*[NUMBER_OF_MODULES] {
         timeSetupModule,
@@ -72,6 +75,7 @@ SystemModulesList* getSystemModules(navRoot* navRootDependency, TimeGuard* timeG
         aerationControlModule,
         heaterControlModule,
         sterilizationControlModule,
+        servoValvesStandbyControlModule,
         serviceModeModule
     };
 
