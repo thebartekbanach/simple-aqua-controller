@@ -45,9 +45,27 @@ SystemModulesList* getSystemModules(navRoot* navRootDependency, TimeGuard* timeG
 
     logln("Initializing valveModule")
     ValveModule* valveModule = new ValveModule(
-        4, 0, 180, 3000, 40,
-        new unsigned short[4] { 3, 4, 5, 6 },
-        new unsigned short[4] { 33, 35, 37, 39 }
+        (unsigned short) NUMBER_OF_VALVES,
+        (unsigned short) SERVOS_OPEN_ANGLE,
+        (unsigned short) SERVOS_CLOSE_ANGLE, 
+        (unsigned short) SERVOS_OPEN_CLOSE_TIMEOUT,
+        (unsigned short) REMOTES_DETECTION_PIN,
+
+        // servo pwm pinout
+        new unsigned short[NUMBER_OF_VALVES] {
+            AQUARIUM_WATER_VALVE_PIN,
+            ADDIONAL_WATER_TANK_VALVE_PIN,
+            CLEAN_WATER_VALVE_PIN,
+            SEWAGE_WATER_VALVE_PIN
+        },
+
+        // servo close detection pinout
+        new unsigned short[NUMBER_OF_VALVES] {
+            AQUARIUM_WATER_VALVE_CLOSE_DETECTION_PIN,
+            ADDIONAL_WATER_TANK_VALVE_CLOSE_DETECTION_PIN,
+            CLEAN_WATER_VALVE_CLOSE_DETECTION_PIN,
+            SEWAGE_WATER_VALVE_CLOSE_DETECTION_PIN
+        }
     );
 
     logln("Initializing system modules")
