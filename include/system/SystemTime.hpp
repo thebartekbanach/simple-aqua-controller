@@ -38,7 +38,7 @@ SystemTime asSystemTime(const RtcDateTime& time) {
     };
 }
 
-uint asSeconds(const SystemTime& time) {
-    uint totalMinutes = time.hour * 60 + time.minute;
+unsigned int asSeconds(const SystemTime& time) {
+    unsigned int totalMinutes = time.hour * 60 + time.minute;
     return totalMinutes * 60;
 }

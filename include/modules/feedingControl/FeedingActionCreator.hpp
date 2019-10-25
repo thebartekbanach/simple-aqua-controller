@@ -16,21 +16,21 @@ class FeedingActionCreator: public CommonActionCreator {
     private:
         Timer timer;
         GlobalEventBus* eventBus;
-        uint lastTimeToEnd = 0;
+        unsigned int lastTimeToEnd = 0;
 
-        char getEndForWord(const uint number) {
+        char getEndForWord(const unsigned int number) {
             if (number < 22) {
                 return number == 1 ? 'e'
                     : number > 1 && number < 5 ? 'y'
                     : /* number == 0 || number > 4 */ ' ';
             } else {
-                uint lastNumber = number % 10;
+                unsigned int lastNumber = number % 10;
                 return lastNumber > 1 && lastNumber < 5 ? 'y' : ' ';
             }
         }
 
         void printTimeLeftToFeedingEnd(const RtcDateTime &time) {
-            const uint minutesLeft = timer.timeToEndInMinutes(time) + 1;
+            const unsigned int minutesLeft = timer.timeToEndInMinutes(time) + 1;
 
             lcd->setCursor(6, 2);
 
@@ -44,7 +44,7 @@ class FeedingActionCreator: public CommonActionCreator {
         }
 
         void changeEndTime(const RtcDateTime& actualTime, int addValue) {
-            uint timeToEnd = timer.timeToEndInSeconds(actualTime);
+            unsigned int timeToEnd = timer.timeToEndInSeconds(actualTime);
 
             if (addValue < 0 && timeToEnd < (2 * 60)) return;
             if (addValue > 0 && timeToEnd > (59 * 60)) return;
@@ -65,7 +65,7 @@ class FeedingActionCreator: public CommonActionCreator {
         }
 
     public:
-        FeedingActionCreator(const RtcDateTime& actualTime, const uint& howLong, GlobalEventBus* eventBus):
+        FeedingActionCreator(const RtcDateTime& actualTime, const unsigned int& howLong, GlobalEventBus* eventBus):
             timer(actualTime, howLong),
             eventBus(eventBus) {}
 

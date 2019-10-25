@@ -11,7 +11,7 @@ class Timer {
             start(actualTime, howLong);
         }
 
-        Timer(const RtcDateTime& actualTime, const uint& howLong) {
+        Timer(const RtcDateTime& actualTime, const unsigned int& howLong) {
             start(actualTime, howLong);
         }
 
@@ -30,7 +30,7 @@ class Timer {
             return *this;
         }
 
-        Timer& start(const RtcDateTime& actualTime, const uint& howLong) {
+        Timer& start(const RtcDateTime& actualTime, const unsigned int& howLong) {
             endTime = new RtcDateTime(actualTime.TotalSeconds64() + howLong);
             return *this;
         }

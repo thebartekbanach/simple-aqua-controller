@@ -12,7 +12,7 @@ class GlobalEventBus;
 
 class SystemModule {
     public:
-        virtual uint getSettingsSize() { return 0; }
+        virtual unsigned int getSettingsSize() { return 0; }
         virtual void resetSettings() { }
 
         virtual prompt** getActionMenuItems() { return nullptr; }
@@ -64,7 +64,7 @@ class CommonSystemModuleWithSettings: public SystemModule {
     public:
         CommonSystemModuleWithSettings(TSettings defaultSettings): settings(defaultSettings) {}
         
-        virtual uint getSettingsSize() { return sizeof(TSettings); }
+        virtual unsigned int getSettingsSize() { return sizeof(TSettings); }
         virtual void resetSettings() { settings.resetSettings(); }
 
         void setup(const int &settingsStartAddress, const bool& isEepromInitialized, DueFlashStorage* storage, 
