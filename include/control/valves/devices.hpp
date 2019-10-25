@@ -13,7 +13,8 @@
     Servo valves name
     definitions in order
     to how valves are registered
-    in Modules.hpp file
+    in Modules.hpp file,
+    used later as a valve IDs
 */
 
 #define unknownValve (short) -1

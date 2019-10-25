@@ -26,19 +26,26 @@ SystemModulesList* getSystemModules(navRoot* navRootDependency, TimeGuard* timeG
     logln("Initializing relayModule")
     RelayModule* relayModule = new RelayModule(6,
         new unsigned short[6] { mainPumpPin,    addionalPumpPin,    aerationPin,    sterilizationPin,   lightingPin,    heaterPin },
-        new bool[6] {   HIGH,           HIGH,               HIGH,           HIGH,               LOW,            LOW }
+        new bool[6] {           HIGH,           HIGH,               HIGH,           HIGH,               LOW,            LOW }
     );
     
     logln("Initializing waterLevelSensor")
-    WaterLevelSensor* waterLevelSensor = new WaterLevelSensor((short unsigned int)2, new short unsigned int[2] { 2,  2 }, 
-        new short unsigned int*[2] {
-            new short unsigned int[2] { // aquariumWater
-                changeWaterLevelPin,
-                normalWaterLevelPin
+    WaterLevelSensor* waterLevelSensor = new WaterLevelSensor(
+        NUMBER_OF_WATER_LEVEL_SENSORS,
+        // Water level sensors pinout arrays size definition
+        new short unsigned int[NUMBER_OF_WATER_LEVEL_SENSORS] {
+            NUMBER_OF_AQUARIUM_WATER_SENSORS,
+            NUMBER_OF_ADDIONAL_WATER_TANK_SENSORS
+        }, 
+        // Pinout definition
+        new short unsigned int*[NUMBER_OF_WATER_LEVEL_SENSORS] {
+            new short unsigned int[NUMBER_OF_AQUARIUM_WATER_SENSORS] {
+                NORMAL_WATER_LEVEL_PIN,
+                CHANGE_WATER_LEVEL_PIN
             },
-            new short unsigned int[2] { // addionalWaterTank
-                addionalWaterTankMaxLevelPin,
-                addionalWaterTankMinLevelPin
+            new short unsigned int[NUMBER_OF_ADDIONAL_WATER_TANK_SENSORS] {
+                ADDIONAL_WATER_TANK_MAX_LEVEL_PIN,
+                ADDIONAL_WATER_TANK_MIN_LEVEL_PIN
             }
         }
     );
