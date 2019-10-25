@@ -58,7 +58,7 @@ SystemModulesList* getSystemModules(navRoot* navRootDependency, TimeGuard* timeG
         SERVOS_OPEN_CLOSE_TIMEOUT,
         REMOTES_DETECTION_PIN,
 
-        // servo pwm pinout
+        // Servo pwm pinout
         new unsigned short[NUMBER_OF_VALVES] {
             AQUARIUM_WATER_VALVE_PIN,
             ADDIONAL_WATER_TANK_VALVE_PIN,
@@ -66,7 +66,7 @@ SystemModulesList* getSystemModules(navRoot* navRootDependency, TimeGuard* timeG
             SEWAGE_WATER_VALVE_PIN
         },
 
-        // servo close detection pinout
+        // Servo close detection pinout
         new unsigned short[NUMBER_OF_VALVES] {
             AQUARIUM_WATER_VALVE_CLOSE_DETECTION_PIN,
             ADDIONAL_WATER_TANK_VALVE_CLOSE_DETECTION_PIN,
