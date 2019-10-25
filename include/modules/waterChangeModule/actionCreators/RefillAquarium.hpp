@@ -6,15 +6,16 @@
 #include "../../../control/relayModule/RelayModule.hpp"
 
 #include "../../../control/valves/ValveModule.hpp"
-#include "../../../control/valves/ServoValveErrorMessage.hpp"
-#include "../../../control/valves/LowerThePressure.hpp"
 #include "../../../control/valves/utility.hpp"
+
+#include "../../../control/valves/actionCreators/ServoValveErrorMessage.hpp"
+#include "../../../control/valves/actionCreators/LowerThePressure.hpp"
+#include "../../../control/valves/actionCreators/DisconnectExternalWaterControl.hpp"
 
 #include "../Settings.hpp"
 
 #include "RefillAddionalWaterTank.hpp"
 
-#include "../../../control/valves/DisconnectExternalWaterControl.hpp"
 #include "messages/AquariumRefillTimeout.hpp"
 
 class RefillAquariumActionCreator: public CommonActionCreator {

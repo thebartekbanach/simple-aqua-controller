@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ValveModule.hpp"
-#include "ServoValveErrorMessage.hpp"
+#include "actionCreators/ServoValveErrorMessage.hpp"
 #include "../../system/ActionCreator.hpp"
 
 ActionCreator* openValvesSynchronusly(

@@ -8,6 +8,8 @@
 #include "../../control/waterLevelSensor/WaterLevelSensor.hpp"
 #include "../../control/valves/ValveModule.hpp"
 
+#include "../../control/valves/actionCreators/ConnectExternalWaterControl.hpp"
+
 #include "../../menu/TurnStateToggle.hpp"
 #include "../../menu/TimeField.hpp"
 
@@ -25,7 +27,6 @@
 #include "actionCreators/FillAddionalWaterTank.hpp"
 #include "actionCreators/EmptyAddionalWaterTank.hpp"
 
-#include "../../control/valves/ConnectExternalWaterControl.hpp"
 #include "actionCreators/messages/AddionalWaterTankRefillUnnecessary.hpp"
 #include "actionCreators/messages/AddionalWaterTankIsAlredyEmpty.hpp"
 

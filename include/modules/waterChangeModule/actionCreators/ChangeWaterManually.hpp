@@ -8,11 +8,12 @@
 #include "../../../control/relayModule/RelayModule.hpp"
 #include "../../../control/waterLevelSensor/WaterLevelSensor.hpp"
 #include "../../../control/valves/ValveModule.hpp"
-#include "../../../control/valves/LowerThePressure.hpp"
+
+#include "../../../control/valves/actionCreators/LowerThePressure.hpp"
+#include "../../../control/valves/actionCreators/DisconnectExternalWaterControl.hpp"
 
 #include "../../heaterControl/Events.hpp"
 
-#include "../../../control/valves/DisconnectExternalWaterControl.hpp"
 #include "messages/ServoValvesControlFailture.hpp"
 
 class ChangeWaterManuallyActionCreator: public CommonActionCreator {

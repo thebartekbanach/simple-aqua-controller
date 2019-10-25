@@ -12,7 +12,7 @@
 #include "actionCreators/RemoveWater.hpp"
 #include "actionCreators/ChangeWaterManually.hpp"
 
-#include "../../control/valves/ConnectExternalWaterControl.hpp"
+#include "../../control/valves/actionCreators/ConnectExternalWaterControl.hpp"
 
 class WaterChangeModule: public CommonSystemModuleWithSettings<WaterChangeModuleSettings> {
     private:

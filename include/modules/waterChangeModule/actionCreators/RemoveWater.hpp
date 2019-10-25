@@ -8,8 +8,10 @@
 #include "../../../control/relayModule/RelayModule.hpp"
 
 #include "../../../control/valves/ValveModule.hpp"
-#include "../../../control/valves/ServoValveErrorMessage.hpp"
 #include "../../../control/valves/utility.hpp"
+
+#include "../../../control/valves/actionCreators/DisconnectExternalWaterControl.hpp"
+#include "../../../control/valves/actionCreators/ServoValveErrorMessage.hpp"
 
 #include "../../heaterControl/Events.hpp"
 
@@ -17,7 +19,6 @@
 
 #include "RefillAquarium.hpp"
 
-#include "../../../control/valves/DisconnectExternalWaterControl.hpp"
 #include "messages/AquariumWaterOutletTimeout.hpp"
 
 class RemoveWaterActionCreator: public CommonActionCreator {

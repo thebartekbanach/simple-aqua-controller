@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../../utils/informationBanner/InformationBannerActionCreator.hpp"
+#include "../../../utils/informationBanner/InformationBannerActionCreator.hpp"
 
-#include "devices.hpp"
+#include "../devices.hpp"
 
 InformationBannerActionCreator* servoValveErrorMessage(unsigned short valveId, ActionCreator* target = nullptr) {
     char* name = nullptr;
