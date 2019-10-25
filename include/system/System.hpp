@@ -22,7 +22,7 @@ class System {
     RtcDS1302<ThreeWire>* rtc;
 
     void restoreDefaultSettings() {
-        for (ushort i = 0; i < modules->length; ++i) {
+        for (unsigned short i = 0; i < modules->length; ++i) {
             modules->items[i]->resetSettings();
         }
     }
@@ -43,7 +43,7 @@ class System {
 
             int settingsAddress = 8; // https://github.com/sebnil/DueFlashStorage/blob/master/src/DueFlashStorage.cpp#L63
 
-            for (ushort i = 0; i < modules->length; ++i) {
+            for (unsigned short i = 0; i < modules->length; ++i) {
                 modules->items[i]->setup(settingsAddress, isEepromInitialized, storage, eventBus, *actionManager, *rtc);
                 settingsAddress += modules->items[i]->getSettingsSize();
 
@@ -53,19 +53,19 @@ class System {
         }
 
         MenuItemsResult<prompt> collectActions() {
-            ushort lengthOfActions = 0;
+            unsigned short lengthOfActions = 0;
 
-            for (ushort i = 0; i < modules->length; ++i) {
+            for (unsigned short i = 0; i < modules->length; ++i) {
                 lengthOfActions += modules->items[i]->getActionMenuItemsLength();
             }
             
             prompt** items = new prompt*[lengthOfActions];
 
-            for (ushort i = 0, total = 0; i < modules->length; ++i) {
+            for (unsigned short i = 0, total = 0; i < modules->length; ++i) {
                 prompt** actions = modules->items[i]->getActionMenuItems();
-                ushort actionsLength = modules->items[i]->getActionMenuItemsLength();
+                unsigned short actionsLength = modules->items[i]->getActionMenuItemsLength();
 
-                for (ushort j = 0; j < actionsLength; ++j, ++total) {
+                for (unsigned short j = 0; j < actionsLength; ++j, ++total) {
                     items[total] = actions[j];
                 }
             }
@@ -74,19 +74,19 @@ class System {
         }
 
         MenuItemsResult<prompt> collectSettings() {
-            ushort lengthOfSettings = 0;
+            unsigned short lengthOfSettings = 0;
 
-            for (ushort i = 0; i < modules->length; ++i) {
+            for (unsigned short i = 0; i < modules->length; ++i) {
                 lengthOfSettings += modules->items[i]->getSettingsMenuItemsLength();
             }
             
             prompt** items = new prompt*[lengthOfSettings + 1];
 
-            for (ushort i = 0, total = 0; i < modules->length; ++i) {
+            for (unsigned short i = 0, total = 0; i < modules->length; ++i) {
                 menuNode** settings = modules->items[i]->getSettingsMenuItems();
-                ushort settingsLength = modules->items[i]->getSettingsMenuItemsLength();
+                unsigned short settingsLength = modules->items[i]->getSettingsMenuItemsLength();
 
-                for (ushort j = 0; j < settingsLength; ++j, ++total) {
+                for (unsigned short j = 0; j < settingsLength; ++j, ++total) {
                     items[total] = settings[j];
                 }
             }
@@ -99,7 +99,7 @@ class System {
         }
 
         void update(const RtcDateTime &time) {
-            for (ushort i = 0; i < modules->length; ++i) {
+            for (unsigned short i = 0; i < modules->length; ++i) {
                 modules->items[i]->update(time);
             }
         }

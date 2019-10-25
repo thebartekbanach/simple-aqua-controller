@@ -18,8 +18,8 @@ class SystemModule {
         virtual prompt** getActionMenuItems() { return nullptr; }
         virtual menuNode** getSettingsMenuItems() { return nullptr; }
 
-        virtual ushort getActionMenuItemsLength() { return 0; }
-        virtual ushort getSettingsMenuItemsLength() { return 0; }
+        virtual unsigned short getActionMenuItemsLength() { return 0; }
+        virtual unsigned short getSettingsMenuItemsLength() { return 0; }
 
         virtual void setup(const int &settingsStartAddress, const bool& isEepromInitialized, DueFlashStorage* storage, 
                            GlobalEventBus& eventBus, ActionManager& actionManager, RtcDS1302<ThreeWire>& rtc) { }

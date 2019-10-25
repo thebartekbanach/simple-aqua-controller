@@ -25,7 +25,7 @@ SystemModulesList* getSystemModules(navRoot* navRootDependency, TimeGuard* timeG
 
     logln("Initializing relayModule")
     RelayModule* relayModule = new RelayModule(6,
-        new ushort[6] { mainPumpPin,    addionalPumpPin,    aerationPin,    sterilizationPin,   lightingPin,    heaterPin },
+        new unsigned short[6] { mainPumpPin,    addionalPumpPin,    aerationPin,    sterilizationPin,   lightingPin,    heaterPin },
         new bool[6] {   HIGH,           HIGH,               HIGH,           HIGH,               LOW,            LOW }
     );
     

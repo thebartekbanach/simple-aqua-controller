@@ -37,7 +37,7 @@ class FeedingControlModule: public CommonSystemModuleWithSettings<FeedingControl
                 relayModule->set(mainPump, ON);
             }
 
-        ushort getActionMenuItemsLength() { return 1; }
+        unsigned short getActionMenuItemsLength() { return 1; }
 
         prompt** getActionMenuItems() {
             prompt* feedingPrompt = new prompt("Tryb karmienia",
@@ -49,10 +49,10 @@ class FeedingControlModule: public CommonSystemModuleWithSettings<FeedingControl
             };
         }
 
-        ushort getSettingsMenuItemsLength() { return 1; }
+        unsigned short getSettingsMenuItemsLength() { return 1; }
 
         menuNode** getSettingsMenuItems() {
-            prompt* feedingLength = new menuField<ushort>(
+            prompt* feedingLength = new menuField<unsigned short>(
                 settings.data().feedingLength,
                 "Czas karmienia", "m", 5, 60, 1, 0,
                 ActionReceiver<typeof(settings)>::forCb(&settings, 

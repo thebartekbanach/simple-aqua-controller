@@ -21,10 +21,10 @@ class WaterLevelCheckingActionCreator: public CommonActionCreator {
     WaterLevelSensor* waterLevelSensor;
     GlobalEventBus* eventBus;
 
-    ushort numOfAllChecks = 0;
-    ushort numOfUnsuccessfullChceks = 0;
+    unsigned short numOfAllChecks = 0;
+    unsigned short numOfUnsuccessfullChceks = 0;
 
-    ushort displayedNumOfAllChecks = 0;
+    unsigned short displayedNumOfAllChecks = 0;
 
     PreciseTimer checkTimer;
 

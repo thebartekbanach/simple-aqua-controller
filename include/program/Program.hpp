@@ -45,7 +45,7 @@ class Program {
 
     TimeGuard timeGuard;
 
-    void buildMenu(Menu::prompt** actionItems, ushort actionsLength, Menu::prompt** settingItems, ushort settingsSize) {
+    void buildMenu(Menu::prompt** actionItems, unsigned short actionsLength, Menu::prompt** settingItems, unsigned short settingsSize) {
         menuNode* settingsMenu = new menuNode("Ustawienia", settingsSize, (prompt**)settingItems, noAction, noEvent, wrapStyle);
 
         prompt** mainMenuItems = combineMenuParts(actionItems, actionsLength, (prompt*)settingsMenu);

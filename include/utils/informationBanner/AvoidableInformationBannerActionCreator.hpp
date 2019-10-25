@@ -8,7 +8,7 @@
 
 class AvoidableInformationBannerActionCreator: public InformationBannerActionCreator {
     public:
-        AvoidableInformationBannerActionCreator(ActionCreator* nextTarget, ushort showTimeInSeconds, bool canSkip,
+        AvoidableInformationBannerActionCreator(ActionCreator* nextTarget, unsigned short showTimeInSeconds, bool canSkip,
             String firstLine,
             String secondLine = "",
             String thirdLine = "",

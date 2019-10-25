@@ -4,12 +4,12 @@
 #define changeWaterLevel 0
 #define normalWaterLevel 1
 
-#define changeWaterLevelPin (ushort) 28
-#define normalWaterLevelPin (ushort) 26
+#define changeWaterLevelPin (unsigned short) 28
+#define normalWaterLevelPin (unsigned short) 26
 
 #define addionalWaterTank 1
 #define addionalWaterTankMaxLevel 0
 #define addionalWaterTankMinLevel 1
 
-#define addionalWaterTankMaxLevelPin (ushort) 27
-#define addionalWaterTankMinLevelPin (ushort) 29
+#define addionalWaterTankMaxLevelPin (unsigned short) 27
+#define addionalWaterTankMinLevelPin (unsigned short) 29

@@ -4,8 +4,8 @@
 
 struct SystemModulesList {
     SystemModule **items;
-    ushort length;
+    unsigned short length;
 
-    SystemModulesList(SystemModule* items[], const ushort &length):
+    SystemModulesList(SystemModule* items[], const unsigned short &length):
         items(items), length(length) {}
 };

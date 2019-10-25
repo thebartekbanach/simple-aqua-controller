@@ -128,7 +128,7 @@ class WaterAdditionControlModule: public CommonSystemModuleWithSettings<WaterAdd
             auto manualWorkingModeMenu = new menuNode("Ustawienia zakresu", 2, manualWorkingModeSettingsItems);
 
 
-            auto timeShiftField = new menuField<ushort>(
+            auto timeShiftField = new menuField<unsigned short>(
                 settings.data().workTimeShift, "Przesuniecie", "m", 0, 120, 1, 0, saveSettings
             );
 
@@ -171,16 +171,16 @@ class WaterAdditionControlModule: public CommonSystemModuleWithSettings<WaterAdd
             auto saveWorkTimeSettings =
                 new ActionReceiver<WaterAdditionControlModule>(this, &WaterAdditionControlModule::workTimesChanged);
 
-            auto breaksBeetweenChecks = new menuField<ushort>(settings.data().breaksBetweenChecks,
+            auto breaksBeetweenChecks = new menuField<unsigned short>(settings.data().breaksBetweenChecks,
                 "Przerwy", "m", 5, 24 * 60, 10, 1, saveWorkTimeSettings, exitEvent);
 
-            auto numberOfChecks = new menuField<ushort>(settings.data().numberOfChecks,
+            auto numberOfChecks = new menuField<unsigned short>(settings.data().numberOfChecks,
                 "Ilosc probek", "", 1, 20, 1, 0, saveSettings, exitEvent);
 
-            auto checkingFrequency = new menuField<ushort>(settings.data().checkingFrequency,
+            auto checkingFrequency = new menuField<unsigned short>(settings.data().checkingFrequency,
                 "Czestotliwosc", "ms", 100, 5000, 100, 50, saveSettings, exitEvent);
 
-            auto percentOfUnsuccessfullAttempts = new menuField<ushort>(settings.data().minNumberOfUnsuccessfullAttempts,
+            auto percentOfUnsuccessfullAttempts = new menuField<unsigned short>(settings.data().minNumberOfUnsuccessfullAttempts,
                 "Min nieudanych", "%", 1, 99, 1, 0, saveSettings, exitEvent);
 
 
@@ -203,7 +203,7 @@ class WaterAdditionControlModule: public CommonSystemModuleWithSettings<WaterAdd
                 WaterAdditionModuleSettings()
             ) {}
 
-        ushort getSettingsMenuItemsLength() { return 1; }
+        unsigned short getSettingsMenuItemsLength() { return 1; }
 
         menuNode** getSettingsMenuItems() {
             prompt** submenus = new prompt*[3] {
@@ -219,7 +219,7 @@ class WaterAdditionControlModule: public CommonSystemModuleWithSettings<WaterAdd
             };
         }
 
-        ushort getActionMenuItemsLength() { return 1; }
+        unsigned short getActionMenuItemsLength() { return 1; }
 
         prompt** getActionMenuItems() {
             auto testWaterLevelActionCreator =

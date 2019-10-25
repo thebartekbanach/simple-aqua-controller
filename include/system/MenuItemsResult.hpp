@@ -4,9 +4,9 @@
 
 template<class TResult>
 struct MenuItemsResult {
-    MenuItemsResult(TResult** items, const ushort length):
+    MenuItemsResult(TResult** items, const unsigned short length):
         items(items), length(length) {}
         
     TResult** items;
-    ushort length;
+    unsigned short length;
 };

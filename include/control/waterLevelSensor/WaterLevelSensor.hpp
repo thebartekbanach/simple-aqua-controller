@@ -11,8 +11,8 @@ class WaterLevelSensor {
         short unsigned int** devicesPins;
 
         void allToGnd() {
-            for (ushort device = 0; device < numberOfDevices; ++device) {
-                for (ushort pin = 0; pin < numberOfDevicePins[device]; ++pin) {
+            for (unsigned short device = 0; device < numberOfDevices; ++device) {
+                for (unsigned short pin = 0; pin < numberOfDevicePins[device]; ++pin) {
                     pinMode(devicesPins[device][pin], OUTPUT);
                     digitalWrite(devicesPins[device][pin], LOW);
                 }
@@ -27,7 +27,7 @@ class WaterLevelSensor {
                 allToGnd();
             }
 
-        bool sense(const ushort& deviceId, const ushort& level) {
+        bool sense(const unsigned short& deviceId, const unsigned short& level) {
             if (deviceId > numberOfDevices) return false;
             if (level > numberOfDevicePins[deviceId]) return false;
             

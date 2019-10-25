@@ -61,7 +61,7 @@ class WaterChangeModule: public CommonSystemModuleWithSettings<WaterChangeModule
                     WaterChangeModuleSettings()
                 ) {}
 
-        ushort getSettingsMenuItemsLength() { return 1; }
+        unsigned short getSettingsMenuItemsLength() { return 1; }
 
         menuNode** getSettingsMenuItems() {
             auto saveSettingsActionReceiver = new ActionReceiver<WaterChangeModule>(
@@ -98,7 +98,7 @@ class WaterChangeModule: public CommonSystemModuleWithSettings<WaterChangeModule
             };
         }
 
-        ushort getActionMenuItemsLength() { return 1; }
+        unsigned short getActionMenuItemsLength() { return 1; }
 
         prompt** getActionMenuItems() {
             auto autoWaterChangeActionReceiver = new ActionReceiver<WaterChangeModule>(

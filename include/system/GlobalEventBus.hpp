@@ -9,7 +9,7 @@ class GlobalEventBus {
             modules(modules) {}
         
         void send(int moduleId, int eventCode, void* data = nullptr) {
-            for (ushort i = 0; i < modules->length; ++i) {
+            for (unsigned short i = 0; i < modules->length; ++i) {
                 modules->items[i]->onEvent(moduleId, eventCode, data);
             }
         }

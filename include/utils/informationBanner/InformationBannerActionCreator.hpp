@@ -12,11 +12,11 @@ class InformationBannerActionCreator: public CommonActionCreator {
         bool canTimeout;
         
         bool initialized = false;
-        ushort showTimeInSeconds;
+        unsigned short showTimeInSeconds;
         Timer end;
 
     public:
-        InformationBannerActionCreator(ActionCreator* nextTarget, ushort showTimeInSeconds, bool canSkip,
+        InformationBannerActionCreator(ActionCreator* nextTarget, unsigned short showTimeInSeconds, bool canSkip,
             String firstLine,
             String secondLine = "",
             String thirdLine = "",
@@ -25,7 +25,7 @@ class InformationBannerActionCreator: public CommonActionCreator {
                 firstLine, secondLine, thirdLine, fourthLine
             }) {}
 
-        InformationBannerActionCreator(ActionCreator* nextTarget, ushort showTimeInSeconds, bool canSkip, String* text):
+        InformationBannerActionCreator(ActionCreator* nextTarget, unsigned short showTimeInSeconds, bool canSkip, String* text):
             target(nextTarget), showTimeInSeconds(showTimeInSeconds), canSkip(canSkip), text(text), canTimeout(showTimeInSeconds != 0) {
                 if (!canSkip && !canTimeout) canSkip = true;
             }
@@ -37,7 +37,7 @@ class InformationBannerActionCreator: public CommonActionCreator {
         void setup() {
             lcd->clear();
             
-            for (ushort i = 0; i < 4; ++i) {
+            for (unsigned short i = 0; i < 4; ++i) {
                 lcd->setCursor(0, i);
                 lcd->write(text[i].c_str());
             }

@@ -11,11 +11,11 @@ class JoystickController {
     private:
         const byte xPin;
         const byte yPin;
-        const ushort moveDelayTime;
+        const unsigned short moveDelayTime;
 
     public:
         JoystickController(const byte &xPin, const byte &yPin,
-                        const ushort &moveDelayTime = (ushort)0):
+                        const unsigned short &moveDelayTime = (unsigned short)0):
             xPin(xPin), 
             yPin(yPin),
             moveDelayTime(moveDelayTime) {

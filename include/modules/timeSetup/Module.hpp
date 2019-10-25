@@ -59,7 +59,7 @@ class TimeSetupModule: public CommonSystemModuleWithSettings<TimeSetupModuleSett
             };
         }
 
-        ushort getSettingsMenuItemsLength() { return 1; }
+        unsigned short getSettingsMenuItemsLength() { return 1; }
 
         void update(const RtcDateTime &time) { 
             if (isInEditMode || serviceModeActive) return;

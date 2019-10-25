@@ -4,12 +4,12 @@
 
 class WaterLevelSensorDataStream {
     private:
-        const ushort dataSetSize;
-        ushort actualIndex = 0;
+        const unsigned short dataSetSize;
+        unsigned short actualIndex = 0;
         bool* data;
 
     public:
-        WaterLevelSensorDataStream(const ushort& dataSetSize):
+        WaterLevelSensorDataStream(const unsigned short& dataSetSize):
             dataSetSize(dataSetSize),
             data(new bool[dataSetSize] { 0 }) {}
         
@@ -18,9 +18,9 @@ class WaterLevelSensorDataStream {
         }
 
         float getAverage() {
-            ushort successfullChecks = 0;
+            unsigned short successfullChecks = 0;
 
-            for (ushort i = 0; i < dataSetSize; ++i) {
+            for (unsigned short i = 0; i < dataSetSize; ++i) {
                 successfullChecks += data[i];
             }
 
@@ -31,7 +31,7 @@ class WaterLevelSensorDataStream {
             return 1 - getAverage();
         }
 
-        float senseAndGetAverage(WaterLevelSensor* sensor, const ushort& deviceId, const ushort& level) {
+        float senseAndGetAverage(WaterLevelSensor* sensor, const unsigned short& deviceId, const unsigned short& level) {
             bool result = sensor->sense(deviceId, level);
 
             data[actualIndex] = result;
@@ -45,7 +45,7 @@ class WaterLevelSensorDataStream {
             return getAverage();
         }
 
-        float senseAndGetUnsuccessfullAverage(WaterLevelSensor* sensor, const ushort& deviceId, const ushort& level) {
+        float senseAndGetUnsuccessfullAverage(WaterLevelSensor* sensor, const unsigned short& deviceId, const unsigned short& level) {
             return 1 - senseAndGetAverage(sensor, deviceId, level);
         }
 };

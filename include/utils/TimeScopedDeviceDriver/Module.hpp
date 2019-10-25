@@ -24,16 +24,16 @@ class TimeScopedDeviceDriver: public CommonSystemModuleWithSettings<TimeScopedDe
         const int moduleId;
 
         RelayModule* relayModule;
-        const ushort deviceId;
+        const unsigned short deviceId;
 
         DayCycle actualCycle = UNSET;
 
-        TimeScopedDeviceDriver(char* name, const int moduleId, RelayModule* relayModule, const ushort deviceId, const TimeScopedDeviceDriverSettings defaultSettings):
+        TimeScopedDeviceDriver(char* name, const int moduleId, RelayModule* relayModule, const unsigned short deviceId, const TimeScopedDeviceDriverSettings defaultSettings):
             CommonSystemModuleWithSettings<TimeScopedDeviceDriverSettings>(defaultSettings),
             name(name), moduleId(moduleId), relayModule(relayModule), deviceId(deviceId) {}
 
     public:
-        ushort getSettingsMenuItemsLength() { return 1; }
+        unsigned short getSettingsMenuItemsLength() { return 1; }
 
         menuNode** getSettingsMenuItems() {
             ActionReceiver<SystemModuleSettings<TimeScopedDeviceDriverSettings>>* settingsUpdated =

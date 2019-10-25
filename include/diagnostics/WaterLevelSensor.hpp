@@ -13,7 +13,7 @@
     void setup() {
         wls = new WaterLevelSensor((short unsigned int)2, new short unsigned int[2] { 2,  2 }, 
             new short unsigned int*[2] {
-                new ushort[2] {
+                new unsigned short[2] {
                     changeWaterLevelPin,
                     normalWaterLevelPin
                 },

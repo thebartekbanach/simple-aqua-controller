@@ -218,7 +218,7 @@ class ServiceModeModule: public CommonSystemModule {
                 valveModule(valveModule),
                 nav(nav) {}
 
-        ushort getSettingsMenuItemsLength() { return 1; }
+        unsigned short getSettingsMenuItemsLength() { return 1; }
 
         menuNode** getSettingsMenuItems() {
             auto inOutEvent = new ExactActionReceiver<ServiceModeModule>(this, &ServiceModeModule::menuInOut);
