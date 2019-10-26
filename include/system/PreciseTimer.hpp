@@ -17,6 +17,10 @@ class PreciseTimer {
         void start(unsigned long howLongMs) {
             fireTime = millis();
             endTime = fireTime + howLongMs;
+
+            if (endTime < fireTime) {
+                fireTime = 0;
+            }
         }
 
         unsigned long timeLeft() {
