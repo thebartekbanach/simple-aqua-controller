@@ -6,8 +6,6 @@
 
 #include "../../control/screen/customCharset.hpp"
 
-#include "../../utils/log.hpp"
-
 #include "../heaterControl/Events.hpp"
 
 #include "Events.hpp"
