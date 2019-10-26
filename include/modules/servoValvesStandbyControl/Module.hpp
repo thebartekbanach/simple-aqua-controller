@@ -29,13 +29,13 @@ class ServoValvesStandbyControlModule: public CommonSystemModuleWithSettings<Ser
             );
 
             prompt* autoDetachEnabled = YesNoToggle(
-                "Auto odlaczanie: ",
+                "Auto odlaczan.: ",
                 settings.data().standbyControlActive,
                 saveSettings
             );
 
             prompt* autoDetachTimeout = new menuField<unsigned short>(settings.data().standbyTimeout,
-                "A. odl. timeout: ", "s", 5, 60, 1, 0, saveSettings
+                "A. odl. tout:", "s", 5, 60, 1, 0, saveSettings
             );
 
             prompt** settingItems = new prompt*[2] {
