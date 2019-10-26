@@ -5,6 +5,7 @@
 #include <menuIO/PCF8574Out.h>
 #include "lcd.hpp"
 
+// ArduinoMenu library MAX_DEPTH definition
 #define MAX_DEPTH 6
 
 chainStream<0> menuInput(nullptr);
