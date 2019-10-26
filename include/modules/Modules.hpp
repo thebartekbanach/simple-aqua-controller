@@ -12,8 +12,9 @@
 #include "feedingControl/Module.hpp"
 #include "waterChangeModule/Module.hpp"
 #include "waterAdditionControl/Module.hpp"
-#include "aerationControl/Module.hpp"
 #include "lightingControl/Module.hpp"
+#include "heatingLampControl/Module.hpp"
+#include "aerationControl/Module.hpp"
 #include "heaterControl/Module.hpp"
 #include "sterilizationControl/Module.hpp"
 #include "servoValvesStandbyControl/Module.hpp"
@@ -24,9 +25,9 @@ SystemModulesList* getSystemModules(navRoot* navRootDependency, TimeGuard* timeG
     logln("Initializing system dependencies");
 
     logln("Initializing relayModule")
-    RelayModule* relayModule = new RelayModule(6,
-        new unsigned short[6] { mainPumpPin,    addionalPumpPin,    aerationPin,    sterilizationPin,   lightingPin,    heaterPin },
-        new bool[6] {           HIGH,           HIGH,               HIGH,           HIGH,               LOW,            LOW }
+    RelayModule* relayModule = new RelayModule(NUMBER_OF_RELAYS,
+        new unsigned short[NUMBER_OF_RELAYS] { MAIN_PUMP_PIN,      ADDIONAL_PUMP_PIN,      AERATION_PIN,       STERILIZATION_PIN,      HEATING_LAMP_PIN,   LIGHTING_PIN,       HEATER_PIN },
+        new bool[NUMBER_OF_RELAYS] {           HIGH,               HIGH,                   HIGH,               HIGH,                   HIGH,               LOW,                LOW }
     );
     
     logln("Initializing waterLevelSensor")
@@ -82,6 +83,7 @@ SystemModulesList* getSystemModules(navRoot* navRootDependency, TimeGuard* timeG
     WaterChangeModule* waterChangeModule = new WaterChangeModule(relayModule, waterLevelSensor, valveModule);
     WaterAdditionControlModule* waterAdditionControlModule = new WaterAdditionControlModule(relayModule, waterLevelSensor, valveModule);
     LightingControlModule* lightingControlModule = new LightingControlModule(relayModule);
+    HeatingLampControlModule* heatingLampControlModule = new HeatingLampControlModule(relayModule);
     AerationControlModule* aerationControlModule = new AerationControlModule(relayModule);
     HeaterControlModule* heaterControlModule = new HeaterControlModule(relayModule);
     SterilizationControlModule* sterilizationControlModule = new SterilizationControlModule(relayModule);
@@ -89,7 +91,7 @@ SystemModulesList* getSystemModules(navRoot* navRootDependency, TimeGuard* timeG
     ServiceModeModule* serviceModeModule = new ServiceModeModule(waterLevelSensor, relayModule, valveModule, navRootDependency);
 
     
-    #define NUMBER_OF_MODULES 10
+    #define NUMBER_OF_MODULES 11
 
     SystemModule** modules = new SystemModule*[NUMBER_OF_MODULES] {
         timeSetupModule,
@@ -97,6 +99,7 @@ SystemModulesList* getSystemModules(navRoot* navRootDependency, TimeGuard* timeG
         waterChangeModule,
         waterAdditionControlModule,
         lightingControlModule,
+        heatingLampControlModule,
         aerationControlModule,
         heaterControlModule,
         sterilizationControlModule,
