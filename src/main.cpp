@@ -5,6 +5,7 @@
 
 #include "diagnostics/WaterLevelSensor.hpp"
 #include "diagnostics/I2cScanner.hpp"
+#include "diagnostics/Servos.hpp"
 
 #ifndef DIAGNOSTICS_MODE
 
