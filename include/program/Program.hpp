@@ -11,6 +11,8 @@
 #include <RtcDS1302.h>
 #include <DueFlashStorage.h>
 
+#include "../control/rtc/configuration.hpp"
+
 #include "../control/joystick/JoystickController.hpp"
 #include "../control/joystick/JoystickBind.hpp"
 
@@ -72,7 +74,7 @@ class Program {
         Program():
             menuInput(nullptr),
             joystick(A0, A1, 150),
-            rtcWiring(23, 2, 22),
+            rtcWiring(RTC_IO_DAT_PIN, RTC_SCLK_PIN, RTC_CE_PIN),
             rtc(rtcWiring),
             timeGuard(&rtc),
             nav(*(menuNode*)nullptr, nav_cursors, MAX_DEPTH, menuInput, menuOutput),
