@@ -7,7 +7,7 @@
 #define NUMBER_OF_VALVES (unsigned short) 4
 #define SERVOS_OPEN_ANGLE (unsigned short) 0
 #define SERVOS_CLOSE_ANGLE (unsigned short) 180
-#define SERVOS_OPEN_CLOSE_TIMEOUT (unsigned short) 3000
+#define SERVOS_OPEN_CLOSE_TIMEOUT (unsigned short) 1500
 
 /*
     Servo valves name
@@ -31,6 +31,11 @@
 #define ADDIONAL_WATER_TANK_VALVE_PIN (unsigned short) 4
 #define CLEAN_WATER_VALVE_PIN (unsigned short) 5
 #define SEWAGE_WATER_VALVE_PIN (unsigned short) 6
+
+/*
+    bool areRemotesAvailable() servovalves driver remotes detection pin
+*/
+
 #define REMOTES_DETECTION_PIN (unsigned short) 40
 
 /*
