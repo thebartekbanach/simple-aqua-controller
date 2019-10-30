@@ -6,7 +6,7 @@
 
 #include "../control/relayModule/RelayModule.hpp"
 #include "../control/waterLevelSensor/WaterLevelSensor.hpp"
-#include "../control/valves/ValveModule.hpp"
+#include "../control/valves/ValveModuleUsingInternalPwm.hpp"
 
 #include "timeSetup/Module.hpp"
 #include "feedingControl/Module.hpp"
@@ -52,7 +52,7 @@ SystemModulesList* getSystemModules(navRoot* navRootDependency, TimeGuard* timeG
     );
 
     logln("Initializing valveModule")
-    ValveModule* valveModule = new ValveModule(
+    ValveModuleUsingInternalPwm* valveModule = new ValveModuleUsingInternalPwm(
         NUMBER_OF_VALVES,
         SERVOS_OPEN_ANGLE,
         SERVOS_CLOSE_ANGLE, 

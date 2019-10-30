@@ -5,17 +5,17 @@
 
 #include "../../menu/YesNoToggle.hpp"
 
-#include "../../control/valves/ValveModule.hpp"
+#include "../../control/valves/ValveModuleUsingInternalPwm.hpp"
 
 #include "Settings.hpp"
 
 class ServoValvesStandbyControlModule: public CommonSystemModuleWithSettings<ServoValvesStandbyControlModuleSettings> {
     private:
-        ValveModule* valveModule;
+        ValveModuleUsingInternalPwm* valveModule;
         unsigned long* attachTimes;
 
     public:
-        ServoValvesStandbyControlModule(ValveModule* valveModule):
+        ServoValvesStandbyControlModule(ValveModuleUsingInternalPwm* valveModule):
             valveModule(valveModule),
             CommonSystemModuleWithSettings(ServoValvesStandbyControlModuleSettings()) {
                 attachTimes = new unsigned long[valveModule->noOfValves] { 0 };
