@@ -13,7 +13,7 @@
 
 Program* program;
 
-void setup () 
+void setup() 
 {
     DEBUG_SERIAL_OUTPUT.begin(115200);
 
@@ -33,7 +33,7 @@ void watchdogSetup() {
     // watchdog enable: https://forum.arduino.cc/index.php?topic=350058.msg2416416#msg2416416
 }
 
-void loop () 
+void loop() 
 {
     watchdogReset();
     program->update();
