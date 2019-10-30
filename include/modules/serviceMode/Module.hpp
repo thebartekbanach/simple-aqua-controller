@@ -19,6 +19,36 @@ class ServiceModeModule: public CommonSystemModule {
         RelayModule* relayModule;
         ValveModule* valveModule;
         navRoot* nav;
+
+        bool serviceModeEntered = false;
+        bool sensorsSubmenuEntered = false;
+        bool valvesSubmenuEntered = false;
+
+        Timer sensorsUpdateTimer;
+
+        bool normalWaterLevelDetected = false;
+        bool changeWaterLevelDetected = false;
+        bool addionalWaterTankMaxLevelDetected = false;
+        bool addionalWaterTankMinLevelDetected = false;
+
+        bool isAquariumWaterValveClosed = false;
+        bool isAddionalWaterTankValveClosed = false;
+        bool isCleanWaterValveClosed = false;
+        bool isSewageWaterValveClosed = false;
+
+        bool isAquariumWaterValveActivated = false;
+        bool isAddionalWaterTankValveActivated = false;
+        bool isCleanWaterValveActivated = false;
+        bool isSewageWaterValveActivated = false;
+        bool areRemotesAvailable = false;
+
+        bool mainPumpActivated = false;
+        bool addionalPumpActivated = false;
+        bool aerationActivated = false;
+        bool sterilizationActivated = false;
+        bool lightingActivated = false;
+        bool heatingLampActivated = false;
+        bool heaterActivated = false;
         
         void menuInOut(eventMask event, navNode& nav, prompt &item) {
             if (event == enterEvent) {
@@ -36,6 +66,7 @@ class ServiceModeModule: public CommonSystemModule {
                 aerationActivated = false;
                 sterilizationActivated = false;
                 lightingActivated = false;
+                heatingLampActivated = false;
                 heaterActivated = false;
 
                 updateDevices();
@@ -111,16 +142,17 @@ class ServiceModeModule: public CommonSystemModule {
         }
 
         menuNode* getDevicesControlSubmenu() {
-            prompt** devices = new prompt*[6] {
+            prompt** devices = new prompt*[7] {
                 OnOffToggle("Glowna pompa: ", mainPumpActivated, nullptr),
                 OnOffToggle("Pompa dolewki: ", addionalPumpActivated, nullptr),
                 OnOffToggle("Napowietrzanie: ", aerationActivated, nullptr),
                 OnOffToggle("Sterylizacja: ", sterilizationActivated, nullptr),
                 OnOffToggle("Oswietlenie: ", lightingActivated, nullptr),
+                OnOffToggle("Lampa grzewcza: ", heatingLampActivated, nullptr),
                 OnOffToggle("Ogrzewanie: ", heaterActivated, nullptr)
             };
 
-            return new menuNode("Urzadzenia", 6, devices);
+            return new menuNode("Urzadzenia", 7, devices);
         }
 
         menuNode* getSensorsCheckSubmenu() {
@@ -146,6 +178,7 @@ class ServiceModeModule: public CommonSystemModule {
             relayModule->set(aeration, aerationActivated);
             relayModule->set(sterilization, sterilizationActivated);
             relayModule->set(lighting, lightingActivated);
+            relayModule->set(heatingLamp, heatingLampActivated);
             relayModule->set(heater, heaterActivated);
         }
 
@@ -177,35 +210,6 @@ class ServiceModeModule: public CommonSystemModule {
             valveModule->set(cleanWaterValve, isCleanWaterValveActivated);
             valveModule->set(sewageWaterValve, isSewageWaterValveActivated);
         }
-
-        bool serviceModeEntered = false;
-        bool sensorsSubmenuEntered = false;
-        bool valvesSubmenuEntered = false;
-
-        bool normalWaterLevelDetected = false;
-        bool changeWaterLevelDetected = false;
-        bool addionalWaterTankMaxLevelDetected = false;
-        bool addionalWaterTankMinLevelDetected = false;
-
-        bool isAquariumWaterValveClosed = false;
-        bool isAddionalWaterTankValveClosed = false;
-        bool isCleanWaterValveClosed = false;
-        bool isSewageWaterValveClosed = false;
-
-        bool isAquariumWaterValveActivated = false;
-        bool isAddionalWaterTankValveActivated = false;
-        bool isCleanWaterValveActivated = false;
-        bool isSewageWaterValveActivated = false;
-        bool areRemotesAvailable = false;
-
-        Timer sensorsUpdateTimer;
-
-        bool mainPumpActivated = false;
-        bool addionalPumpActivated = false;
-        bool aerationActivated = false;
-        bool sterilizationActivated = false;
-        bool lightingActivated = false;
-        bool heaterActivated = false;
 
     public:
         ServiceModeModule(
