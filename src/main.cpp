@@ -6,6 +6,7 @@
 #include "diagnostics/WaterLevelSensor.hpp"
 #include "diagnostics/I2cScanner.hpp"
 #include "diagnostics/Servos.hpp"
+#include "diagnostics/AdafruitPwmServoDriver.hpp"
 
 #ifndef DIAGNOSTICS_MODE
 
