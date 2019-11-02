@@ -51,6 +51,10 @@
     Configuration for Adafruit PWM Servo Driver module
 */
 
+#include <Wire.h>
+
+#define ADAFRUIT_SERVO_DRIVER_ADDRESS (unsigned int) 0x40
+#define ADAFRUIT_SERVO_DRIVER_WIRE Wire1
 #define ADAFRUIT_SERVO_DRIVER_SERVO_MIN 150 // This is the 'minimum' pulse length count (out of 4096)
 #define ADAFRUIT_SERVO_DRIVER_SERVO_MAX 600 // This is the 'maximum' pulse length count (out of 4096)
 #define ADAFRUIT_SERVO_DRIVER_FREQ 60 // Analog servos run at ~60 Hz updates
