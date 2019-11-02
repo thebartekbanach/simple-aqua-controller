@@ -5,27 +5,31 @@
 
 #include "../../menu/YesNoToggle.hpp"
 
-#include "../../control/valves/ValveModuleUsingInternalPwm.hpp"
+#include "../../control/valves/ValveModule.hpp"
 
 #include "Settings.hpp"
 
 class ServoValvesStandbyControlModule: public CommonSystemModuleWithSettings<ServoValvesStandbyControlModuleSettings> {
     private:
-        ValveModuleUsingInternalPwm* valveModule;
+        ValveModuleAttachManagement* valveModule;
         unsigned long* attachTimes;
 
+        void saveSettings() {
+            settings.saveSettings();
+        }
+
     public:
-        ServoValvesStandbyControlModule(ValveModuleUsingInternalPwm* valveModule):
+        ServoValvesStandbyControlModule(ValveModuleAttachManagement* valveModule):
             valveModule(valveModule),
             CommonSystemModuleWithSettings(ServoValvesStandbyControlModuleSettings()) {
-                attachTimes = new unsigned long[valveModule->noOfValves] { 0 };
+                attachTimes = new unsigned long[valveModule->getNumberOfValves()] { 0 };
             }
         
         unsigned short getSettingsMenuItemsLength() { return 1; }
 
         menuNode** getSettingsMenuItems() {
-            auto saveSettings = new ActionReceiver<SystemModuleSettings<ServoValvesStandbyControlModuleSettings>>(
-                &settings, &SystemModuleSettings<ServoValvesStandbyControlModuleSettings>::saveSettings
+            auto saveSettings = new ActionReceiver<ServoValvesStandbyControlModule>(
+                this, &ServoValvesStandbyControlModule::saveSettings
             );
 
             prompt* autoDetachEnabled = YesNoToggle(
@@ -53,20 +57,23 @@ class ServoValvesStandbyControlModule: public CommonSystemModuleWithSettings<Ser
             
             const unsigned long actualTime = time.TotalSeconds64();
 
-            for (unsigned short i = 0; i < valveModule->noOfValves; ++i) {
-                Servo& servo = valveModule->servoValves[i];
-                unsigned long& attachTime = attachTimes[i];
-
-                if (servo.attached() && attachTime == 0) {
-                    attachTime = actualTime;
+            for (unsigned short i = 0; i < valveModule->getNumberOfValves(); ++i) {
+                if (valveModule->attached(i) && attachTimes[i] == 0) {
+                    attachTimes[i] = actualTime;
                     continue;
                 }
 
-                const unsigned long detachTime = attachTime + settings.data().standbyTimeout;
+                if (attachTimes[i] == 0) continue;
+                
+                const unsigned long detachTime = attachTimes[i] + settings.data().standbyTimeout;
+                
+                if (actualTime <= detachTime) continue;
+                
+                attachTimes[i] = 0;
 
-                if (servo.attached() && attachTime != 0 && actualTime > detachTime) {
-                    servo.detach();
-                    attachTime = 0;
+                if (valveModule->attached(i) ) {
+                    log("Detaching servovalve: ") logln(i);
+                    valveModule->detach(i);
                 }
             }
         }

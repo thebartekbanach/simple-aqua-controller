@@ -1,50 +1,65 @@
 #pragma once
 
 #include <Arduino.h>
-#include <Servo.h>
+#include <Wire.h>
+#include <Adafruit_PWMServoDriver.h>
 
 #include "../../system/PreciseTimer.hpp"
 
 #include "ValveModule.hpp"
 
-class ValveModuleUsingInternalPwm: public ValveModule, public ValveModuleAttachManagement {
+class ValveModuleUsingExternalDriver: public ValveModule, public ValveModuleAttachManagement {
     private:
-        Servo* servoValves;
+        Adafruit_PWMServoDriver* pwm;
+
+        bool* attachedValves;
+
         unsigned short noOfValves;
-        unsigned short* valveSteeringPins;
         unsigned short* valveClosedDetectionPins;
         unsigned short servosOpenAngle;
         unsigned short servosCloseAngle;
         unsigned int waitTime;
         unsigned short remotesDetectionPin;
 
+        void move(unsigned short valveId, unsigned short angle) {
+            attachedValves[valveId] = true;
+            pwm->setPWM(valveId, 0, map(
+                angle,
+                0, 180,
+                ADAFRUIT_SERVO_DRIVER_SERVO_MIN,
+                ADAFRUIT_SERVO_DRIVER_SERVO_MAX
+            ));
+        }
+
     public:
-        ValveModuleUsingInternalPwm(
+        ValveModuleUsingExternalDriver(
+            unsigned short i2cAddress,
+            TwoWire& driverConnection,
             unsigned short noOfValves,
             unsigned short servosOpenAngle,
             unsigned short servosCloseAngle,
             unsigned int waitTime,
             unsigned short remotesDetectionPin,
-            unsigned short* valveSteeringPins,
             unsigned short* valveClosedDetectionPins):
-                valveSteeringPins(valveSteeringPins),
-                valveClosedDetectionPins(valveClosedDetectionPins),
                 noOfValves(noOfValves),
-                servoValves(new Servo[noOfValves] { Servo() }),
+                attachedValves(new bool[noOfValves]),
+                valveClosedDetectionPins(valveClosedDetectionPins),
                 servosOpenAngle(servosOpenAngle),
                 servosCloseAngle(servosCloseAngle),
                 waitTime(waitTime),
-                remotesDetectionPin(remotesDetectionPin)
-        {
-            pinMode(remotesDetectionPin, INPUT_PULLUP);
-            
-            for (unsigned short i = 0; i < noOfValves; ++i) {
-                pinMode(valveClosedDetectionPins[i], INPUT_PULLUP);
+                remotesDetectionPin(remotesDetectionPin) {
+                    pwm = new Adafruit_PWMServoDriver(i2cAddress, driverConnection);
 
-                if (!isClosed(i)) {
-                    close(i);
-                }
-            }
+                    pwm->begin();
+                    pwm->setPWMFreq(ADAFRUIT_SERVO_DRIVER_FREQ);
+
+                    pinMode(remotesDetectionPin, INPUT_PULLUP);
+
+                    for (unsigned short i = 0; i < noOfValves; ++i) {
+                        pinMode(valveClosedDetectionPins[i], INPUT_PULLUP);
+                        move(i, servosCloseAngle);
+                        attachedValves[i] = true;
+                    }
         }
 
         bool open(unsigned short valveId) {
@@ -56,16 +71,9 @@ class ValveModuleUsingInternalPwm: public ValveModule, public ValveModuleAttachM
         }
 
         bool set(unsigned short valveId, bool state) {
-            if (valveId > noOfValves) return false;
             if (state != isClosed(valveId)) return true;
-
-            Servo& valve = servoValves[valveId];
-
-            if (!valve.attached()) {
-                valve.attach(valveSteeringPins[valveId]);
-            }
             
-            valve.write(state == true ? servosOpenAngle : servosCloseAngle);
+            move(valveId, state == true ? servosOpenAngle : servosCloseAngle);
 
             PreciseTimer servoMoveTimer(waitTime);
 
@@ -78,12 +86,12 @@ class ValveModuleUsingInternalPwm: public ValveModule, public ValveModuleAttachM
 
                 if (state == false && closed) {
                     delay(200);
-                    valve.detach();
+                    detach(valveId);
                     return true;
                 }
             }
 
-            valve.detach();
+            detach(valveId);
             return false;
         }
 
@@ -95,16 +103,19 @@ class ValveModuleUsingInternalPwm: public ValveModule, public ValveModuleAttachM
         bool areRemotesAvailable() {
             return !digitalRead(remotesDetectionPin);
         }
-        
+
         unsigned short getNumberOfValves() {
             return noOfValves;
         }
 
         bool attached(unsigned short valveId) {
-            return servoValves[valveId].attached();
+            return attachedValves[valveId];
         }
 
         void detach(unsigned short valveId) {
-            return servoValves[valveId].detach();
+            if (attached(valveId)) {
+                pwm->setPWM(valveId, 0, 4096);
+                attachedValves[valveId] = false;
+            }
         }
 };
