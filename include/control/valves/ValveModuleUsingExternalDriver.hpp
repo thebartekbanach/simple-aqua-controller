@@ -16,6 +16,8 @@ class ValveModuleUsingExternalDriver: public ValveModule, public ValveModuleAtta
 
         unsigned short noOfValves;
         unsigned short* valveClosedDetectionPins;
+        unsigned short servoMax;
+        unsigned short servoMin;
         unsigned short servosOpenAngle;
         unsigned short servosCloseAngle;
         unsigned int waitTime;
@@ -26,8 +28,8 @@ class ValveModuleUsingExternalDriver: public ValveModule, public ValveModuleAtta
             pwm->setPWM(valveId, 0, map(
                 angle,
                 0, 180,
-                ADAFRUIT_SERVO_DRIVER_SERVO_MIN,
-                ADAFRUIT_SERVO_DRIVER_SERVO_MAX
+                servoMin,
+                servoMax
             ));
         }
 
@@ -35,6 +37,9 @@ class ValveModuleUsingExternalDriver: public ValveModule, public ValveModuleAtta
         ValveModuleUsingExternalDriver(
             unsigned short i2cAddress,
             TwoWire& driverConnection,
+            unsigned short pwmFrequency,
+            unsigned short servoMax,
+            unsigned short servoMin,
             unsigned short noOfValves,
             unsigned short servosOpenAngle,
             unsigned short servosCloseAngle,
@@ -42,6 +47,8 @@ class ValveModuleUsingExternalDriver: public ValveModule, public ValveModuleAtta
             unsigned short remotesDetectionPin,
             unsigned short* valveClosedDetectionPins):
                 noOfValves(noOfValves),
+                servoMax(servoMax),
+                servoMin(servoMin),
                 attachedValves(new bool[noOfValves]),
                 valveClosedDetectionPins(valveClosedDetectionPins),
                 servosOpenAngle(servosOpenAngle),
@@ -51,7 +58,7 @@ class ValveModuleUsingExternalDriver: public ValveModule, public ValveModuleAtta
                     pwm = new Adafruit_PWMServoDriver(i2cAddress, driverConnection);
 
                     pwm->begin();
-                    pwm->setPWMFreq(ADAFRUIT_SERVO_DRIVER_FREQ);
+                    pwm->setPWMFreq(pwmFrequency);
 
                     pinMode(remotesDetectionPin, INPUT_PULLUP);
 
