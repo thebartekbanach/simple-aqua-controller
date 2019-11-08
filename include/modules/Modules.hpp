@@ -6,7 +6,7 @@
 
 #include "../control/relayModule/RelayModule.hpp"
 #include "../control/waterLevelSensor/WaterLevelSensor.hpp"
-#include "../control/valves/ValveModuleUsingInternalPwm.hpp"
+#include "../control/valves/ValveModuleUsingExternalDriver.hpp"
 
 #include "timeSetup/Module.hpp"
 #include "feedingControl/Module.hpp"
@@ -17,7 +17,6 @@
 #include "aerationControl/Module.hpp"
 #include "heaterControl/Module.hpp"
 #include "sterilizationControl/Module.hpp"
-#include "servoValvesStandbyControl/Module.hpp"
 #include "serviceMode/Module.hpp"
 
 
@@ -25,12 +24,14 @@ SystemModulesList* getSystemModules(navRoot* navRootDependency, TimeGuard* timeG
     logln("Initializing system dependencies");
 
     logln("Initializing relayModule")
+    
     RelayModule* relayModule = new RelayModule(NUMBER_OF_RELAYS,
         new unsigned short[NUMBER_OF_RELAYS] { MAIN_PUMP_PIN,      ADDIONAL_PUMP_PIN,      AERATION_PIN,       STERILIZATION_PIN,      HEATING_LAMP_PIN,   LIGHTING_PIN,       HEATER_PIN },
         new bool[NUMBER_OF_RELAYS] {           HIGH,               HIGH,                   HIGH,               HIGH,                   HIGH,               LOW,                LOW }
     );
     
     logln("Initializing waterLevelSensor")
+
     WaterLevelSensor* waterLevelSensor = new WaterLevelSensor(
         NUMBER_OF_WATER_LEVEL_SENSORS,
         // Water level sensors pinout arrays size definition
@@ -52,20 +53,16 @@ SystemModulesList* getSystemModules(navRoot* navRootDependency, TimeGuard* timeG
     );
 
     logln("Initializing valveModule")
-    ValveModuleUsingInternalPwm* valveModule = new ValveModuleUsingInternalPwm(
+    ValveModuleUsingExternalDriver* valveModule = new ValveModuleUsingExternalDriver(
+        ADAFRUIT_SERVO_DRIVER_ADDRESS,
+        ADAFRUIT_SERVO_DRIVER_WIRE,
+        ADAFRUIT_SERVO_DRIVER_FREQ,
+        ADAFRUIT_SERVO_DRIVER_SERVO_MAX,
+        ADAFRUIT_SERVO_DRIVER_SERVO_MIN,
         NUMBER_OF_VALVES,
         SERVOS_OPEN_ANGLE,
-        SERVOS_CLOSE_ANGLE, 
-        SERVOS_OPEN_CLOSE_TIMEOUT,
+        SERVOS_CLOSE_ANGLE,
         REMOTES_DETECTION_PIN,
-
-        // Servo pwm pinout
-        new unsigned short[NUMBER_OF_VALVES] {
-            AQUARIUM_WATER_VALVE_PIN,
-            ADDIONAL_WATER_TANK_VALVE_PIN,
-            CLEAN_WATER_VALVE_PIN,
-            SEWAGE_WATER_VALVE_PIN
-        },
 
         // Servo close detection pinout
         new unsigned short[NUMBER_OF_VALVES] {
@@ -78,17 +75,16 @@ SystemModulesList* getSystemModules(navRoot* navRootDependency, TimeGuard* timeG
 
     logln("Initializing system modules")
     
-    TimeSetupModule* timeSetupModule = new TimeSetupModule(timeGuard);
-    FeedingControlModule* feedingControlModule = new FeedingControlModule(relayModule);
-    WaterChangeModule* waterChangeModule = new WaterChangeModule(relayModule, waterLevelSensor, valveModule);
-    WaterAdditionControlModule* waterAdditionControlModule = new WaterAdditionControlModule(relayModule, waterLevelSensor, valveModule);
-    LightingControlModule* lightingControlModule = new LightingControlModule(relayModule);
-    HeatingLampControlModule* heatingLampControlModule = new HeatingLampControlModule(relayModule);
-    AerationControlModule* aerationControlModule = new AerationControlModule(relayModule);
-    HeaterControlModule* heaterControlModule = new HeaterControlModule(relayModule);
-    SterilizationControlModule* sterilizationControlModule = new SterilizationControlModule(relayModule);
-    ServoValvesStandbyControlModule* servoValvesStandbyControlModule = new ServoValvesStandbyControlModule(valveModule);
-    ServiceModeModule* serviceModeModule = new ServiceModeModule(waterLevelSensor, relayModule, valveModule, navRootDependency);
+    TimeSetupModule*                timeSetupModule =               new TimeSetupModule(timeGuard);
+    FeedingControlModule*           feedingControlModule =          new FeedingControlModule(relayModule);
+    WaterChangeModule*              waterChangeModule =             new WaterChangeModule(relayModule, waterLevelSensor, valveModule);
+    WaterAdditionControlModule*     waterAdditionControlModule =    new WaterAdditionControlModule(relayModule, waterLevelSensor, valveModule);
+    LightingControlModule*          lightingControlModule =         new LightingControlModule(relayModule);
+    HeatingLampControlModule*       heatingLampControlModule =      new HeatingLampControlModule(relayModule);
+    AerationControlModule*          aerationControlModule =         new AerationControlModule(relayModule);
+    HeaterControlModule*            heaterControlModule =           new HeaterControlModule(relayModule);
+    SterilizationControlModule*     sterilizationControlModule =    new SterilizationControlModule(relayModule);
+    ServiceModeModule*              serviceModeModule =             new ServiceModeModule(waterLevelSensor, relayModule, valveModule, navRootDependency);
 
     
     #define NUMBER_OF_MODULES 11
@@ -103,7 +99,7 @@ SystemModulesList* getSystemModules(navRoot* navRootDependency, TimeGuard* timeG
         aerationControlModule,
         heaterControlModule,
         sterilizationControlModule,
-        servoValvesStandbyControlModule,
+        valveModule,
         serviceModeModule
     };
 
