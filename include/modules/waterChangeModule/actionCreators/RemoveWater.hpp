@@ -2,9 +2,11 @@
 
 #include "../../../system/ActionCreator.hpp"
 #include "../../../system/Timer.hpp"
+#include "../../../system/PreciseTimer.hpp"
 #include "../../../system/GlobalEventBus.hpp"
 
 #include "../../../control/waterLevelSensor/WaterLevelSensor.hpp"
+#include "../../../control/waterLevelSensor/WaterLevelSensorDataStream.hpp"
 #include "../../../control/relayModule/RelayModule.hpp"
 
 #include "../../../control/valves/ValveModule.hpp"
@@ -28,10 +30,12 @@ class RemoveWaterActionCreator: public CommonActionCreator {
         RelayModule* relayModule;
         WaterLevelSensor* waterLevelSensor;
         ValveModule* valveModule;
+
+        WaterLevelSensorDataStream emptyingAverager;
         
         WaterChangeModuleSettings* settings;
 
-        Timer waterLevelCheckTimer;
+        PreciseTimer waterLevelCheckTimer;
         Timer waterOutletTimeoutTimer;
 
         ActionCreator* openWaterRemoveValves() {
@@ -74,23 +78,34 @@ class RemoveWaterActionCreator: public CommonActionCreator {
                 valveModule(valveModule),
                 eventBus(eventBus),
                 settings(settings),
-                waterOutletTimeoutTimer(actualTime, settings->aquariumWaterOutflowTimeout * 60) {}
+                waterOutletTimeoutTimer(actualTime, settings->aquariumWaterOutflowTimeout * 60),
+                emptyingAverager(5, true) {}
 
         ActionCreator* update(const RtcDateTime& time, const JoystickActions &action) {
             if (waterOutletTimeoutTimer.isReached(time)) {
+                eventBus->send(HEATER_MODULE_ID, HEATER_SAFETY_UNLOCK);
+
                 return closeWaterRemoveValves(AquariumWaterOutletTimeout(nullptr), true);
             }
 
             if (action == BACK) {
+                eventBus->send(HEATER_MODULE_ID, HEATER_SAFETY_UNLOCK);
+                
                 return closeWaterRemoveValves(
                     DisconnectExternalWaterControl("   Podmiana wody", nullptr)
                 );
             }
 
-            if (waterLevelCheckTimer.isReached(time)) {
-                waterLevelCheckTimer.start(time, 1);
+            if (waterLevelCheckTimer.done()) {
+                waterLevelCheckTimer.start(200);
 
-                if (!waterLevelSensor->sense(aquariumWater, changeWaterLevel)) {
+                emptyingAverager.senseAndGetAverage(waterLevelSensor, aquariumWater, changeWaterLevel);
+
+                log("Emptying average is: ") logln(emptyingAverager.getAverage());
+
+                if (emptyingAverager.getAverage() == 0) {
+                    eventBus->send(HEATER_MODULE_ID, HEATER_SAFETY_UNLOCK);
+
                     return closeWaterRemoveValves(
                         new RefillAquariumActionCreator(
                             relayModule,

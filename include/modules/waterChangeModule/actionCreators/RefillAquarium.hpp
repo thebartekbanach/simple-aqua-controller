@@ -1,8 +1,11 @@
 #pragma once
 
 #include "../../../system/ActionCreator.hpp"
+#include "../../../system/Timer.hpp"
+#include "../../../system/PreciseTimer.hpp"
 
 #include "../../../control/waterLevelSensor/WaterLevelSensor.hpp"
+#include "../../../control/waterLevelSensor/WaterLevelSensorDataStream.hpp"
 #include "../../../control/relayModule/RelayModule.hpp"
 
 #include "../../../control/valves/ValveModule.hpp"
@@ -24,10 +27,12 @@ class RefillAquariumActionCreator: public CommonActionCreator {
         WaterLevelSensor* waterLevelSensor;
         ValveModule* valveModule;
 
+        WaterLevelSensorDataStream refillAverager;
+
         WaterChangeModuleSettings* settings;
 
         Timer waterRefillTimeoutTimer;
-        Timer waterLevelCheckTimer;
+        PreciseTimer waterLevelCheckTimer;
 
         ActionCreator* openAquariumRefillValves() {
             relayModule->set(mainPump, OFF); // too strong water draft
@@ -68,7 +73,8 @@ class RefillAquariumActionCreator: public CommonActionCreator {
                 waterLevelSensor(waterLevelSensor),
                 valveModule(valveModule),
                 settings(settings),
-                waterRefillTimeoutTimer(actualTime, settings->aquariumRefillTimeout * 60) {}
+                waterRefillTimeoutTimer(actualTime, settings->aquariumRefillTimeout * 60),
+                refillAverager(5) {}
 
         ActionCreator* update(const RtcDateTime& time, const JoystickActions &action) {
             if (waterRefillTimeoutTimer.isReached(time)) {
@@ -90,10 +96,12 @@ class RefillAquariumActionCreator: public CommonActionCreator {
                 );
             }
 
-            if (waterLevelCheckTimer.isReached(time)) {
-                waterLevelCheckTimer.start(time, 1);
+            if (waterLevelCheckTimer.done()) {
+                waterLevelCheckTimer.start(200);
 
-                if (waterLevelSensor->sense(aquariumWater, normalWaterLevel)) {
+                refillAverager.senseAndGetAverage(waterLevelSensor, aquariumWater, normalWaterLevel);
+
+                if (refillAverager.getAverage() == 1) {
                     bool addionalWaterTankRefillEnabled = settings->refillAddionalWaterTankDuringWaterChange;
                     bool addionalWaterTankFull = waterLevelSensor->sense(addionalWaterTank, addionalWaterTankMaxLevel);
 
