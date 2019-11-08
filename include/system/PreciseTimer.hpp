@@ -5,33 +5,32 @@
 
 class PreciseTimer {
     private:
-        unsigned long fireTime = 0; // need for rollover handle
+        bool rolloved = false;
         unsigned long endTime = 0;
 
     public:
         PreciseTimer() {}
-        PreciseTimer(unsigned long howLongMs) {
-            start(howLongMs);
+        PreciseTimer(unsigned long howLongMs, unsigned long fireTime = millis()) {
+            start(howLongMs, fireTime);
         }
 
-        void start(unsigned long howLongMs) {
-            fireTime = millis();
+        void start(unsigned long howLongMs, unsigned long fireTime = millis()) {
             endTime = fireTime + howLongMs;
-
-            if (endTime < fireTime) {
-                fireTime = 0;
-            }
+            rolloved = endTime < fireTime;
         }
 
         unsigned long timeLeft() {
             auto actualTime = millis();
             
-            if (actualTime < fireTime) {
-                fireTime = 0;
-                endTime = endTime - ULONG_MAX;
+            if (rolloved) { // rollover handling
+                if (actualTime > endTime) {
+                    return ULONG_MAX - actualTime + endTime;
+                }
+                
+                rolloved = false;
             }
 
-            if (actualTime > endTime) return 0;
+            if (actualTime >= endTime) return 0;
             else return endTime - actualTime;
         }
 
