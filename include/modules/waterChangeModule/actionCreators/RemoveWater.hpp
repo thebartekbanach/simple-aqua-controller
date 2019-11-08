@@ -101,19 +101,19 @@ class RemoveWaterActionCreator: public CommonActionCreator {
 
                 emptyingAverager.senseAndGetAverage(waterLevelSensor, aquariumWater, changeWaterLevel);
 
-                log("Emptying average is: ") logln(emptyingAverager.getAverage());
-
                 if (emptyingAverager.getAverage() == 0) {
+                    if (!valveModule->close(sewageWaterValve)) {
+                        return closeWaterRemoveValves(nullptr);
+                    }
+                    
                     eventBus->send(HEATER_MODULE_ID, HEATER_SAFETY_UNLOCK);
 
-                    return closeWaterRemoveValves(
-                        new RefillAquariumActionCreator(
-                            relayModule,
-                            waterLevelSensor,
-                            valveModule,
-                            settings,
-                            time
-                        )
+                    return new RefillAquariumActionCreator(
+                        relayModule,
+                        waterLevelSensor,
+                        valveModule,
+                        settings,
+                        time
                     );
                 }
             }

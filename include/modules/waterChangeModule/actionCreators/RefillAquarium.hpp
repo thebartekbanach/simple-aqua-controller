@@ -106,13 +106,17 @@ class RefillAquariumActionCreator: public CommonActionCreator {
                     bool addionalWaterTankFull = waterLevelSensor->sense(addionalWaterTank, addionalWaterTankMaxLevel);
 
                     if (addionalWaterTankRefillEnabled && !addionalWaterTankFull) {
-                        return closeAquariumRefillValves(
-                            new RefillAddionalWaterTankActionCreator(
-                                waterLevelSensor,
-                                valveModule,
-                                settings,
-                                time
-                            )
+                        if (!valveModule->close(aquariumWaterValve)) {
+                            return closeAquariumRefillValves(nullptr);
+                        }
+
+                        relayModule->set(mainPump, ON);
+                        
+                        return new RefillAddionalWaterTankActionCreator(
+                            waterLevelSensor,
+                            valveModule,
+                            settings,
+                            time
                         );
                     }
 
