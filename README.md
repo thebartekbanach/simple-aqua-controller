@@ -101,7 +101,7 @@ SSR relays have such an advantage over mechanical relays,
 that they do not create electromagnetic interference. They are also more durable.
 They have more energy losses, but for me it doesn't make much difference.
 
-## What SSR relays?
+## Whose SSR relays?
 It all depends on how power-hungry devices you connect.
 The heater will probably be the most resource-consuming device.
 I used an 8 channel SSR relay with `G3MB-202P OMRON` modules.
@@ -178,10 +178,10 @@ the order of connecting the devices themselves.
 We have five options here:
     - `Aquarium`: servo valve connected
     to main water circulation and filtering system in the aquarium
-    - 'Refill': refill tank servo valve
-    - 'Clean water': servo valve connected to the source of
+    - `Refill`: refill tank servo valve
+    - `Clean water`: servo valve connected to the source of
     clean water from a tap or water pipe
-    - 'Sewage water': servo valve for water outlet from aquarium
+    - `Sewage water`: servo valve for water outlet from aquarium
     - `Remote valves`: shows whether remote connection
     with servo valves is connected.
 
