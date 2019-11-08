@@ -9,9 +9,13 @@ class WaterLevelSensorDataStream {
         bool* data;
 
     public:
-        WaterLevelSensorDataStream(const unsigned short& dataSetSize):
+        WaterLevelSensorDataStream(const unsigned short& dataSetSize, bool defaultState = false):
             dataSetSize(dataSetSize),
-            data(new bool[dataSetSize] { 0 }) {}
+            data(new bool[dataSetSize]) {
+                for (unsigned short i = 0; i < dataSetSize; ++i) {
+                    data[i] = defaultState;
+                }
+            }
         
         ~WaterLevelSensorDataStream() {
             delete[] data;
@@ -24,7 +28,8 @@ class WaterLevelSensorDataStream {
                 successfullChecks += data[i];
             }
 
-            return (float)successfullChecks / dataSetSize;
+            if (successfullChecks == 0) return 0;
+            else return (float)successfullChecks / dataSetSize;
         }
 
         float getUnsuccessfullAverage() {
