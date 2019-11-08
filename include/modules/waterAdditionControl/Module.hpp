@@ -129,7 +129,7 @@ class WaterAdditionControlModule: public CommonSystemModuleWithSettings<WaterAdd
 
 
             auto timeShiftField = new menuField<unsigned short>(
-                settings.data().workTimeShift, "Przesuniecie", "m", 0, 120, 1, 0, saveSettings
+                settings.data().workTimeShift, "Przesuniecie", "m", 0, 120, 1, 0, saveSettings, exitEvent
             );
 
 

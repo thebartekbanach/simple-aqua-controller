@@ -76,16 +76,16 @@ class WaterChangeModule: public CommonSystemModuleWithSettings<WaterChangeModule
 
             prompt** timeoutSettings = new prompt*[4] {
                 new menuField<float>(settings.data().aquariumRefillTimeout,
-                    "Czas wlewu", "m", 0.5, 90, 1, 0.5, saveSettingsActionReceiver),
+                    "Czas wlewu", "m", 0.5, 90, 1, 0.5, saveSettingsActionReceiver, exitEvent),
                 
                 new menuField<float>(settings.data().aquariumWaterOutflowTimeout,
-                    "Czas wylewu", "m", 0.5, 90, 1, 0.5, saveSettingsActionReceiver),
+                    "Czas wylewu", "m", 0.5, 90, 1, 0.5, saveSettingsActionReceiver, exitEvent),
 
                 new menuField<float>(settings.data().addionalWaterTankRefillTimeout,
-                    "Uzup. dolewki", "m", 0.5, 90, 1, 0.5, saveSettingsActionReceiver),
+                    "Uzup. dolewki", "m", 0.5, 90, 1, 0.5, saveSettingsActionReceiver, exitEvent),
                     
                 new menuField<float>(settings.data().aquariumRefillTimeout,
-                    "Uzup. braku", "m", 0.5, 90, 1, 0.5, saveSettingsActionReceiver),
+                    "Uzup. braku", "m", 0.5, 90, 1, 0.5, saveSettingsActionReceiver, exitEvent),
             };
 
             prompt** settingItems = new prompt*[2] {
