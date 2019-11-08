@@ -90,7 +90,9 @@ class FillAddionalWaterTankActionCreator: public CommonActionCreator {
 
             if (action == BACK) {
                 return closeValves(
-                    new LowerThePressure(valveModule, "    Dolewka wody", nullptr)
+                    new LowerThePressure(valveModule, "    Dolewka wody", 
+                        DisconnectExternalWaterControl("    Dolewka wody", nullptr)
+                    )
                 );
             }
 

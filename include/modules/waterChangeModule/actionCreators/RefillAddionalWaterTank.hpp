@@ -73,7 +73,9 @@ class RefillAddionalWaterTankActionCreator: public CommonActionCreator {
 
             if (action == BACK) {
                 return closeRefillValves(
-                    new LowerThePressure(valveModule, "   Podmiana wody", nullptr)
+                    new LowerThePressure(valveModule, "   Podmiana wody",
+                        DisconnectExternalWaterControl("   Podmiana wody", nullptr)
+                    )
                 );
             }
  
