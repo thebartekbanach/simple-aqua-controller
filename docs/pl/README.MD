@@ -1,5 +1,7 @@
 # Prosty kontroler akwarystyczny
 
+### Language: [English](../../README.md) / **Polski**
+
 ## Ten projekt jest prostym kontrolerem akwarystycznym z obsługą automatycznej podmiany wody i dolewki ze zbiornika rezerwowego.
 
 ## Główne cele tego projektu:
@@ -9,13 +11,6 @@
 - automatyczne uzupełnianie zbiornika dolewki
 - tryb karmienia
 - obsługa osprzętu w akwarium
-
-PLAN:
-- postawić kamerę na wprost ekranu i joysticka
-- odpalić automatyczną podmianę wody
-- zrobić timelapsa ze wszystkich kroków
-- w trakcie timelapsa pokazywać jak włączają się i wyłączają serwozawory
-- do tego dodać timelapsa z napełniania "akwarium"
 
 ## Czego potrzebujesz przede wszystkim?
 - podstawowa wiedza na temat elektryki
@@ -40,16 +35,13 @@ PLAN:
 ![hydraulics](../../assets/docs/img/hydraulics.jpg)
 ![servovalves-on-tank](../../assets/docs/img/servovalves-on-tank.jpg)
 ![servovalves-remote](../../assets/docs/img/servovalves-intro.jpg)
-## tutaj idzie wejście w bańce w sensie tuba zasysająca
 
 # Potrzebny sprzęt:
 - płytka Arduino Due
 - wyświetlacz `LCD 2004` z konwerterem I2C `HD44780`
 - zegar RTC `DS1302`
 - analogowy joystick współpracujący z Arduino, np. `KY-023`
-- zewnętrzny zegar RTC z własną baterią wspierany przez bibliotekę `RTC@2.3.3`
 - płytka przekaźników SSR
-- dwa zawory zwrotne w układzie akwarium
 - pompa automatycznej dolewki (np. nowa do pralki)
 - cztery serwozawory z detekcją domyku
 
@@ -67,8 +59,7 @@ Stworzyłem własny projekt serwozaworów tańszy niż serwozawory ze sklepów.
 Całkowity koszt to jakieś 60 złotych za sztukę.
 Do ich złożenia wymagana jest umiejętność użycia drukarki 3D.
 Jeśli chcesz skorzystać z gotowych serwozawórów ze sklepu możesz zrobić forka
-projektu i podmienić klasę w pliku `include/control/valves/ValveModule.hpp`
-na własną implemetację sterownika serwozawórów.
+projektu i zaimplementować interfejs z pliku `include/control/valves/ValveModule.hpp`.
 
 ### Więcej na temat serwozaworów przeczytasz [tutaj](serwozawory.md).
 

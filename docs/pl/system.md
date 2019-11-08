@@ -53,3 +53,15 @@ Przed aktywowaniem kreatora akcji należy upewnić się,
 Przykład takiego sprawdzenia znajduje się w metodzie
 `void startFeedingModeEvent()` klasy `FeedingControlModule`
 w pliku `include/modules/feedingControl/Module.hpp`.
+
+# TimeGuard
+TimeGuard jest zabezpieczeniem modułu RTC przed zakłóceniami
+i restartowaniem czasu. Cały czas pobierając czas
+z modułu RTC TimeGuard sprawdza, czy czas nie jest starszy względem
+ostatniego pomiaru. Jeśli czas jest starszy, oznacza to, że
+zegar zrestartował się pod wpływem jakiś zakłóceń z zewnątrz.
+TimeGuard wykrywa to i ustawia zegar RTC ponownie do ostatniego
+znanego poprawnego czasu.
+
+Może to powodować "zwalnianie" zegara RTC jeśli kontroler znajduje
+się w środowisku w którym często występują zakłócenia.
