@@ -2,6 +2,8 @@
 
 #include <Arduino.h>
 
+#include "../../system/PreciseTimer.hpp"
+
 #include "devices.hpp"
 
 class WaterLevelSensor {
@@ -32,8 +34,22 @@ class WaterLevelSensor {
             if (level > numberOfDevicePins[deviceId]) return false;
             
             pinMode(devicesPins[deviceId][level], INPUT_PULLUP);
-            delay(100); // need to wait a short while to give time to pull up the pin
-            const bool result = !digitalRead(devicesPins[deviceId][level]);
+
+            PreciseTimer senseTimer;
+            unsigned short measurements = 0;
+
+            for (unsigned short i = 0; i < 10;) {
+                if (senseTimer.done()) { // average the result, it all takes ~100ms to check
+                    measurements += !digitalRead(devicesPins[deviceId][level]);
+                    senseTimer.start(10);
+                    ++i;
+
+                    if (measurements > 5) break;
+                }
+            }
+
+            const bool result = measurements > 5;
+
             pinMode(devicesPins[deviceId][level], OUTPUT);
             digitalWrite(devicesPins[deviceId][level], LOW);
 
