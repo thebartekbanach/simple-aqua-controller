@@ -114,7 +114,7 @@ two protected methods and do not worry about automatic servo valves detach.
 
 ### Why disconnect the servo valve control signal?
 Built in drivers in servos can cause servo buzzing
-hich means that the servo is trying to move to
+which means that the servo is trying to move to
 selected position, even if it is missing just 0.1 degree,
 so it doesn't use all the power of the servo and uses the engine
 all the time but can't move to the end. It puts a load to the stabilizers,
