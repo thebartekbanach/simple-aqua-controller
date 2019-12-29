@@ -8,9 +8,9 @@ in the file `include/system/SystemModule.hpp`.
 The application uses the `ArduinoMenu` library to create and manage
 and displaying the entire menu on the device display.
 
-This is my [fork] (https://github.com/thebartekbanach/ArduinoMenu/archive/master.zip)
-of this library whose latest version can be found [here] (https://github.com/neu-rah/ArduinoMenu).
-Thanks for creating this library, [neu-rah] (https://github.com/neu-rah)!
+This is my [fork](https://github.com/thebartekbanach/ArduinoMenu/archive/master.zip)
+of this library whose latest version can be found [here](https://github.com/neu-rah/ArduinoMenu).
+Thanks for creating this library, [neu-rah](https://github.com/neu-rah)!
 
 ## Why fork and why did I have to change the original library?
 Well, the original version of this library did not give opportunities
