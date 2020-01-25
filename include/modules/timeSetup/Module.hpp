@@ -11,11 +11,16 @@
 
 #include "../serviceMode/Events.hpp"
 
+#include "DayCycleInfo.hpp"
+
 #include "Events.hpp"
 #include "DayCycle.hpp"
 #include "Settings.hpp"
 
-class TimeSetupModule: public CommonSystemModuleWithSettings<TimeSetupModuleSettings> {
+class TimeSetupModule:
+	public CommonSystemModuleWithSettings<TimeSetupModuleSettings>,
+	public DayCycleInfo {
+		
     private:
         TimeGuard* timeGuard;
 
@@ -43,6 +48,9 @@ class TimeSetupModule: public CommonSystemModuleWithSettings<TimeSetupModuleSett
         TimeSetupModule(TimeGuard* timeGuard):
             timeGuard(timeGuard),
             CommonSystemModuleWithSettings(TimeSetupModuleSettings()) {}
+
+		const SystemTime& getDayStart() { return settings.data().dayStart; }
+		const SystemTime& getNightStart() { return settings.data().nightStart; }
 
         menuNode** getSettingsMenuItems() {
             prompt** settingsNodes = new prompt*[3] {
