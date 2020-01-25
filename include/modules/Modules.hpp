@@ -6,13 +6,13 @@
 
 #include "../control/relayModule/RelayModule.hpp"
 #include "../control/waterLevelSensor/WaterLevelSensor.hpp"
-#include "../control/valves/ValveModuleUsingExternalDriver.hpp"
+#include "../control/valves/ValveModuleUsingAdafruitPwmServoDriver.hpp"
 
 #include "timeSetup/Module.hpp"
 #include "feedingControl/Module.hpp"
 #include "waterChangeModule/Module.hpp"
 #include "waterAdditionControl/Module.hpp"
-#include "lightingControl/Module.hpp"
+#include "softLightingControl/Module.hpp"
 #include "heatingLampControl/Module.hpp"
 #include "aerationControl/Module.hpp"
 #include "heaterControl/Module.hpp"
@@ -52,11 +52,25 @@ SystemModulesList* getSystemModules(navRoot* navRootDependency, TimeGuard* timeG
         }
     );
 
-    logln("Initializing valveModule")
-    ValveModuleUsingExternalDriver* valveModule = new ValveModuleUsingExternalDriver(
+	logln("Initializing AdafruitPwmServoDriver")
+
+	Adafruit_PWMServoDriver* pwmServoDriver = new Adafruit_PWMServoDriver(
         ADAFRUIT_SERVO_DRIVER_ADDRESS,
-        ADAFRUIT_SERVO_DRIVER_WIRE,
-        ADAFRUIT_SERVO_DRIVER_FREQ,
+        ADAFRUIT_SERVO_DRIVER_WIRE
+	);
+
+	pwmServoDriver->begin();
+	pwmServoDriver->setPWMFreq(ADAFRUIT_SERVO_DRIVER_FREQ);
+
+	logln("Initializing PwmLightController")
+
+	PwmLightControllerUsingAdafruitPwmServoDriver *lightController =
+		new PwmLightControllerUsingAdafruitPwmServoDriver(pwmServoDriver, 15);
+
+    logln("Initializing valveModule")
+
+    ValveModuleUsingAdafruitPwmServoDriver* valveModule = new ValveModuleUsingAdafruitPwmServoDriver(
+		pwmServoDriver,
         ADAFRUIT_SERVO_DRIVER_SERVO_MAX,
         ADAFRUIT_SERVO_DRIVER_SERVO_MIN,
         NUMBER_OF_VALVES,
@@ -79,12 +93,12 @@ SystemModulesList* getSystemModules(navRoot* navRootDependency, TimeGuard* timeG
     FeedingControlModule*           feedingControlModule =          new FeedingControlModule(relayModule);
     WaterChangeModule*              waterChangeModule =             new WaterChangeModule(relayModule, waterLevelSensor, valveModule);
     WaterAdditionControlModule*     waterAdditionControlModule =    new WaterAdditionControlModule(relayModule, waterLevelSensor, valveModule);
-    LightingControlModule*          lightingControlModule =         new LightingControlModule(relayModule);
+    SoftLightingControlModule*      softLightingControlModule =     new SoftLightingControlModule(lightController, timeSetupModule);
     HeatingLampControlModule*       heatingLampControlModule =      new HeatingLampControlModule(relayModule);
     AerationControlModule*          aerationControlModule =         new AerationControlModule(relayModule);
     HeaterControlModule*            heaterControlModule =           new HeaterControlModule(relayModule);
     SterilizationControlModule*     sterilizationControlModule =    new SterilizationControlModule(relayModule);
-    ServiceModeModule*              serviceModeModule =             new ServiceModeModule(waterLevelSensor, relayModule, valveModule, navRootDependency);
+    ServiceModeModule*              serviceModeModule =             new ServiceModeModule(waterLevelSensor, relayModule, valveModule, lightController, navRootDependency);
 
     
     #define NUMBER_OF_MODULES 11
@@ -94,7 +108,7 @@ SystemModulesList* getSystemModules(navRoot* navRootDependency, TimeGuard* timeG
         feedingControlModule,
         waterChangeModule,
         waterAdditionControlModule,
-        lightingControlModule,
+        softLightingControlModule,
         heatingLampControlModule,
         aerationControlModule,
         heaterControlModule,
