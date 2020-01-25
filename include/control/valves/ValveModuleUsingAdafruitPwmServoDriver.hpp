@@ -8,7 +8,7 @@
 
 #include "ValveModuleBase.hpp"
 
-class ValveModuleUsingExternalDriver: public ValveModuleBase {
+class ValveModuleUsingAdafruitPwmServoDriver: public ValveModuleBase {
     private:
         Adafruit_PWMServoDriver* pwm;
         unsigned short servoMax;
@@ -33,10 +33,10 @@ class ValveModuleUsingExternalDriver: public ValveModuleBase {
         }
 
     public:
-        ValveModuleUsingExternalDriver(
+        ValveModuleUsingAdafruitPwmServoDriver(
             unsigned short i2cAddress,
             TwoWire& driverConnection,
-            unsigned short pwmFrequency,
+            float pwmFrequency,
             unsigned short servoMax,
             unsigned short servoMin,
             unsigned short numberOfValves,
@@ -60,4 +60,27 @@ class ValveModuleUsingExternalDriver: public ValveModuleBase {
 
                     initialize();
                 }
+
+		ValveModuleUsingAdafruitPwmServoDriver(
+			Adafruit_PWMServoDriver* servoDriver,
+            unsigned short servoMax,
+            unsigned short servoMin,
+            unsigned short numberOfValves,
+            unsigned short servosOpenAngle,
+            unsigned short servosCloseAngle,
+            unsigned short remotesDetectionPin,
+            unsigned short* valveClosedDetectionPins
+		):
+			servoMax(servoMax),
+			servoMin(servoMin),
+			servosOpenAngle(servosOpenAngle),
+			servosCloseAngle(servosCloseAngle),
+			ValveModuleBase(
+				numberOfValves,
+				remotesDetectionPin,
+				valveClosedDetectionPins
+			) {
+				pwm = servoDriver;
+				initialize();
+			}
 };
