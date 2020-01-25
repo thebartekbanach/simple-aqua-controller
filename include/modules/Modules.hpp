@@ -13,10 +13,7 @@
 #include "waterChangeModule/Module.hpp"
 #include "waterAdditionControl/Module.hpp"
 #include "softLightingControl/Module.hpp"
-#include "heatingLampControl/Module.hpp"
-#include "aerationControl/Module.hpp"
 #include "heaterControl/Module.hpp"
-#include "sterilizationControl/Module.hpp"
 #include "serviceMode/Module.hpp"
 
 
@@ -94,11 +91,12 @@ SystemModulesList* getSystemModules(navRoot* navRootDependency, TimeGuard* timeG
     WaterChangeModule*              waterChangeModule =             new WaterChangeModule(relayModule, waterLevelSensor, valveModule);
     WaterAdditionControlModule*     waterAdditionControlModule =    new WaterAdditionControlModule(relayModule, waterLevelSensor, valveModule);
     SoftLightingControlModule*      softLightingControlModule =     new SoftLightingControlModule(lightController, timeSetupModule);
-    HeatingLampControlModule*       heatingLampControlModule =      new HeatingLampControlModule(relayModule);
-    AerationControlModule*          aerationControlModule =         new AerationControlModule(relayModule);
     HeaterControlModule*            heaterControlModule =           new HeaterControlModule(relayModule);
-    SterilizationControlModule*     sterilizationControlModule =    new SterilizationControlModule(relayModule);
     ServiceModeModule*              serviceModeModule =             new ServiceModeModule(waterLevelSensor, relayModule, valveModule, lightController, navRootDependency);
+	
+	TimeScopedDeviceDriver*			heatingLampControlModule =		TimeScopedDeviceDriver::as("Lampa grzewcza", IN_DAY_CYCLE, heatingLamp, relayModule);
+	TimeScopedDeviceDriver*			aerationControlModule =			TimeScopedDeviceDriver::as("Napowietrzanie", IN_NIGHT_CYCLE, aeration, relayModule);
+	TimeScopedDeviceDriver*			sterilizationControlModule =	TimeScopedDeviceDriver::as("Sterylizacja", CONTINUOUS_ON, sterilization, relayModule);
 
     
     #define NUMBER_OF_MODULES 11
