@@ -8,6 +8,7 @@ class PwmLightControllerUsingAdafruitPwmServoDriver: public PwmLightController {
 	private:
 		Adafruit_PWMServoDriver* driver;
 		unsigned short lightSteeringPin;
+		unsigned short lastPwmValue = 0;
 
 	public:
 		PwmLightControllerUsingAdafruitPwmServoDriver(
@@ -15,7 +16,9 @@ class PwmLightControllerUsingAdafruitPwmServoDriver: public PwmLightController {
 			unsigned short lightSteeringPin
 		):
 			driver(driver),
-			lightSteeringPin(lightSteeringPin) {}
+			lightSteeringPin(lightSteeringPin) {
+				driver->setPWM(lightSteeringPin, 0, 0);
+			}
 
 		PwmLightControllerUsingAdafruitPwmServoDriver(
             unsigned short i2cAddress,
@@ -32,6 +35,9 @@ class PwmLightControllerUsingAdafruitPwmServoDriver: public PwmLightController {
 		}
 
 		void setLightPwm(const unsigned short &value) {
-			driver->setPWM(lightSteeringPin, 0, value);
+			if (lastPwmValue != value) {
+				lastPwmValue = value;
+				driver->setPWM(lightSteeringPin, 0, value);
+			}
 		}
 };
