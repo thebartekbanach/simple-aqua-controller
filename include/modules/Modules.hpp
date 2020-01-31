@@ -7,6 +7,7 @@
 #include "../control/relayModule/RelayModule.hpp"
 #include "../control/waterLevelSensor/WaterLevelSensor.hpp"
 #include "../control/valves/ValveModuleUsingAdafruitPwmServoDriver.hpp"
+#include "../control/pwmLightController/PwmLightControllerUsingInternalPwm.hpp"
 
 #include "timeSetup/Module.hpp"
 #include "feedingControl/Module.hpp"
@@ -49,25 +50,16 @@ SystemModulesList* getSystemModules(navRoot* navRootDependency, TimeGuard* timeG
         }
     );
 
-	logln("Initializing AdafruitPwmServoDriver")
-
-	Adafruit_PWMServoDriver* pwmServoDriver = new Adafruit_PWMServoDriver(
-        ADAFRUIT_SERVO_DRIVER_ADDRESS,
-        ADAFRUIT_SERVO_DRIVER_WIRE
-	);
-
-	pwmServoDriver->begin();
-	pwmServoDriver->setPWMFreq(ADAFRUIT_SERVO_DRIVER_FREQ);
-
 	logln("Initializing PwmLightController")
 
-	PwmLightControllerUsingAdafruitPwmServoDriver *lightController =
-		new PwmLightControllerUsingAdafruitPwmServoDriver(pwmServoDriver, 15);
+	PwmLightControllerUsingInternalPwm *lightController = new PwmLightControllerUsingInternalPwm();
 
     logln("Initializing valveModule")
 
     ValveModuleUsingAdafruitPwmServoDriver* valveModule = new ValveModuleUsingAdafruitPwmServoDriver(
-		pwmServoDriver,
+		ADAFRUIT_SERVO_DRIVER_ADDRESS,
+		ADAFRUIT_SERVO_DRIVER_WIRE,
+		ADAFRUIT_SERVO_DRIVER_FREQ,
         ADAFRUIT_SERVO_DRIVER_SERVO_MAX,
         ADAFRUIT_SERVO_DRIVER_SERVO_MIN,
         NUMBER_OF_VALVES,
