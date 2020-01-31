@@ -33,6 +33,28 @@ class TimeScopedDeviceDriver: public CommonSystemModuleWithSettings<TimeScopedDe
             name(name), moduleId(moduleId), relayModule(relayModule), deviceId(deviceId) {}
 
     public:
+		static TimeScopedDeviceDriver* as(
+			char* name,
+			DeviceWorkingMode defaultWorkingMode,
+			const unsigned short deviceId,
+			RelayModule* relayModule) {
+				return new TimeScopedDeviceDriver(name, -1, relayModule, deviceId, TimeScopedDeviceDriverSettings(defaultWorkingMode));
+		}
+
+		static TimeScopedDeviceDriver* as(
+			char* name,
+			DeviceWorkingMode defaultWorkingMode,
+			SystemTime manualDayStartSetting,
+			SystemTime manualDayEndSetting,
+			const unsigned short deviceId,
+			RelayModule* relayModule) {
+				TimeScopedDeviceDriverSettings settings(defaultWorkingMode);
+				settings.start = manualDayStartSetting;
+				settings.end = manualDayEndSetting;
+
+				return new TimeScopedDeviceDriver(name, -1, relayModule, deviceId, settings);
+		}
+
         unsigned short getSettingsMenuItemsLength() { return 1; }
 
         menuNode** getSettingsMenuItems() {

@@ -33,7 +33,7 @@
 #define LIGHTING_PIN 53
 
 #define heater 6
-#define HEATER_PIN 52
+#define HEATER_PIN 7
 
 #define ON true
 #define OFF false

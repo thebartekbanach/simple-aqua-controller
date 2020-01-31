@@ -18,6 +18,7 @@ class ServiceModeModule: public CommonSystemModule {
         WaterLevelSensor* waterLevelSensor;
         RelayModule* relayModule;
         ValveModule* valveModule;
+		PwmLightController* lightController;
         navRoot* nav;
 
         bool serviceModeEntered = false;
@@ -46,9 +47,10 @@ class ServiceModeModule: public CommonSystemModule {
         bool addionalPumpActivated = false;
         bool aerationActivated = false;
         bool sterilizationActivated = false;
-        bool lightingActivated = false;
         bool heatingLampActivated = false;
         bool heaterActivated = false;
+
+		unsigned short lightingState = 0;
         
         void menuInOut(eventMask event, navNode& nav, prompt &item) {
             if (event == enterEvent) {
@@ -65,9 +67,10 @@ class ServiceModeModule: public CommonSystemModule {
                 addionalPumpActivated = false;
                 aerationActivated = false;
                 sterilizationActivated = false;
-                lightingActivated = false;
                 heatingLampActivated = false;
                 heaterActivated = false;
+
+                lightingState = 0;
 
                 updateDevices();
 
@@ -147,7 +150,7 @@ class ServiceModeModule: public CommonSystemModule {
                 OnOffToggle("Pompa dolewki: ", addionalPumpActivated, nullptr),
                 OnOffToggle("Napowietrzanie: ", aerationActivated, nullptr),
                 OnOffToggle("Sterylizacja: ", sterilizationActivated, nullptr),
-                OnOffToggle("Oswietlenie: ", lightingActivated, nullptr),
+                new menuField<unsigned short>(lightingState, "Oswietlenie:", "", 0, 255, 10, 1),
                 OnOffToggle("Lampa grzewcza: ", heatingLampActivated, nullptr),
                 OnOffToggle("Ogrzewanie: ", heaterActivated, nullptr)
             };
@@ -177,9 +180,10 @@ class ServiceModeModule: public CommonSystemModule {
             relayModule->set(addionalPump, addionalPumpActivated);
             relayModule->set(aeration, aerationActivated);
             relayModule->set(sterilization, sterilizationActivated);
-            relayModule->set(lighting, lightingActivated);
             relayModule->set(heatingLamp, heatingLampActivated);
             relayModule->set(heater, heaterActivated);
+
+			lightController->setLightPwm(lightingState);
         }
 
         void updateSensors(const RtcDateTime& time) {
@@ -216,10 +220,12 @@ class ServiceModeModule: public CommonSystemModule {
             WaterLevelSensor* waterLevelSensor,
             RelayModule* relayModule,
             ValveModule* valveModule,
+			PwmLightController* lightController,
             navRoot* nav):
                 waterLevelSensor(waterLevelSensor),
                 relayModule(relayModule),
                 valveModule(valveModule),
+				lightController(lightController),
                 nav(nav) {}
 
         unsigned short getSettingsMenuItemsLength() { return 1; }
