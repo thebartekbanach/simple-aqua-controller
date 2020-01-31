@@ -150,7 +150,7 @@ class ServiceModeModule: public CommonSystemModule {
                 OnOffToggle("Pompa dolewki: ", addionalPumpActivated, nullptr),
                 OnOffToggle("Napowietrzanie: ", aerationActivated, nullptr),
                 OnOffToggle("Sterylizacja: ", sterilizationActivated, nullptr),
-                new menuField<unsigned short>(lightingState, "Oswietlenie: ", "", 0, 4096, 10, 1),
+                new menuField<unsigned short>(lightingState, "Oswietlenie:", "", 0, 255, 10, 1),
                 OnOffToggle("Lampa grzewcza: ", heatingLampActivated, nullptr),
                 OnOffToggle("Ogrzewanie: ", heaterActivated, nullptr)
             };

@@ -8,10 +8,10 @@ struct SoftLightingSettings {
     SystemTime start = { .hour = 8, .minute = 0 };
     SystemTime end = { .hour = 20, .minute = 0 };
 
-    SystemTime midday = { .hour = 12, .minute = 0 };
-    SystemTime middayLength = { .hour = 2, .minute = 0 };
+    SystemTime durationOfMorning = { .hour = 4, .minute = 0 };
+    SystemTime durationOfDusk = { .hour = 4, .minute = 0 };
 	
-	unsigned short maximumLightingLevel = 4096;
+	unsigned short maximumLightingLevel = 255;
 	unsigned short minimumLightingLevel = 0;
-	unsigned short softLightChangeStepsPerSecond = 1000;
+	unsigned short softLightChangeStepsPerSecond = 255;
 };
