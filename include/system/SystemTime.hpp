@@ -47,6 +47,22 @@ struct SystemTime {
     friend bool operator > (const SystemTime& left, const SystemTime& right) {
 		return asSeconds(left) > asSeconds(right);
     }
+	
+	friend bool operator <= (const SystemTime& left, const RtcDateTime& right) {
+		return asSeconds(left) <= asSeconds(asSystemTime(right));
+    }
+
+    friend bool operator >= (const SystemTime& left, const RtcDateTime& right) {
+		return asSeconds(left) >= asSeconds(asSystemTime(right));
+    }
+
+    friend bool operator <= (const SystemTime& left, const SystemTime& right) {
+		return asSeconds(left) <= asSeconds(right);
+    }
+
+    friend bool operator >= (const SystemTime& left, const SystemTime& right) {
+		return asSeconds(left) >= asSeconds(right);
+    }
 
 	friend SystemTime operator + (const SystemTime& left, const SystemTime& right) {
 		return asSystemTime(asSeconds(left) + asSeconds(right));
