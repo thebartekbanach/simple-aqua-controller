@@ -9,6 +9,8 @@
 #include "../control/valves/ValveModuleUsingAdafruitPwmServoDriver.hpp"
 #include "../control/pwmLightController/PwmLightControllerUsingInternalPwm.hpp"
 
+#include "../control/pwmLightController/ServiceModule.hpp"
+
 #include "timeSetup/Module.hpp"
 #include "feedingControl/Module.hpp"
 #include "waterChangeModule/Module.hpp"
@@ -76,6 +78,16 @@ SystemModulesList* getSystemModules(navRoot* navRootDependency, TimeGuard* timeG
         }
     );
 
+	logln("Initializing service modules")
+
+	PwmLightControllerServiceModule* pwmLightControllerServiceModule = new PwmLightControllerServiceModule(lightController);
+
+	#define NUMBER_OF_SERVICE_MODULES 1
+
+	ServiceModule** serviceModules = new ServiceModule*[NUMBER_OF_SERVICE_MODULES] {
+		pwmLightControllerServiceModule
+	};
+
     logln("Initializing system modules")
     
     TimeSetupModule*                timeSetupModule =               new TimeSetupModule(timeGuard);
@@ -84,7 +96,7 @@ SystemModulesList* getSystemModules(navRoot* navRootDependency, TimeGuard* timeG
     WaterAdditionControlModule*     waterAdditionControlModule =    new WaterAdditionControlModule(relayModule, waterLevelSensor, valveModule);
     SoftLightingControlModule*      softLightingControlModule =     new SoftLightingControlModule(lightController, timeSetupModule);
     HeaterControlModule*            heaterControlModule =           new HeaterControlModule(relayModule);
-    ServiceModeModule*              serviceModeModule =             new ServiceModeModule(waterLevelSensor, relayModule, valveModule, lightController, navRootDependency);
+    ServiceModeModule*              serviceModeModule =             new ServiceModeModule(serviceModules, NUMBER_OF_SERVICE_MODULES, navRootDependency);
 	
 	TimeScopedDeviceDriver*			heatingLampControlModule =		TimeScopedDeviceDriver::as("Lampa grzewcza", IN_DAY_CYCLE, heatingLamp, relayModule);
 	TimeScopedDeviceDriver*			aerationControlModule =			TimeScopedDeviceDriver::as("Napowietrzanie", IN_NIGHT_CYCLE, aeration, relayModule);

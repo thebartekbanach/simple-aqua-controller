@@ -2,7 +2,7 @@
 
 #include <Adafruit_PWMServoDriver.h>
 
-#include "../../modules/softLightingControl/PwmLightController.hpp"
+#include "PwmLightController.hpp"
 
 class PwmLightControllerUsingAdafruitPwmServoDriver: public PwmLightController {
 	private:
@@ -34,7 +34,7 @@ class PwmLightControllerUsingAdafruitPwmServoDriver: public PwmLightController {
 			driver->setPWMFreq(pwmFrequency);
 		}
 
-		void setLightPwm(const unsigned short &value) {
+		void setLightPower(const unsigned short &value) {
 			if (lastPwmValue != value) {
 				lastPwmValue = value;
 				driver->setPWM(lightSteeringPin, 0, value);
