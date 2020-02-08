@@ -41,6 +41,7 @@ class TimeSetupModule:
         }
 
         void dayCycleSettingsUpdated() {
+			eventBus->send(TIME_SETUP_MODULE_ID, DAY_CYCLE_CHANGED);
             settings.saveSettings();
         }
 
