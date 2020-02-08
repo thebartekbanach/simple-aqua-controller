@@ -4,7 +4,7 @@
 
 #include "../utils/DeviceWorkingMode.hpp"
 
-prompt* turnStateToggle(char* fieldName, DeviceWorkingMode& dayCycle, actionReceiver* updateAction) {
+prompt* turnStateToggle(char* fieldName, DeviceWorkingMode& dayCycle, actionReceiver* updateAction, eventMask updateEvent = enterEvent) {
     prompt** toggleValues = new prompt*[5] {
         new menuValue<DeviceWorkingMode>("wylaczony", DeviceWorkingMode::CONTINUOUS_OFF),
         new menuValue<DeviceWorkingMode>("wlaczony", DeviceWorkingMode::CONTINUOUS_ON),
@@ -13,7 +13,7 @@ prompt* turnStateToggle(char* fieldName, DeviceWorkingMode& dayCycle, actionRece
         new menuValue<DeviceWorkingMode>("w zakresie", DeviceWorkingMode::FROM_SETTINGS)
     };
 
-    prompt* toogle = new toggle<DeviceWorkingMode>(fieldName, dayCycle, 5, toggleValues, action(updateAction), enterEvent, wrapStyle);
+    prompt* toogle = new toggle<DeviceWorkingMode>(fieldName, dayCycle, 5, toggleValues, action(updateAction), updateEvent, wrapStyle);
 
     return toogle;
 }
