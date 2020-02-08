@@ -10,6 +10,7 @@
 #include "../control/pwmLightController/PwmLightControllerUsingInternalPwm.hpp"
 
 #include "../control/pwmLightController/ServiceModule.hpp"
+#include "../control/valves/ServiceModule.hpp"
 
 #include "timeSetup/Module.hpp"
 #include "feedingControl/Module.hpp"
@@ -81,11 +82,13 @@ SystemModulesList* getSystemModules(navRoot* navRootDependency, TimeGuard* timeG
 	logln("Initializing service modules")
 
 	PwmLightControllerServiceModule* pwmLightControllerServiceModule = new PwmLightControllerServiceModule(lightController);
+	ServovalvesServiceModule* servovalvesServiceModule = new ServovalvesServiceModule(valveModule);
 
-	#define NUMBER_OF_SERVICE_MODULES 1
+	#define NUMBER_OF_SERVICE_MODULES 2
 
 	ServiceModule** serviceModules = new ServiceModule*[NUMBER_OF_SERVICE_MODULES] {
-		pwmLightControllerServiceModule
+		pwmLightControllerServiceModule,
+		servovalvesServiceModule
 	};
 
     logln("Initializing system modules")
