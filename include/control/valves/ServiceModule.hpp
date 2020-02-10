@@ -37,7 +37,7 @@ class ServovalvesServiceModule: public ServiceModuleWithHelpers {
 				new ActionReceiver<ServovalvesServiceModule>(this, &ServovalvesServiceModule::servoStateChanged);
 
 			prompt** items = new prompt*[2] {
-				OnOffToggle("Status: ", servoIsOpen[index], updateEvent),
+				OnOffToggle("Status: ", servoIsOpen[index], updateEvent, enterEvent),
 				OnOffToggle("Krancowka: ", servoIsDetectedAsClosed[index], nullptr)
 			};
 
@@ -94,7 +94,7 @@ class ServovalvesServiceModule: public ServiceModuleWithHelpers {
 				YesNoToggle("Zdalne zawory", remotesAreAvailable, nullptr)
 			};
 
-			return new menuNode("Serwozawory", 5, items);
+			return new menuNode("Serwozawory", 5, items, menuStateChangeEvent, (eventMask)(enterEvent | exitEvent));
 		};
 
 		void update(const RtcDateTime &time) {
