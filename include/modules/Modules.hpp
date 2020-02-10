@@ -9,8 +9,10 @@
 #include "../control/valves/ValveModuleUsingAdafruitPwmServoDriver.hpp"
 #include "../control/pwmLightController/PwmLightControllerUsingInternalPwm.hpp"
 
+#include "../control/waterLevelSensor/ServiceModule.hpp"
 #include "../control/pwmLightController/ServiceModule.hpp"
 #include "../control/valves/ServiceModule.hpp"
+#include "../control/relayModule/ServiceModule.hpp"
 
 #include "timeSetup/Module.hpp"
 #include "feedingControl/Module.hpp"
@@ -27,8 +29,8 @@ SystemModulesList* getSystemModules(navRoot* navRootDependency, TimeGuard* timeG
     logln("Initializing relayModule")
     
     RelayModule* relayModule = new RelayModule(NUMBER_OF_RELAYS,
-        new unsigned short[NUMBER_OF_RELAYS] { MAIN_PUMP_PIN,      ADDIONAL_PUMP_PIN,      AERATION_PIN,       STERILIZATION_PIN,      HEATING_LAMP_PIN,   LIGHTING_PIN,       HEATER_PIN },
-        new bool[NUMBER_OF_RELAYS] {           HIGH,               HIGH,                   HIGH,               HIGH,                   HIGH,               LOW,                LOW }
+        new unsigned short[NUMBER_OF_RELAYS] { MAIN_PUMP_PIN,      ADDIONAL_PUMP_PIN,      AERATION_PIN,       STERILIZATION_PIN,      HEATING_LAMP_PIN,   HEATER_PIN },
+        new bool[NUMBER_OF_RELAYS] {           HIGH,               HIGH,                   HIGH,               HIGH,                   HIGH,               LOW }
     );
     
     logln("Initializing waterLevelSensor")
@@ -84,9 +86,34 @@ SystemModulesList* getSystemModules(navRoot* navRootDependency, TimeGuard* timeG
 	PwmLightControllerServiceModule* pwmLightControllerServiceModule = new PwmLightControllerServiceModule(lightController);
 	ServovalvesServiceModule* servovalvesServiceModule = new ServovalvesServiceModule(valveModule);
 
-	#define NUMBER_OF_SERVICE_MODULES 2
+	WaterLevelSensorServiceModule* waterLevelSensorServiceModule = new WaterLevelSensorServiceModule(waterLevelSensor, 4,
+		new WaterLevelSensorServiceModule::SensorSetup[4] {
+			{ .label = "Akwa. normalny: ", .deviceId = aquariumWater, .waterLevel = normalWaterLevel },
+			{ .label = "Akwa. podmiana: ", .deviceId = aquariumWater, .waterLevel = changeWaterLevel },
+			{ .label = "Rezerwa max: ", .deviceId = addionalWaterTank, .waterLevel = addionalWaterTankMaxLevel },
+			{ .label = "Rezerwa min: ", .deviceId = addionalWaterTank, .waterLevel = addionalWaterTankMinLevel }
+		}
+	);
+
+	RelayModuleServiceModule* relayModuleServiceModule = new RelayModuleServiceModule(
+		relayModule,
+		NUMBER_OF_RELAYS,
+		new char*[NUMBER_OF_RELAYS] {
+			"Glowna pompa: ",
+			"Pompa dolewki: ",
+			"Napowietrzacz: ",
+			"Sterylizator: ",
+			"Lampa grzewcza: ",
+			"Grzalka: "
+		}
+	);
+	
+
+	#define NUMBER_OF_SERVICE_MODULES 4
 
 	ServiceModule** serviceModules = new ServiceModule*[NUMBER_OF_SERVICE_MODULES] {
+		waterLevelSensorServiceModule,
+		relayModuleServiceModule,
 		pwmLightControllerServiceModule,
 		servovalvesServiceModule
 	};
