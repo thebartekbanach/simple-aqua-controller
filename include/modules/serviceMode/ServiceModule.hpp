@@ -18,7 +18,7 @@ class ServiceModuleWithHelpers: public ServiceModule {
 	private:
 		void menuStateChange(eventMask event, navNode& nav, prompt &item) {
 			switch (event) {
-				case eventMask::activateEvent:
+				case eventMask::enterEvent:
 					menuEntered();
 					break;
 				
